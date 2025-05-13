@@ -22,7 +22,40 @@ namespace Jennifer.Tenant.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Jennifer.Core.Models.RoleClaim", b =>
+            modelBuilder.Entity("Jennifer.Tenant.Models.Role", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("TenantId")
+                        .HasColumnType("nvarchar(5)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex")
+                        .HasFilter("[NormalizedName] IS NOT NULL");
+
+                    b.HasIndex("TenantId");
+
+                    b.ToTable("Roles", "account");
+                });
+
+            modelBuilder.Entity("Jennifer.Tenant.Models.RoleClaim", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -44,34 +77,6 @@ namespace Jennifer.Tenant.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("RoleClaims", "account");
-                });
-
-            modelBuilder.Entity("Jennifer.Tenant.Models.Role", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("NormalizedName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedName")
-                        .IsUnique()
-                        .HasDatabaseName("RoleNameIndex")
-                        .HasFilter("[NormalizedName] IS NOT NULL");
-
-                    b.ToTable("Roles", "account");
                 });
 
             modelBuilder.Entity("Jennifer.Tenant.Models.Tenant", b =>
@@ -274,7 +279,17 @@ namespace Jennifer.Tenant.Migrations
                     b.ToTable("UserTokens", "account");
                 });
 
-            modelBuilder.Entity("Jennifer.Core.Models.RoleClaim", b =>
+            modelBuilder.Entity("Jennifer.Tenant.Models.Role", b =>
+                {
+                    b.HasOne("Jennifer.Tenant.Models.Tenant", "Tenant")
+                        .WithMany("Roles")
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Tenant");
+                });
+
+            modelBuilder.Entity("Jennifer.Tenant.Models.RoleClaim", b =>
                 {
                     b.HasOne("Jennifer.Tenant.Models.Role", "Role")
                         .WithMany("RoleClaims")
@@ -354,6 +369,8 @@ namespace Jennifer.Tenant.Migrations
 
             modelBuilder.Entity("Jennifer.Tenant.Models.Tenant", b =>
                 {
+                    b.Navigation("Roles");
+
                     b.Navigation("Users");
                 });
 

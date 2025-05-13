@@ -1,4 +1,4 @@
-﻿using Jennifer.Core.Consts;
+﻿using Jennifer.SharedKernel.Consts;
 using Jennifer.Jwt.Models;
 using Jennifer.Models;
 using Microsoft.AspNetCore.Identity;

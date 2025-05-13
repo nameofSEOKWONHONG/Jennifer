@@ -1,7 +1,7 @@
 ﻿using Ardalis.SmartEnum;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace Jennifer.Core.Domains;
+namespace Jennifer.SharedKernel.Domains;
 
 public class ENUM_USER_TYPE : SmartEnum<ENUM_USER_TYPE, int>
 {

@@ -27,6 +27,9 @@ builder.Services.AddJenniferHybridCache(null, null);
 // Add jennifer signalr hub
 builder.Services.AddJenniferHub(null);
 
+// Add jennifer email
+builder.Services.AddJenniferEmail();
+
 // options =>
 // {
 //     options.Configuration = 

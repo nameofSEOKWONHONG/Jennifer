@@ -1,8 +1,8 @@
 ﻿using System.Net.Http.Headers;
 using System.Net.Http.Json;
-using Jennifer.Core.Domains;
+using Jennifer.SharedKernel.Domains;
 
-namespace Jennifer.Core.SignHandlers;
+namespace Jennifer.SharedKernel.Infrastructure.SignHandlers;
 
 public class GoogleSignHandler(IHttpClientFactory httpClientFactory) : ExternalSignHandler(httpClientFactory)
 {

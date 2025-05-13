@@ -1,4 +1,4 @@
-﻿using Jennifer.Core.Consts;
+﻿using Jennifer.SharedKernel.Consts;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

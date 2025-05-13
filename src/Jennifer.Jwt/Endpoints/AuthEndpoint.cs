@@ -1,4 +1,4 @@
-﻿using Jennifer.Core.Domains;
+﻿using Jennifer.SharedKernel.Domains;
 using Jennifer.Jwt.Domains;
 using Jennifer.Jwt.Services;
 using Microsoft.AspNetCore.Builder;
@@ -21,30 +21,30 @@ public static class AuthEndpoint
                 .WithGroupName("v1")
                 .WithTags("Auth");
         
-        group.MapPost("/signup", async (RegisterRequest request, ISignService signService) => await signService.Register(request));
+        group.MapPost("/signup", async (RegisterRequest request, IAuthService authService) => await authService.Register(request));
         
-        group.MapPost("/signin", async (SignInRequest request, ISignService signService) =>
+        group.MapPost("/signin", async (SignInRequest request, IAuthService authService) =>
         {
-            var result = await signService.Signin(request.Email, request.Password);
+            var result = await authService.Signin(request.Email, request.Password);
             if(result is null) return Results.Unauthorized();
             return Results.Ok(result);
         });
-        group.MapPost("/cookie/signin", async (SignInRequest request, ISignService signService) => Results.Ok(await signService.CookieSignIn(request.Email, request.Password)));
+        group.MapPost("/cookie/signin", async (SignInRequest request, IAuthService authService) => Results.Ok(await authService.CookieSignIn(request.Email, request.Password)));
         
-        group.MapPost("/signout", (ISignService signService) => Results.Ok(signService.SignOut())).RequireAuthorization();
+        group.MapPost("/signout", (IAuthService authService) => Results.Ok(authService.SignOut())).RequireAuthorization();
         
-        group.MapPost("/refreshtoken", async (string refreshToken, ISignService signService) =>
+        group.MapPost("/refreshtoken", async (string refreshToken, IAuthService authService) =>
         {
-            var result = await signService.RefreshToken(refreshToken);
+            var result = await authService.RefreshToken(refreshToken);
             if(result is null) return Results.Unauthorized();
             return Results.Ok(result);
         });
 
         group.MapGet("/password/forgot",
-            async (string email, ISignService signService) => Results.Ok(await signService.RequestPasswordResetToken(email)));
+            async (string email, IAuthService authService) => Results.Ok(await authService.RequestChangePasswordToken(email)));
         group.MapPost("/password/reset", 
-            async (PasswordResetRequest request, ISignService signService) => 
-            Results.Ok(await signService.ResetPassword(request.ResetToken, request.Password, request.NewPassword)));
+            async (PasswordResetRequest request, IAuthService authService) => 
+            Results.Ok(await authService.ChangePasswordWithToken(request.ResetToken, request.Password, request.NewPassword)));
 
         group.MapPost("/external/signin", async (ExternalSignInRequest request, IExternalSignService service, CancellationToken ct) 
             =>

@@ -1,4 +1,4 @@
-﻿using Jennifer.Core.Consts;
+﻿using Jennifer.SharedKernel.Consts;
 using Jennifer.Tenant.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -8,6 +8,8 @@ namespace Jennifer.Tenant.Models;
 
 public class Role: IdentityRole<Guid>
 {
+    public string TenantId { get; set; }
+    public Tenant Tenant { get; set; }
     public virtual ICollection<UserRole> UserRoles { get; set; }
     public virtual ICollection<RoleClaim> RoleClaims { get; set; }
     
@@ -23,6 +25,10 @@ public class Role: IdentityRole<Guid>
             builder.HasMany(m => m.UserRoles)
                 .WithOne(ur => ur.Role)
                 .HasForeignKey(ur => ur.RoleId)
+                .OnDelete(DeleteBehavior.Restrict);
+            builder.HasOne(m => m.Tenant)
+                .WithMany(m => m.Roles)
+                .HasForeignKey(m => m.TenantId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }

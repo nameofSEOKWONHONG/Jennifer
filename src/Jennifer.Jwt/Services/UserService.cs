@@ -1,7 +1,7 @@
-﻿using Jennifer.Domains;
-using Jennifer.Jwt.Data;
+﻿using Jennifer.Jwt.Data;
 using Jennifer.Jwt.Domains;
 using Jennifer.Jwt.Models;
+using Jennifer.SharedKernel.Domains;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -61,13 +61,13 @@ public class UserService: IUserService
             // 충돌 에러 존재하면 409, 그 외는 400
             if (result.Errors.Any(e => e.Code == "DuplicateUserName" || e.Code == "DuplicateEmail"))
             {
-                return ApiResponse<string>.Fail("already exists", result.Errors.Select(m => new {m.Code, m.Description}));
+                return await ApiResponse<string>.FailAsync("already exists", result.Errors.Select(m => new {m.Code, m.Description}));
             }
 
-            return ApiResponse<string>.Fail("failed", result.Errors.Select(m => new {m.Code, m.Description}));
+            return await ApiResponse<string>.FailAsync("failed", result.Errors.Select(m => new {m.Code, m.Description}));
         }
 
-        return ApiResponse<string>.Success(user.Id.ToString());
+        return await ApiResponse<string>.SuccessAsync(user.Id.ToString());
     }
 
     public async Task<ApiResponse<bool>> ModifyUser(UserDto userDto, CancellationToken ct)
@@ -83,10 +83,10 @@ public class UserService: IUserService
         var result = await _userManager.UpdateAsync(user);
         if (!result.Succeeded)
         {
-            return ApiResponse<bool>.Fail("failed", result.Errors.Select(m => new {m.Code, m.Description}));
+            return await ApiResponse<bool>.FailAsync("failed", result.Errors.Select(m => new {m.Code, m.Description}));
         }
         
-        return ApiResponse<bool>.Success(true);
+        return await ApiResponse<bool>.SuccessAsync(true);
     }
 
     public async Task<ApiResponse<bool>> RemoveUser(Guid id, CancellationToken ct)

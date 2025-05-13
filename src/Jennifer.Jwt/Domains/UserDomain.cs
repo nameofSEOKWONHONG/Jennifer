@@ -1,4 +1,4 @@
-﻿using Jennifer.Core.Infrastructure;
+﻿using Jennifer.SharedKernel.Infrastructure;
 
 namespace Jennifer.Jwt.Domains;
 

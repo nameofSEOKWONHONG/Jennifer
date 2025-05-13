@@ -3,7 +3,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
-using Jennifer.Core.Infrastructure;
+using Jennifer.SharedKernel.Infrastructure;
 using Jennifer.Jwt.Data;
 using Jennifer.Jwt.Models;
 using Microsoft.Extensions.Options;

@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Jennifer.Core.Domains;
+namespace Jennifer.SharedKernel.Domains;
 
 public class KakaoSignResult : IExternalSignResult
 {

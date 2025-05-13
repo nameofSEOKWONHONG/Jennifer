@@ -1,11 +1,14 @@
 ﻿using System.Text;
-using Jennifer.Core.Consts;
-using Jennifer.Core.Infrastructure;
+using Amazon.SimpleSystemsManagement;
+using Jennifer.SharedKernel.Consts;
+using Jennifer.SharedKernel.Infrastructure;
 using Jennifer.Jwt.Endpoints;
 using Jennifer.Jwt.Data;
 using Jennifer.Jwt.Hubs;
 using Jennifer.Jwt.Models;
 using Jennifer.Jwt.Services;
+using Jennifer.SharedKernel.Infrastructure.AppConfigurations;
+using Jennifer.SharedKernel.Infrastructure.Email;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
@@ -166,7 +169,7 @@ public static class DependencyInjection
         
         builder.Services.AddScoped<ISessionContext, SessionContext>();        
         
-        builder.Services.AddScoped<ISignService, SignService>();
+        builder.Services.AddScoped<IAuthService, AuthService>();
         builder.Services.AddScoped<IJwtService, JwtService>();
         builder.Services.AddScoped<IExternalSignService, ExternalSignService>();
         builder.Services.AddScoped<IUserService, UserService>();
@@ -221,6 +224,12 @@ public static class DependencyInjection
             services.AddSignalR().AddStackExchangeRedis(redisOptions);
         
         services.AddSingleton<IUserIdProvider, SubUserIdProvider>();
+    }
+
+    public static void AddJenniferEmail(this IServiceCollection services)
+    {
+        services.AddSingleton<IEmailQueue, EmailQueue>();
+        services.AddHostedService<EmailSenderService>();
     }
 
     /// <summary>

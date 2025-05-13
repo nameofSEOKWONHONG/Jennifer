@@ -1,4 +1,4 @@
-﻿namespace Jennifer.Core.Consts;
+﻿namespace Jennifer.SharedKernel.Consts;
 
 internal class JenniferSetting
 {

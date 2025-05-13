@@ -1,4 +1,4 @@
-﻿namespace Jennifer.Core.Infrastructure;
+﻿namespace Jennifer.SharedKernel.Infrastructure;
 
 public interface IAuditable
 {

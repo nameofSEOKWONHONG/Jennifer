@@ -1,4 +1,4 @@
-﻿using Jennifer.Core.Consts;
+﻿using Jennifer.SharedKernel.Consts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -13,6 +13,7 @@ public class Tenant: IAuditable
     public DateTimeOffset? ModifiedOn { get; set; }
     
     public virtual ICollection<User> Users { get; set; }
+    public virtual ICollection<Role> Roles { get; set; }
     
     public class TenantEntityConfiguration : IEntityTypeConfiguration<Tenant>
     {

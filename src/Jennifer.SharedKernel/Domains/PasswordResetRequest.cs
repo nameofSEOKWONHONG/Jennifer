@@ -1,4 +1,4 @@
-﻿namespace Jennifer.Core.Domains;
+﻿namespace Jennifer.SharedKernel.Domains;
 
 public class PasswordResetRequest
 {

@@ -1,9 +1,8 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
-using Jennifer.Core.Domains;
-using Jennifer.Jwt.Services.Handlers;
+using Jennifer.SharedKernel.Domains;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Jennifer.Core.SignHandlers;
+namespace Jennifer.SharedKernel.Infrastructure.SignHandlers;
 
 public class AppleSignHandler : ExternalSignHandler
 {

@@ -1,7 +1,7 @@
 ﻿using Ardalis.SmartEnum.EFCore;
-using Jennifer.Core.Consts;
-using Jennifer.Core.Domains;
-using Jennifer.Core.Infrastructure;
+using Jennifer.SharedKernel.Consts;
+using Jennifer.SharedKernel.Domains;
+using Jennifer.SharedKernel.Infrastructure;
 using Jennifer.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

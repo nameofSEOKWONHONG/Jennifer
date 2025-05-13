@@ -1,5 +1,5 @@
 ﻿using Ardalis.SmartEnum.EFCore;
-using Jennifer.Core.Consts;
+using Jennifer.SharedKernel.Consts;
 using Jennifer.Tenant.Domains;
 using Jennifer.Tenant.Infrastructure;
 using Microsoft.AspNetCore.Identity;

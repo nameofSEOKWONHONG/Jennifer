@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Jennifer.Jwt.Domains;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.Data;
 
 namespace Jennifer.Jwt.Services;
@@ -7,7 +8,7 @@ namespace Jennifer.Jwt.Services;
 /// Provides services for user authentication and authorization processes,
 /// including user registration, sign-in, sign-out, token refresh, and password management.
 /// </summary>
-public interface ISignService
+public interface IAuthService
 {
     /// <summary>
     /// Registers a new user in the system with the provided registration details.
@@ -50,7 +51,7 @@ public interface ISignService
     /// </summary>
     /// <param name="email">The email address of the user requesting the password reset token.</param>
     /// <returns>A string containing the password reset token if the user exists; otherwise, null.</returns>
-    Task<string> RequestPasswordResetToken(string email);
+    Task<string> RequestChangePasswordToken(string email);
 
     /// <summary>
     /// Resets the password for a user based on a valid reset token, email address, and a new password.
@@ -59,5 +60,9 @@ public interface ISignService
     /// <param name="token">The password reset token generated and associated with the user.</param>
     /// <param name="newPassword">The new password to be set for the user's account.</param>
     /// <returns>A <see cref="bool"/> indicating whether the password reset operation was successful.</returns>
-    Task<bool> ResetPassword(string email, string token, string newPassword);
+    Task<bool> ChangePasswordWithToken(string email, string token, string newPassword);
+
+    Task<bool> RequestConfirmEmailToken(string url, string email);
+
+    Task<bool> ConfirmEmail(string userId, string code);
 }

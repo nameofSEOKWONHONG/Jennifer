@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
+using Jennifer.Jwt.Domains;
 using Jennifer.Jwt.Models;
-using Jennifer.Jwt.Services.Handlers;
+using Jennifer.SharedKernel.Infrastructure.SignHandlers;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 

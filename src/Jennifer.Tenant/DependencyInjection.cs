@@ -1,4 +1,4 @@
-﻿using Jennifer.Core.Consts;
+﻿using Jennifer.SharedKernel.Consts;
 using Jennifer.Endpoints;
 
 using Jennifer.Tenant.Data;

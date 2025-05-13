@@ -1,30 +1,36 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using System.Net.Mail;
 using System.Security.Claims;
+using Jennifer.Jwt.Domains;
 using Jennifer.Jwt.Models;
+using Jennifer.SharedKernel.Infrastructure.Email;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.Data;
 
 namespace Jennifer.Jwt.Services;
 
-public class SignService : ISignService
+public class AuthService : IAuthService
 {
     private readonly UserManager<User> _userManager;
     private readonly SignInManager<User> _signInManager;
     private readonly RoleManager<Role> _roleManager;
     private readonly IJwtService _jwtService;
     private readonly HttpContext _httpContext;
+    private readonly IEmailQueue _emailQueue;
     
-    public SignService(UserManager<User> userManager, 
+    public AuthService(UserManager<User> userManager, 
         SignInManager<User> signInManager,
         RoleManager<Role> roleManager,
         IJwtService jwtService,
+        IEmailQueue emailQueue,
         IHttpContextAccessor httpContextAccessor)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _roleManager = roleManager;
         _jwtService = jwtService;
+        _emailQueue = emailQueue;
         _httpContext = httpContextAccessor.HttpContext;
     }
     
@@ -168,7 +174,7 @@ public class SignService : ISignService
         return new TokenResponse(_jwtService.GenerateJwtToken(user, userClaims.ToList(), roleClaims), _jwtService.GenerateRefreshTokenString(newRefreshTokenObj));
     }
     
-    public async Task<string> RequestPasswordResetToken(string email)
+    public async Task<string> RequestChangePasswordToken(string email)
     {
         var user = await _userManager.FindByEmailAsync(email);
         if (user == null) return null;
@@ -177,7 +183,7 @@ public class SignService : ISignService
         return token;
     }
 
-    public async Task<bool> ResetPassword(string token, string oldPassword, string newPassword)
+    public async Task<bool> ChangePasswordWithToken(string token, string oldPassword, string newPassword)
     {
         var id = _httpContext.User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
         var user = await _userManager.FindByIdAsync(id);
@@ -189,8 +195,34 @@ public class SignService : ISignService
         var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
         return result.Succeeded;
     }
+
+    public async Task<bool> RequestConfirmEmailToken(string url, string email)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+        if (user == null) return false;
+        
+        var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+        
+        //this code is for test, not for production. not working.
+        var mail = new EmailMessage.Builder()
+            .From("test", "test@test.com")
+            .To(string.Empty, email)
+            .Subject("Jennifer Email Confirmation")
+            .Body($"<p>https://example.com/confirmemail?userId={user.Id.ToString()}token={token}</p>", true)
+            .Build();
+
+        await _emailQueue.EnqueueAsync(mail);
+        
+        return true;
+    }
+    
+    public async Task<bool> ConfirmEmail(string userId, string code)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null) return false;
+        
+        var result = await _userManager.ConfirmEmailAsync(user, code);
+        return result.Succeeded;
+    }
 }
 
-public record TokenResponse(string AccessToken, string RefreshToken);
-
-public record SignInRequest(string Email, string Password);

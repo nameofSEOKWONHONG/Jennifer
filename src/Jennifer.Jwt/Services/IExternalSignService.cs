@@ -1,4 +1,6 @@
-﻿namespace Jennifer.Jwt.Services;
+﻿using Jennifer.Jwt.Domains;
+
+namespace Jennifer.Jwt.Services;
 
 public interface IExternalSignService
 {

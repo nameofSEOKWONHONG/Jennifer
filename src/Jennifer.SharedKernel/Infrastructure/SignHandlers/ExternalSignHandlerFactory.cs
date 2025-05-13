@@ -1,6 +1,4 @@
-﻿using Jennifer.Core.SignHandlers;
-
-namespace Jennifer.Jwt.Services.Handlers;
+﻿namespace Jennifer.SharedKernel.Infrastructure.SignHandlers;
 
 public class ExternalSignHandlerFactory
 {

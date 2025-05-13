@@ -1,5 +1,5 @@
-﻿using Jennifer.Core.Consts;
-using Jennifer.Core.Infrastructure;
+﻿using Jennifer.SharedKernel.Consts;
+using Jennifer.SharedKernel.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

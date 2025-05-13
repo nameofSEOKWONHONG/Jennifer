@@ -1,6 +1,6 @@
-﻿using Jennifer.Core.Domains;
+﻿using Jennifer.SharedKernel.Domains;
 
-namespace Jennifer.Core.SignHandlers;
+namespace Jennifer.SharedKernel.Infrastructure.SignHandlers;
 
 public abstract class ExternalSignHandler
 {

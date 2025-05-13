@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 
-namespace Jennifer.Core.Infrastructure;
+namespace Jennifer.SharedKernel.Infrastructure;
 
 public static class Infra
 {

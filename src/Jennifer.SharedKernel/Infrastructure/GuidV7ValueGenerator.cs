@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.ValueGeneration;
 
-namespace Jennifer.Core.Infrastructure;
+namespace Jennifer.SharedKernel.Infrastructure;
 
 public class GuidV7ValueGenerator: ValueGenerator<Guid>
 {

@@ -1,4 +1,4 @@
-﻿using Jennifer.Core.Infrastructure;
+﻿using Jennifer.SharedKernel.Infrastructure;
 using Jennifer.Jwt.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;

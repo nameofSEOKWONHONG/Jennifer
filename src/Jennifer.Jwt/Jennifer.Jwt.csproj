@@ -19,7 +19,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Jennifer.Core\Jennifer.Core.csproj" />
+      <ProjectReference Include="..\Jennifer.SharedKernel\Jennifer.SharedKernel.csproj" />
     </ItemGroup>
 
     <ItemGroup>
