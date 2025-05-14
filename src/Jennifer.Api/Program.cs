@@ -25,10 +25,10 @@ builder.AddJennifer("account",
 builder.Services.AddJenniferHybridCache(null, null);
 
 // Add jennifer signalr hub
-builder.Services.AddJenniferHub(null);
+builder.Services.AddJenniferAuthHub(null);
 
 // Add jennifer email
-builder.Services.AddJenniferEmail();
+builder.Services.AddJenniferMailService();
 
 // options =>
 // {

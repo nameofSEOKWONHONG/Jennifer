@@ -1,13 +1,14 @@
 ﻿using System.Text;
-using Amazon.SimpleSystemsManagement;
+using FluentValidation;
 using Jennifer.SharedKernel.Consts;
 using Jennifer.SharedKernel.Infrastructure;
 using Jennifer.Jwt.Endpoints;
 using Jennifer.Jwt.Data;
+using Jennifer.Jwt.Domains;
 using Jennifer.Jwt.Hubs;
 using Jennifer.Jwt.Models;
 using Jennifer.Jwt.Services;
-using Jennifer.SharedKernel.Infrastructure.AppConfigurations;
+using Jennifer.Jwt.Services.Abstracts;
 using Jennifer.SharedKernel.Infrastructure.Email;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -167,12 +168,18 @@ public static class DependencyInjection
         builder.Services.Configure<GzipCompressionProviderOptions>(options => options.Level = System.IO.Compression.CompressionLevel.Fastest);
         builder.Services.Configure<BrotliCompressionProviderOptions>(options => options.Level = System.IO.Compression.CompressionLevel.Fastest);     
         
-        builder.Services.AddScoped<ISessionContext, SessionContext>();        
-        
+        builder.Services.AddScoped<ISessionContext, SessionContext>();
         builder.Services.AddScoped<IAuthService, AuthService>();
         builder.Services.AddScoped<IJwtService, JwtService>();
         builder.Services.AddScoped<IExternalSignService, ExternalSignService>();
         builder.Services.AddScoped<IUserService, UserService>();
+        builder.Services.AddScoped<IUserRoleService, UserRoleService>();
+        builder.Services.AddScoped<IUserClaimService, UserClaimService>();
+        builder.Services.AddScoped<IRoleService, RoleService>();
+        builder.Services.AddScoped<IRoleClaimService, RoleClaimService>();
+        
+        builder.Services.AddValidatorsFromAssemblyContaining<UserDtoValidator>(); // 자동 검증 필터 추가
+
     }
 
     /// <summary>
@@ -212,11 +219,11 @@ public static class DependencyInjection
     }
 
     /// <summary>
-    /// Adds the Jennifer.Jwt Hub services to the dependency injection container.
+    /// Adds the Jennifer.Jwt Auth Hub services to the dependency injection container.
     /// </summary>
     /// <param name="services">The service collection to which the SignalR and related Jennifer.Jwt.Hub services will be added.</param>
     /// <param name="redisOptions">An optional delegate to configure Redis options for SignalR. If null, the default SignalR setup will be used without Redis integration.</param>
-    public static void AddJenniferHub(this IServiceCollection services, Action<RedisOptions> redisOptions)
+    public static void AddJenniferAuthHub(this IServiceCollection services, Action<RedisOptions> redisOptions)
     {
         if(redisOptions is null)
             services.AddSignalR();
@@ -226,7 +233,12 @@ public static class DependencyInjection
         services.AddSingleton<IUserIdProvider, SubUserIdProvider>();
     }
 
-    public static void AddJenniferEmail(this IServiceCollection services)
+    /// <summary>
+    /// Adds the Jennifer.Mail services to the dependency injection container.
+    /// </summary>
+    /// <param name="services">The service collection to which the Jennifer.Mail services will be added.
+    /// This includes a singleton registration for email queuing and a hosted service for email sending operations.</param>
+    public static void AddJenniferMailService(this IServiceCollection services)
     {
         services.AddSingleton<IEmailQueue, EmailQueue>();
         services.AddHostedService<EmailSenderService>();
@@ -241,8 +253,8 @@ public static class DependencyInjection
         app.MapAuthEndpoint();
         app.MapUserEndpoint();
         app.MapUserRoleEndpoint();
+        app.MapUserClaimEndpoint();
         app.MapRoleEndpoint();
-        app.MapRoleClaimEndpoint();
     }
 
     /// <summary>

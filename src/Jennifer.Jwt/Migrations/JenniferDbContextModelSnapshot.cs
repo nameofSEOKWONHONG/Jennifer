@@ -17,7 +17,7 @@ namespace Jennifer.Jwt.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.4")
+                .HasAnnotation("ProductVersion", "9.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -123,7 +123,8 @@ namespace Jennifer.Jwt.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
@@ -135,7 +136,6 @@ namespace Jennifer.Jwt.Migrations
                         .HasColumnType("bit");
 
                     b.Property<int?>("Type")
-                        .HasMaxLength(20)
                         .HasColumnType("int");
 
                     b.Property<string>("UserName")
@@ -256,11 +256,13 @@ namespace Jennifer.Jwt.Migrations
 
             modelBuilder.Entity("Jennifer.Jwt.Models.UserClaim", b =>
                 {
-                    b.HasOne("Jennifer.Jwt.Models.User", null)
+                    b.HasOne("Jennifer.Jwt.Models.User", "User")
                         .WithMany("Claims")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Jennifer.Jwt.Models.UserLogin", b =>
@@ -279,7 +281,7 @@ namespace Jennifer.Jwt.Migrations
                     b.HasOne("Jennifer.Jwt.Models.Role", "Role")
                         .WithMany("UserRoles")
                         .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Jennifer.Jwt.Models.User", "User")

@@ -1,6 +1,7 @@
 ﻿using Jennifer.SharedKernel.Domains;
 using Jennifer.Jwt.Domains;
 using Jennifer.Jwt.Services;
+using Jennifer.Jwt.Services.Abstracts;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.Data;
@@ -54,5 +55,14 @@ public static class AuthEndpoint
             return Results.Ok(result);
         });
         group.MapPost("/external/signin/apple", () => Results.Ok("apple"));
+        group.MapPatch("/{userId}/user",
+            async (string userId, UpdateUserDto updateUserDto, IAuthService authService) =>
+            {
+                var result = await authService.UpdateUserInfo(userId, updateUserDto.Username, updateUserDto.PhoneNumber);
+                if (result) return Results.Ok();
+                return Results.BadRequest();
+            });        
     }
 }
+
+public record UpdateUserDto(string Username, string PhoneNumber);

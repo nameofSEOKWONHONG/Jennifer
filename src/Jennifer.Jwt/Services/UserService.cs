@@ -1,7 +1,10 @@
-﻿using Jennifer.Jwt.Data;
+﻿using FluentValidation;
+using Jennifer.Jwt.Data;
 using Jennifer.Jwt.Domains;
 using Jennifer.Jwt.Models;
+using Jennifer.Jwt.Services.Abstracts;
 using Jennifer.SharedKernel.Domains;
+using Jennifer.SharedKernel.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,11 +14,13 @@ public class UserService: IUserService
 {
     private readonly ISessionContext _context;
     private readonly UserManager<User> _userManager;
+    private readonly IValidator<UserDto> _validator;
 
-    public UserService(ISessionContext context, UserManager<User> userManager)
+    public UserService(ISessionContext context, UserManager<User> userManager, IValidator<UserDto> validator)
     {
         _context = context;
         _userManager = userManager;
+        _validator = validator;
     }
 
     public async Task<IEnumerable<User>> GetUsers(string email, int page, int size, CancellationToken ct)
@@ -42,6 +47,11 @@ public class UserService: IUserService
     
     public async Task<ApiResponse<string>> AddUser(UserDto userDto)
     {
+        var validationResult = await _validator.ValidateAsync(userDto);
+        if (!validationResult.IsValid)
+        {
+            return await ApiResponse<string>.FailAsync("failed", validationResult.Errors.Select(m => new {m.PropertyName, m.ErrorMessage}));
+        }
         var user = new User
         {
             UserName = userDto.Name,

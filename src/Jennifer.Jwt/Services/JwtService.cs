@@ -6,6 +6,7 @@ using System.Text.Json;
 using Jennifer.SharedKernel.Infrastructure;
 using Jennifer.Jwt.Data;
 using Jennifer.Jwt.Models;
+using Jennifer.Jwt.Services.Abstracts;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 

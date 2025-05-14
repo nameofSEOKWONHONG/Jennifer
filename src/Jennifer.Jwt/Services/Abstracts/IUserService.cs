@@ -2,7 +2,7 @@
 using Jennifer.Jwt.Models;
 using Jennifer.SharedKernel.Domains;
 
-namespace Jennifer.Jwt.Services;
+namespace Jennifer.Jwt.Services.Abstracts;
 
 public interface IUserService
 {

@@ -24,6 +24,10 @@ public class Role: IdentityRole<Guid>
                 .WithOne(ur => ur.Role)
                 .HasForeignKey(ur => ur.RoleId)
                 .OnDelete(DeleteBehavior.Restrict);
+            builder.HasMany(m => m.RoleClaims)
+                .WithOne(rc => rc.Role)
+                .HasForeignKey(rc => rc.RoleId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using Jennifer.Jwt.Domains;
 
-namespace Jennifer.Jwt.Services;
+namespace Jennifer.Jwt.Services.Abstracts;
 
 public interface IExternalSignService
 {

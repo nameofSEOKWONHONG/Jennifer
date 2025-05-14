@@ -59,11 +59,15 @@ public class EmailMessage
             return this;
         }
 
+        private static readonly FileExtensionContentTypeProvider _provider = new();
         public Builder Attachments(string tempFullFileName, string srcFilename)
         {
-            var provider = new FileExtensionContentTypeProvider();
             var filename = Path.GetFileName(srcFilename);
-            provider.TryGetContentType(filename, out var contentType);
+            _provider.TryGetContentType(filename, out var contentType);
+            
+            if (!File.Exists(tempFullFileName))
+                throw new FileNotFoundException("Attachment file not found.", tempFullFileName);
+
             _email.Attachments.Add(new EmailAttachment()
             {
                 FileName = filename,

@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using Jennifer.Jwt.Models;
 
-namespace Jennifer.Jwt.Services;
+namespace Jennifer.Jwt.Services.Abstracts;
 
 public interface IJwtService
 {

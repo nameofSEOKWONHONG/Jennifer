@@ -3,6 +3,8 @@ using System.Net.Mail;
 using System.Security.Claims;
 using Jennifer.Jwt.Domains;
 using Jennifer.Jwt.Models;
+using Jennifer.Jwt.Services.Abstracts;
+using Jennifer.SharedKernel.Domains;
 using Jennifer.SharedKernel.Infrastructure.Email;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -41,10 +43,12 @@ public class AuthService : IAuthService
             UserName = request.Email,
             Email = request.Email,
             EmailConfirmed = true,
+            PhoneNumber = null,
             PhoneNumberConfirmed = true,
             TwoFactorEnabled = false,
             LockoutEnabled = false,
             AccessFailedCount = 0,
+            Type = ENUM_USER_TYPE.CUSTOMER,
             CreatedOn = DateTimeOffset.UtcNow
         };
         var result = await _userManager.CreateAsync(user, request.Password);
@@ -222,6 +226,17 @@ public class AuthService : IAuthService
         if (user == null) return false;
         
         var result = await _userManager.ConfirmEmailAsync(user, code);
+        return result.Succeeded;
+    }
+    
+    public async Task<bool> UpdateUserInfo(string email, string name, string phoneNumber)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+        if (user == null) return false;
+        
+        user.UserName = name;
+        user.PhoneNumber = phoneNumber;
+        var result = await _userManager.UpdateAsync(user);
         return result.Succeeded;
     }
 }

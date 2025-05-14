@@ -1,6 +1,9 @@
-﻿using Jennifer.Jwt.Data;
+﻿using FluentValidation;
+using Jennifer.Jwt.Data;
 using Jennifer.Jwt.Domains;
 using Jennifer.Jwt.Services;
+using Jennifer.Jwt.Services.Abstracts;
+using Jennifer.SharedKernel.Domains;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -22,8 +25,7 @@ public static class UserEndpoint
             Results.Ok(await service.GetUsers(request.Email, request.PageNo, request.PageSize, ct)));
         group.MapGet("/{id}", async (string id, IUserService service, CancellationToken ct) => Results.Ok(await service.GetUser(id, ct)));
         group.MapPost("/",
-            async (UserDto user, IUserService service) =>
-                Results.Ok(await service.AddUser(user)));
+            async (UserDto user, IUserService service) => await service.AddUser(user));
         group.MapPut("/", async (UserDto user, IUserService service, CancellationToken ct) =>
                 Results.Ok(await service.ModifyUser(user, ct)));
         group.MapDelete("/{id}", async (Guid id, IUserService service, CancellationToken ct) =>

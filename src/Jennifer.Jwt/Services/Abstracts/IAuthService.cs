@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.Data;
 
-namespace Jennifer.Jwt.Services;
+namespace Jennifer.Jwt.Services.Abstracts;
 
 /// <summary>
 /// Provides services for user authentication and authorization processes,
@@ -65,4 +65,6 @@ public interface IAuthService
     Task<bool> RequestConfirmEmailToken(string url, string email);
 
     Task<bool> ConfirmEmail(string userId, string code);
+
+    Task<bool> UpdateUserInfo(string email, string name, string phoneNumber);
 }
