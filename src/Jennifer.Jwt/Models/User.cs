@@ -3,7 +3,7 @@ using Jennifer.SharedKernel.Consts;
 using Jennifer.SharedKernel.Domains;
 using Jennifer.SharedKernel.Infrastructure;
 using Jennifer.Models;
-using Jennifer.SharedKernel.Converters;
+using Jennifer.SharedKernel.Infrastructure.Converters;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

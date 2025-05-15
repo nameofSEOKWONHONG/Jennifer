@@ -1,12 +1,7 @@
-﻿using FluentValidation;
-using Jennifer.Jwt.Data;
-using Jennifer.Jwt.Domains;
-using Jennifer.Jwt.Services;
+﻿using Jennifer.Jwt.Domains;
 using Jennifer.Jwt.Services.Abstracts;
-using Jennifer.SharedKernel.Domains;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 
 namespace Jennifer.Jwt.Endpoints;
@@ -21,14 +16,26 @@ public static class UserEndpoint
             .RequireAuthorization()
             ;
 
-        group.MapGet("/", async ([AsParameters]UserPagingRequest request, IUserService service, CancellationToken ct) => 
-            Results.Ok(await service.GetUsers(request.Email, request.PageNo, request.PageSize, ct)));
-        group.MapGet("/{id}", async (string id, IUserService service, CancellationToken ct) => Results.Ok(await service.GetUser(id, ct)));
+        group.MapGet("/", 
+            async ([AsParameters]UserPagingRequest request, IUserService service, CancellationToken ct) => 
+                await service.GetUsers(request.Email, request.PageNo, request.PageSize, ct))
+            .WithName("GetUsers");
+        
+        group.MapGet("/{id}", 
+            async (Guid id, IUserService service, CancellationToken ct) => 
+                await service.GetUser(id, ct))
+            .WithName("GetUser");
+        
         group.MapPost("/",
-            async (UserDto user, IUserService service) => await service.AddUser(user));
-        group.MapPut("/", async (UserDto user, IUserService service, CancellationToken ct) =>
-                Results.Ok(await service.ModifyUser(user, ct)));
-        group.MapDelete("/{id}", async (Guid id, IUserService service, CancellationToken ct) =>
-            Results.Ok(await service.RemoveUser(id, ct)));
+            async (RegisterUserDto user, IUserService service) => 
+                await service.AddUser(user)).WithName("AddUser");
+        
+        group.MapPut("/", 
+            async (UserDto user, IUserService service, CancellationToken ct) =>
+                await service.ModifyUser(user, ct)).WithName("ModifyUser");
+        
+        group.MapDelete("/{id}", 
+            async (Guid id, IUserService service, CancellationToken ct) =>
+                await service.RemoveUser(id, ct)).WithName("RemoveUser");
     }
 }

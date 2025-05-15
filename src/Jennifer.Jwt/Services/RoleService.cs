@@ -1,14 +1,17 @@
-﻿using Jennifer.Jwt.Models;
+﻿using eXtensionSharp;
+using Jennifer.Jwt.Models;
+using Jennifer.SharedKernel.Domains;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace Jennifer.Jwt.Services;
 
 public interface IRoleService
 {
-    Task<bool> CreateRoleAsync(string roleName);
-    Task<bool> DeleteRoleAsync(string roleName);
-    Task<List<string>> GetAllRolesAsync();
-    Task<bool> RoleExistsAsync(string roleName);
+    Task<ApiResponse<bool>> CreateRoleAsync(string roleName);
+    Task<ApiResponse<bool>> DeleteRoleAsync(string roleName);
+    Task<ApiResponse<IList<string>>> GetAllRolesAsync();
+    Task<ApiResponse<bool>> RoleExistsAsync(string roleName);
 }
 
 public class RoleService: IRoleService
@@ -20,32 +23,34 @@ public class RoleService: IRoleService
         _roleManager = roleManager;
     }
 
-    public async Task<bool> CreateRoleAsync(string roleName)
+    public async Task<ApiResponse<bool>> CreateRoleAsync(string roleName)
     {
         if (await _roleManager.RoleExistsAsync(roleName))
-            return false;
+            return await ApiResponse<bool>.FailAsync();
 
         var result = await _roleManager.CreateAsync(new Role { Name = roleName });
-        return result.Succeeded;
+        return await ApiResponse<bool>.SuccessAsync(result.Succeeded);
     }
 
-    public async Task<bool> DeleteRoleAsync(string roleName)
+    public async Task<ApiResponse<bool>> DeleteRoleAsync(string roleName)
     {
         var role = await _roleManager.FindByNameAsync(roleName);
-        if (role == null)
-            return false;
+        if (role.xIsEmpty())
+            return await ApiResponse<bool>.FailAsync();
 
         var result = await _roleManager.DeleteAsync(role);
-        return result.Succeeded;
+        return await ApiResponse<bool>.SuccessAsync(result.Succeeded);
     }
 
-    public async Task<List<string>> GetAllRolesAsync()
+    public async Task<ApiResponse<IList<string>>> GetAllRolesAsync()
     {
-        return await Task.FromResult(_roleManager.Roles.Select(r => r.Name).ToList());
+        var roleNames = await _roleManager.Roles.Select(r => r.Name).ToListAsync();
+        return await ApiResponse<IList<string>>.SuccessAsync(roleNames);
     }
 
-    public async Task<bool> RoleExistsAsync(string roleName)
+    public async Task<ApiResponse<bool>> RoleExistsAsync(string roleName)
     {
-        return await _roleManager.RoleExistsAsync(roleName);
+        var result = await _roleManager.RoleExistsAsync(roleName);
+        return await ApiResponse<bool>.SuccessAsync(result);
     }
 }

@@ -85,13 +85,6 @@ public class AuthService : IAuthService
         
         if(!await _userManager.CheckPasswordAsync(user, password)) return null;
         
-        // var result = await _signInManager.PasswordSignInAsync
-        //     (user, password, isPersistent:false, lockoutOnFailure:false);
-        // if (result.Succeeded)
-        // {
-        //
-        // }
-        
         var userClaims = await _userManager.GetClaimsAsync(user);
         var roles = await _userManager.GetRolesAsync(user);
         var roleClaims = new List<Claim>();

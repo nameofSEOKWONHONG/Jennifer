@@ -4,6 +4,13 @@ using Microsoft.Extensions.Options;
 
 namespace Jennifer.SharedKernel.Infrastructure.Email;
 
+/// <summary>
+/// Represents an email message for use in email sending systems.
+/// Provides properties to define the sender, recipients, subject,
+/// body content, and email configuration, such as HTML formatting
+/// and attachments. This class is designed for flexible email construction
+/// through the use of the Builder design pattern.
+/// </summary>
 public class EmailMessage
 {
     public string From { get; private set; }
@@ -81,6 +88,11 @@ public class EmailMessage
     }
 }
 
+/// <summary>
+/// Represents a single attachment in an email message. This class provides
+/// the file name, content type, and file content as a byte array, enabling
+/// the inclusion of attachments in email messages.
+/// </summary>
 public class EmailAttachment
 {
     public string FileName { get; set; } = default!;

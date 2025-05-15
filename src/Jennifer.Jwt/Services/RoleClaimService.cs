@@ -1,14 +1,16 @@
 ﻿using System.Security.Claims;
+using eXtensionSharp;
 using Jennifer.Jwt.Models;
+using Jennifer.SharedKernel.Domains;
 using Microsoft.AspNetCore.Identity;
 
 namespace Jennifer.Jwt.Services;
 
 public interface IRoleClaimService
 {
-    Task<List<Claim>> GetClaimsAsync(string roleName);
-    Task<bool> AddClaimAsync(string roleName, Claim claim);
-    Task<bool> RemoveClaimAsync(string roleName, Claim claim);
+    Task<ApiResponse<IList<Claim>>> GetClaimsAsync(string roleName);
+    Task<ApiResponse<bool>> AddClaimAsync(string roleName, Claim claim);
+    Task<ApiResponse<bool>> RemoveClaimAsync(string roleName, Claim claim);
 }
 
 public class RoleClaimService: IRoleClaimService
@@ -20,30 +22,30 @@ public class RoleClaimService: IRoleClaimService
         _roleManager = roleManager;
     }
 
-    public async Task<List<Claim>> GetClaimsAsync(string roleName)
+    public async Task<ApiResponse<IList<Claim>>> GetClaimsAsync(string roleName)
     {
         var role = await _roleManager.FindByNameAsync(roleName);
-        if (role == null) return new List<Claim>();
+        if (role.xIsEmpty()) return await ApiResponse<IList<Claim>>.FailAsync();
 
         var claims = await _roleManager.GetClaimsAsync(role);
-        return claims.ToList();
+        return await ApiResponse<IList<Claim>>.SuccessAsync(claims);
     }
 
-    public async Task<bool> AddClaimAsync(string roleName, Claim claim)
+    public async Task<ApiResponse<bool>> AddClaimAsync(string roleName, Claim claim)
     {
         var role = await _roleManager.FindByNameAsync(roleName);
-        if (role == null) return false;
+        if (role.xIsEmpty()) return await ApiResponse<bool>.FailAsync();
 
         var result = await _roleManager.AddClaimAsync(role, claim);
-        return result.Succeeded;
+        return await ApiResponse<bool>.SuccessAsync(result.Succeeded);
     }
 
-    public async Task<bool> RemoveClaimAsync(string roleName, Claim claim)
+    public async Task<ApiResponse<bool>> RemoveClaimAsync(string roleName, Claim claim)
     {
         var role = await _roleManager.FindByNameAsync(roleName);
-        if (role == null) return false;
+        if (role.xIsEmpty()) return await ApiResponse<bool>.FailAsync();
 
         var result = await _roleManager.RemoveClaimAsync(role, claim);
-        return result.Succeeded;
+        return await ApiResponse<bool>.SuccessAsync(result.Succeeded);
     }
 }

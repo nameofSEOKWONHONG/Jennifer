@@ -14,16 +14,16 @@ public class UserService: IUserService
 {
     private readonly ISessionContext _context;
     private readonly UserManager<User> _userManager;
-    private readonly IValidator<UserDto> _validator;
+    private readonly IValidator<RegisterUserDto> _validator;
 
-    public UserService(ISessionContext context, UserManager<User> userManager, IValidator<UserDto> validator)
+    public UserService(ISessionContext context, UserManager<User> userManager, IValidator<RegisterUserDto> validator)
     {
         _context = context;
         _userManager = userManager;
         _validator = validator;
     }
 
-    public async Task<IEnumerable<User>> GetUsers(string email, int page, int size, CancellationToken ct)
+    public async Task<ApiResponse<IList<UserDto>>> GetUsers(string email, int page, int size, CancellationToken ct)
     {
         var query = _context.DbContext.Users.AsNoTracking().AsQueryable();
 
@@ -31,21 +31,38 @@ public class UserService: IUserService
         {
             query = query.Where(x => x.Email.Contains(email));       
         }
-        return await query
+        var result = await query
             .Skip((page - 1) * size)
             .Take(size)
+            .Select(m => new UserDto()
+            {
+                Id = m.Id,
+                Email = m.Email,
+                Name = m.UserName,
+                PhoneNumber = m.PhoneNumber
+            })
             .ToArrayAsync(cancellationToken: ct);
+        
+        return await ApiResponse<IList<UserDto>>.SuccessAsync(result);
     }
 
-    public async Task<User> GetUser(string id, CancellationToken ct)
+    public async Task<ApiResponse<UserDto>> GetUser(Guid id, CancellationToken ct)
     {
-        if (!Guid.TryParse(id, out var guid)) throw new ArgumentException("Parameter is not a valid Guid.");
-        return await _context.DbContext.Users.AsNoTracking()
-            .Where(m => m.Id == guid)
-            .FirstAsync(m => m.Id == guid, ct);
+        var result = await _context.DbContext.Users.AsNoTracking()
+            .Where(m => m.Id == id)
+            .Select(m => new UserDto()
+            {
+                Id = m.Id,
+                Email = m.Email,
+                Name = m.UserName,
+                PhoneNumber = m.PhoneNumber
+            })
+            .FirstAsync(m => m.Id == id, ct);
+        
+        return await ApiResponse<UserDto>.SuccessAsync(result);
     }
     
-    public async Task<ApiResponse<string>> AddUser(UserDto userDto)
+    public async Task<ApiResponse<string>> AddUser(RegisterUserDto userDto)
     {
         var validationResult = await _validator.ValidateAsync(userDto);
         if (!validationResult.IsValid)

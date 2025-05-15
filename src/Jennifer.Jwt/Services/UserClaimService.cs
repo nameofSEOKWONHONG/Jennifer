@@ -1,15 +1,17 @@
 ﻿using System.Security.Claims;
+using eXtensionSharp;
 using Jennifer.Jwt.Models;
+using Jennifer.SharedKernel.Domains;
 using Microsoft.AspNetCore.Identity;
 
 namespace Jennifer.Jwt.Services;
 
 public interface IUserClaimService
 {
-    Task<IList<Claim>> GetUserClaimsAsync(string userId);
-    Task<bool> AddClaimAsync(string userId, Claim claim);
-    Task<bool> RemoveClaimAsync(string userId, Claim claim);
-    Task<bool> HasClaimAsync(string userId, Claim claim);
+    Task<ApiResponse<IList<Claim>>> GetUserClaimsAsync(string userId);
+    Task<ApiResponse<bool>> AddClaimAsync(string userId, Claim claim);
+    Task<ApiResponse<bool>> RemoveClaimAsync(string userId, Claim claim);
+    Task<ApiResponse<bool>> HasClaimAsync(string userId, Claim claim);
 }
 
 public class UserClaimService: IUserClaimService
@@ -21,35 +23,40 @@ public class UserClaimService: IUserClaimService
         _userManager = userManager;
     }
 
-    public async Task<IList<Claim>> GetUserClaimsAsync(string userId)
+    public async Task<ApiResponse<IList<Claim>>> GetUserClaimsAsync(string userId)
     {
         var user = await _userManager.FindByIdAsync(userId);
-        return user == null
-            ? new List<Claim>()
-            : await _userManager.GetClaimsAsync(user);
+        if(user.xIsEmpty()) return await ApiResponse<IList<Claim>>.FailAsync();
+        
+        var claims = await _userManager.GetClaimsAsync(user);
+        return await ApiResponse<IList<Claim>>.SuccessAsync(claims);
     }
 
-    public async Task<bool> AddClaimAsync(string userId, Claim claim)
+    public async Task<ApiResponse<bool>> AddClaimAsync(string userId, Claim claim)
     {
         var user = await _userManager.FindByIdAsync(userId);
-        if (user == null) return false;
+        if (user.xIsEmpty()) return await ApiResponse<bool>.FailAsync();
 
         var result = await _userManager.AddClaimAsync(user, claim);
-        return result.Succeeded;
+        return await ApiResponse<bool>.SuccessAsync(result.Succeeded);
     }
 
-    public async Task<bool> RemoveClaimAsync(string userId, Claim claim)
+    public async Task<ApiResponse<bool>> RemoveClaimAsync(string userId, Claim claim)
     {
         var user = await _userManager.FindByIdAsync(userId);
-        if (user == null) return false;
+        if (user.xIsEmpty()) return await ApiResponse<bool>.FailAsync();
 
         var result = await _userManager.RemoveClaimAsync(user, claim);
-        return result.Succeeded;
+        return await ApiResponse<bool>.SuccessAsync(result.Succeeded);
     }
 
-    public async Task<bool> HasClaimAsync(string userId, Claim claim)
+    public async Task<ApiResponse<bool>> HasClaimAsync(string userId, Claim claim)
     {
-        var claims = await GetUserClaimsAsync(userId);
-        return claims.Any(c => c.Type == claim.Type && c.Value == claim.Value);
+        var user = await _userManager.FindByIdAsync(userId);
+        if(user.xIsEmpty()) return await ApiResponse<bool>.FailAsync();
+        
+        var claims = await _userManager.GetClaimsAsync(user); 
+        var exists = claims.Any(c => c.Type == claim.Type && c.Value == claim.Value);
+        return await ApiResponse<bool>.SuccessAsync(exists);
     }
 }
