@@ -1,4 +1,7 @@
 ﻿using System.Text;
+using System.Text.Json.Serialization;
+using Ardalis.SmartEnum.EFCore;
+using Ardalis.SmartEnum.SystemTextJson;
 using FluentValidation;
 using Jennifer.SharedKernel.Consts;
 using Jennifer.SharedKernel.Infrastructure;
@@ -13,6 +16,7 @@ using Jennifer.Jwt.Services.AuthServices;
 using Jennifer.SharedKernel.Infrastructure.Email;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http.Json;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.Routing;

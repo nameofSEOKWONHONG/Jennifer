@@ -1,4 +1,4 @@
-﻿namespace Jennifer.Jwt.Services.Bases;
+﻿namespace Jennifer.SharedKernel.Base;
 
 public interface IServiceBase<TRequest, TResponse>
 {

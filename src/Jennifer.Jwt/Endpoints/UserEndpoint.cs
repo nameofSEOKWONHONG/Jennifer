@@ -27,7 +27,7 @@ public static class UserEndpoint
             .WithName("GetUser");
         
         group.MapPost("/",
-            async (RegisterUserDto user, IUserService service) => 
+            async (UserDto user, IUserService service) => 
                 await service.AddUser(user)).WithName("AddUser");
         
         group.MapPut("/", 

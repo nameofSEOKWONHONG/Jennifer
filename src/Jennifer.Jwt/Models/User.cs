@@ -1,4 +1,6 @@
-﻿using Jennifer.SharedKernel.Domains;
+﻿using Jennifer.Jwt.Models.Contracts;
+using Jennifer.Jwt.Services.AuthServices.Contracts;
+using Jennifer.SharedKernel.Domains;
 using Jennifer.SharedKernel.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 

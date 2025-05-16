@@ -1,4 +1,6 @@
 ﻿using Ardalis.SmartEnum.EFCore;
+using Jennifer.Jwt.Models.Contracts;
+using Jennifer.Jwt.Services.AuthServices.Contracts;
 using Jennifer.SharedKernel.Consts;
 using Jennifer.SharedKernel.Domains;
 using Jennifer.SharedKernel.Infrastructure.Converters;

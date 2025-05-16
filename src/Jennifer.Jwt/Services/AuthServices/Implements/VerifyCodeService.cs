@@ -3,7 +3,7 @@ using Jennifer.Jwt.Data;
 using Jennifer.Jwt.Models;
 using Jennifer.Jwt.Services.AuthServices.Abstracts;
 using Jennifer.Jwt.Services.AuthServices.Contracts;
-using Jennifer.Jwt.Services.Bases;
+using Jennifer.SharedKernel.Base;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -21,10 +21,9 @@ public class VerifyCodeService: ServiceBase<VerifyCodeService, VerifyCodeRequest
 
     public async Task<VerifyCodeResponse> HandleAsync(VerifyCodeRequest request, CancellationToken cancellationToken)
     {
-        var type = ENUM_EMAIL_VERIFICATION_TYPE.FromName(request.Type);
         var emailVerify = await _dbContext.EmailVerificationCodes
-            .Where(m => m.Email == request.email
-                        && m.Type == type
+            .Where(m => m.Email == request.Email
+                        && m.Type == request.Type
                         && !m.IsUsed 
                         && m.ExpiresAt > DateTimeOffset.UtcNow)
             .OrderByDescending(m => m.CreatedAt)

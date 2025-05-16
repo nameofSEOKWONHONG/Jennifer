@@ -12,8 +12,9 @@ public class UserDto
 {
     public Guid Id { get; set; }
     public string Email { get; set; }
-    public string Name { get; set; }
+    public string UserName { get; set; }
     public string PhoneNumber { get; set; }
+    public string Password { get; set; }
 }
 
 public class UserDtoValidator : AbstractValidator<UserDto>
@@ -24,38 +25,7 @@ public class UserDtoValidator : AbstractValidator<UserDto>
         RuleFor(m => m.Email).NotEmpty()
             .EmailAddress()
             .MaximumLength(255);
-        RuleFor(m => m.Name).NotEmpty()
-            .MaximumLength(255)
-            .MinimumLength(2)
-            .Matches(@"^[a-zA-Z0-9]+$")
-            ;
-        RuleFor(m => m.PhoneNumber).NotEmpty()
-            .MaximumLength(20)
-            .MinimumLength(10);
-    }
-}
-
-public record UpdateUserDto(string Username, string PhoneNumber);
-
-public class RegisterUserDto
-{
-    public Guid Id { get; set; }
-    public string Email { get; set; }
-    public string Name { get; set; }
-    public string PhoneNumber { get; set; }
-    public string Password { get; set; }
-    public string ConfirmPassword { get; set; }
-}
-
-public class RegisterUserDtoValidator : AbstractValidator<RegisterUserDto>
-{
-    public RegisterUserDtoValidator()
-    {
-        RuleFor(m => m.Id).NotEmpty();
-        RuleFor(m => m.Email).NotEmpty()
-            .EmailAddress()
-            .MaximumLength(255);
-        RuleFor(m => m.Name).NotEmpty()
+        RuleFor(m => m.UserName).NotEmpty()
             .MaximumLength(255)
             .MinimumLength(2)
             .Matches(@"^[a-zA-Z0-9]+$")
@@ -68,9 +38,5 @@ public class RegisterUserDtoValidator : AbstractValidator<RegisterUserDto>
             .MinimumLength(8)
             .Matches(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$")
             ;
-        RuleFor(m => m.ConfirmPassword).NotEmpty()
-            .Equal(m => m.Password)
-            ;       
     }
 }
-

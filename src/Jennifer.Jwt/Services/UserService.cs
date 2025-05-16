@@ -14,9 +14,9 @@ public class UserService: IUserService
 {
     private readonly ISessionContext _context;
     private readonly UserManager<User> _userManager;
-    private readonly IValidator<RegisterUserDto> _validator;
+    private readonly IValidator<UserDto> _validator;
 
-    public UserService(ISessionContext context, UserManager<User> userManager, IValidator<RegisterUserDto> validator)
+    public UserService(ISessionContext context, UserManager<User> userManager, IValidator<UserDto> validator)
     {
         _context = context;
         _userManager = userManager;
@@ -38,7 +38,7 @@ public class UserService: IUserService
             {
                 Id = m.Id,
                 Email = m.Email,
-                Name = m.UserName,
+                UserName = m.UserName,
                 PhoneNumber = m.PhoneNumber
             })
             .ToArrayAsync(cancellationToken: ct);
@@ -54,7 +54,7 @@ public class UserService: IUserService
             {
                 Id = m.Id,
                 Email = m.Email,
-                Name = m.UserName,
+                UserName = m.UserName,
                 PhoneNumber = m.PhoneNumber
             })
             .FirstAsync(m => m.Id == id, ct);
@@ -62,27 +62,27 @@ public class UserService: IUserService
         return await ApiResponse<UserDto>.SuccessAsync(result);
     }
     
-    public async Task<ApiResponse<string>> AddUser(RegisterUserDto userDto)
+    public async Task<ApiResponse<string>> AddUser(UserDto userAddRequest)
     {
-        var validationResult = await _validator.ValidateAsync(userDto);
+        var validationResult = await _validator.ValidateAsync(userAddRequest);
         if (!validationResult.IsValid)
         {
             return await ApiResponse<string>.FailAsync("failed", validationResult.Errors.Select(m => new {m.PropertyName, m.ErrorMessage}));
         }
         var user = new User
         {
-            UserName = userDto.Name,
-            NormalizedUserName = userDto.Name.ToUpper(),
-            Email = userDto.Email,
-            NormalizedEmail = userDto.Email.ToUpper(),
-            PhoneNumber = userDto.PhoneNumber,
+            UserName = userAddRequest.UserName,
+            NormalizedUserName = userAddRequest.UserName.ToUpper(),
+            Email = userAddRequest.Email,
+            NormalizedEmail = userAddRequest.Email.ToUpper(),
+            PhoneNumber = userAddRequest.PhoneNumber,
             EmailConfirmed = true,
             PhoneNumberConfirmed = true,
             TwoFactorEnabled = false,
             LockoutEnabled = false,
             AccessFailedCount = 0,
         };
-        var result = await _userManager.CreateAsync(user, userDto.Password);
+        var result = await _userManager.CreateAsync(user, userAddRequest.Password);
         if (!result.Succeeded)
         {
             // 충돌 에러 존재하면 409, 그 외는 400
@@ -102,8 +102,8 @@ public class UserService: IUserService
         var user = await _userManager.FindByIdAsync(userDto.Id.ToString());
         if(user is null) return ApiResponse<bool>.Fail("not found");
         
-        user.UserName = userDto.Name;
-        user.NormalizedUserName = userDto.Name.ToUpper();
+        user.UserName = userDto.UserName;
+        user.NormalizedUserName = userDto.UserName.ToUpper();
         user.Email = userDto.Email;
         user.NormalizedEmail = userDto.Email.ToUpper();
         user.PhoneNumber = userDto.PhoneNumber;
@@ -127,10 +127,11 @@ public class UserService: IUserService
         user.NormalizedEmail = string.Empty;
         user.PhoneNumber = string.Empty;
         user.PasswordHash = string.Empty;
+        user.LockoutEnabled = true;
         user.IsDelete = true;
         _context.DbContext.Users.Update(user);
         await _context.DbContext.SaveChangesAsync(ct);
         
-        return ApiResponse<bool>.Success(true);
+        return await ApiResponse<bool>.SuccessAsync(true);
     }
 }

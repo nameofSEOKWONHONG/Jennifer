@@ -1,7 +1,10 @@
-﻿using Ardalis.SmartEnum;
+﻿using System.Text.Json.Serialization;
+using Ardalis.SmartEnum;
+using Ardalis.SmartEnum.EFCore;
 
 namespace Jennifer.Jwt.Services.AuthServices.Contracts;
 
+[JsonConverter(typeof(SmartEnumConverter<ENUM_VERITY_RESULT_STATUS, int>))]
 public class ENUM_VERITY_RESULT_STATUS: SmartEnum<ENUM_VERITY_RESULT_STATUS, int>
 {
     public static readonly ENUM_VERITY_RESULT_STATUS NOT_FOUND = new(nameof(NOT_FOUND), 0);

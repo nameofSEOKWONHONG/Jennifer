@@ -4,7 +4,7 @@ using Jennifer.Jwt.Models;
 using Jennifer.Jwt.Services.Abstracts;
 using Jennifer.Jwt.Services.AuthServices.Abstracts;
 using Jennifer.Jwt.Services.AuthServices.Contracts;
-using Jennifer.Jwt.Services.Bases;
+using Jennifer.SharedKernel.Base;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
@@ -30,7 +30,10 @@ public class SignInService: ServiceBase<SignInService, SignInRequest, IResult>, 
     public async Task<IResult> HandleAsync(SignInRequest request, CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByEmailAsync(request.Email);
-        if(user is null) return null;
+        if(user is null) Results.Unauthorized();
+
+        var locked = await _userManager.IsLockedOutAsync(user);
+        if(locked) return Results.Unauthorized();
         
         if(!await _userManager.CheckPasswordAsync(user, request.Password)) return Results.Unauthorized();
 

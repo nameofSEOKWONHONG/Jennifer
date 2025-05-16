@@ -1,7 +1,9 @@
 ﻿using Jennifer.Jwt.Data;
 using Jennifer.Jwt.Models;
+using Jennifer.Jwt.Models.Contracts;
 using Jennifer.Jwt.Services.AuthServices.Abstracts;
-using Jennifer.Jwt.Services.Bases;
+using Jennifer.Jwt.Services.AuthServices.Contracts;
+using Jennifer.SharedKernel.Base;
 using Jennifer.SharedKernel.Infrastructure.Email;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -45,7 +47,7 @@ Jennifer";
         await _dbContext.EmailVerificationCodes.AddAsync(new EmailVerificationCode()
         {
             Email = request.Email,
-            Type = ENUM_EMAIL_VERIFICATION_TYPE.FromName(request.Type),
+            Type = request.Type,
             Code = code,
             FailedCount = 0,
             ExpiresAt = DateTimeOffset.UtcNow.AddMinutes(30),

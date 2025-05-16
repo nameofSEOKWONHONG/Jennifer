@@ -1,5 +1,5 @@
 ﻿using Jennifer.Jwt.Services.AuthServices.Contracts;
-using Jennifer.Jwt.Services.Bases;
+using Jennifer.SharedKernel.Base;
 using Microsoft.AspNetCore.Http;
 
 namespace Jennifer.Jwt.Services.AuthServices.Abstracts;

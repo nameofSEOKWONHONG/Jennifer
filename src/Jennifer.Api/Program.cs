@@ -1,12 +1,18 @@
+using Jennifer.Api;
 using Jennifer.Jwt;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+builder.Services.AddOpenApi(options =>
+{
+    options.OpenApiVersion = OpenApiSpecVersion.OpenApi3_0;
+    options.AddDocumentTransformer<OpenApiSecuritySchemeTransformer>();
+});
 
 // Add jennifer account manager
 builder.AddJennifer("account", 
@@ -42,7 +48,15 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
-    app.MapScalarApiReference();
+    app.MapScalarApiReference(options =>
+    {
+        options.Theme = ScalarTheme.None;
+        options.Authentication = 
+            new ScalarAuthenticationOptions
+            {
+                PreferredSecurityScheme = "Bearer"
+            };        
+    });
 }
 
 app.UseHttpsRedirection();

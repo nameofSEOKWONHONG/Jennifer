@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 
-namespace Jennifer.Jwt.Services.Bases;
+namespace Jennifer.SharedKernel.Base;
 
 public abstract class ServiceBase<T, TRequest, TResponse>
 {

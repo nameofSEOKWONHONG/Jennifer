@@ -1,5 +1,6 @@
 ﻿using Jennifer.Jwt.Domains;
 using Jennifer.Jwt.Models;
+using Jennifer.Jwt.Models.Contracts;
 using Jennifer.Jwt.Services;
 using Jennifer.Jwt.Services.Abstracts;
 using Jennifer.Jwt.Services.AuthServices.Abstracts;
@@ -17,6 +18,7 @@ public static class AuthEndpoint
     /// These endpoints include operations for user signup, signin, signout, and identity verification.
     /// </summary>
     /// <param name="endpoints">The <see cref="IEndpointRouteBuilder"/> used to define the API routes.</param>
+    [EndpointDescription("test")]
     public static void MapAuthEndpoint(this IEndpointRouteBuilder endpoints)
     {
         var group = endpoints.MapGroup("/api/v1/auth")
@@ -30,7 +32,7 @@ public static class AuthEndpoint
         
         group.MapPost("/verify", 
             async (string email, IVerifyCodeByEmailSendService service, CancellationToken ct) => 
-                await service.HandleAsync(new VerifyCodeByEmailSendRequest(email, ENUM_EMAIL_VERIFICATION_TYPE.SIGN_UP_BEFORE.Name), ct))
+                await service.HandleAsync(new VerifyCodeByEmailSendRequest(email, ENUM_EMAIL_VERIFICATION_TYPE.SIGN_UP_BEFORE), ct))
             .WithName("VerifyEmail");
         
         group.MapPost("/signup", 
@@ -56,7 +58,7 @@ public static class AuthEndpoint
         
         group.MapPost("/password/forgot",
             async (string email, IVerifyCodeByEmailSendService service, CancellationToken ct) => 
-                await service.HandleAsync(new VerifyCodeByEmailSendRequest(email, ENUM_EMAIL_VERIFICATION_TYPE.PASSWORD_FORGOT.Name), ct))
+                await service.HandleAsync(new VerifyCodeByEmailSendRequest(email, ENUM_EMAIL_VERIFICATION_TYPE.PASSWORD_FORGOT), ct))
             .WithName("PasswordForgot");
 
         group.MapPost("/password/forgot/change", 

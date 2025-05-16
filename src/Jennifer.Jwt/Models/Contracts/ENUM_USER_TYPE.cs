@@ -1,8 +1,10 @@
-﻿using Ardalis.SmartEnum;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+﻿using System.Text.Json.Serialization;
+using Ardalis.SmartEnum;
+using Ardalis.SmartEnum.SystemTextJson;
 
-namespace Jennifer.SharedKernel.Domains;
+namespace Jennifer.Jwt.Models.Contracts;
 
+[JsonConverter(typeof(SmartEnumNameConverter<ENUM_USER_TYPE, int>))]
 public class ENUM_USER_TYPE : SmartEnum<ENUM_USER_TYPE, int>
 {
     public static readonly ENUM_USER_TYPE ADMIN = new ENUM_USER_TYPE("ADMIN", 1);
