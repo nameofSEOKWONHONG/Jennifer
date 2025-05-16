@@ -1,5 +1,7 @@
 ﻿using Jennifer.Jwt.Domains;
+using Jennifer.Jwt.Services;
 using Jennifer.Jwt.Services.Abstracts;
+using Jennifer.Jwt.Services.UserServices.Abstracts;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -22,8 +24,8 @@ public static class UserEndpoint
             .WithName("GetUsers");
         
         group.MapGet("/{id}", 
-            async (Guid id, IUserService service, CancellationToken ct) => 
-                await service.GetUser(id, ct))
+            async (Guid id, IGetUserService service, CancellationToken ct) => 
+                await service.HandleAsync(id, ct))
             .WithName("GetUser");
         
         group.MapPost("/",

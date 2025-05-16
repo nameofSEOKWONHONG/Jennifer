@@ -15,6 +15,7 @@ internal static class DependencyInjection
         services.AddScoped<ISignInService, SignInService>();
         services.AddScoped<ISignOutService, SignOutService>();
         services.AddScoped<ISignUpService, SignUpService>();
+        services.AddScoped<ISignUpAdminService, SignUpAdminService>();
         services.AddScoped<IVerifyCodeByEmailSendService, VerifyCodeByEmailSendService>();
         services.AddScoped<IVerifyCodeService, VerifyCodeService>();
     }

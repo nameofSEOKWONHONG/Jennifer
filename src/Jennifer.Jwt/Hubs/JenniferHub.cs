@@ -4,9 +4,9 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace Jennifer.Jwt.Hubs;
 
-public class AuthHub: Hub
+public class JenniferHub: Hub
 {
-    public AuthHub()
+    public JenniferHub()
     {
         
     }

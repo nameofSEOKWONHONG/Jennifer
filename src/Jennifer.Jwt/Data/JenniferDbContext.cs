@@ -1,6 +1,7 @@
 ﻿using Jennifer.SharedKernel.Infrastructure;
 using Jennifer.Jwt.Models;
 using Jennifer.Jwt.Models.EntityConfigurations;
+using Jennifer.SharedKernel.Infrastructure.Session;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SmartEnum.EFCore;
@@ -12,7 +13,7 @@ public class JenniferDbContext : IdentityDbContext<User, Role, Guid,
     UserRole, 
     UserLogin, 
     RoleClaim,
-    UserToken>
+    UserToken>, IDbContext
 {
     public JenniferDbContext(DbContextOptions<JenniferDbContext> options): base(options)
     {

@@ -1,14 +1,22 @@
-﻿using FluentValidation;
+﻿using eXtensionSharp;
+using FluentValidation;
 using Jennifer.Jwt.Data;
 using Jennifer.Jwt.Domains;
 using Jennifer.Jwt.Models;
 using Jennifer.Jwt.Services.Abstracts;
+using Jennifer.SharedKernel.Base;
 using Jennifer.SharedKernel.Domains;
 using Jennifer.SharedKernel.Infrastructure;
+using Jennifer.SharedKernel.Infrastructure.Session;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Jennifer.Jwt.Services;
+
+
+
+
 
 public class UserService: IUserService
 {
@@ -25,7 +33,7 @@ public class UserService: IUserService
 
     public async Task<ApiResponse<IList<UserDto>>> GetUsers(string email, int page, int size, CancellationToken ct)
     {
-        var query = _context.DbContext.Users.AsNoTracking().AsQueryable();
+        var query = _context.DbContext.xAs<JenniferDbContext>().Users.AsNoTracking().AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(email))
         {
@@ -48,7 +56,7 @@ public class UserService: IUserService
 
     public async Task<ApiResponse<UserDto>> GetUser(Guid id, CancellationToken ct)
     {
-        var result = await _context.DbContext.Users.AsNoTracking()
+        var result = await _context.DbContext.xAs<JenniferDbContext>().Users.AsNoTracking()
             .Where(m => m.Id == id)
             .Select(m => new UserDto()
             {
@@ -118,19 +126,18 @@ public class UserService: IUserService
 
     public async Task<ApiResponse<bool>> RemoveUser(Guid id, CancellationToken ct)
     {
-        var user = await _context.DbContext.Users.FirstAsync(m => m.Id == id, ct);
+        var user = await _context.DbContext.xAs<JenniferDbContext>().Users.FirstAsync(m => m.Id == id, ct);
         if(user is null) return ApiResponse<bool>.Fail("not found");
 
         user.UserName = string.Empty;
         user.NormalizedUserName = string.Empty;
-        user.Email = string.Empty;
         user.NormalizedEmail = string.Empty;
         user.PhoneNumber = string.Empty;
         user.PasswordHash = string.Empty;
         user.LockoutEnabled = true;
         user.IsDelete = true;
-        _context.DbContext.Users.Update(user);
-        await _context.DbContext.SaveChangesAsync(ct);
+        _context.DbContext.xAs<JenniferDbContext>().Users.Update(user);
+        await _context.DbContext.xAs<JenniferDbContext>().SaveChangesAsync(ct);
         
         return await ApiResponse<bool>.SuccessAsync(true);
     }

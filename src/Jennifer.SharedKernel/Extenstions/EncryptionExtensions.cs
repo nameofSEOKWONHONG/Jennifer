@@ -25,7 +25,7 @@ public static class EncryptionExtensions
     {
         var key = Convert.FromBase64String(JenniferSetting.AesKey);
         var iv  = Convert.FromBase64String(JenniferSetting.AesIV);
-        byte[] data = Encoding.UTF8.GetBytes(value);
+        byte[] data = Convert.FromBase64String(value);
 
         using Aes aes = Aes.Create();
         aes.Mode = CipherMode.CBC;

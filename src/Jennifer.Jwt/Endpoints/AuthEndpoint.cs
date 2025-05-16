@@ -1,6 +1,4 @@
-﻿using Jennifer.Jwt.Domains;
-using Jennifer.Jwt.Models;
-using Jennifer.Jwt.Models.Contracts;
+﻿using Jennifer.Jwt.Models.Contracts;
 using Jennifer.Jwt.Services;
 using Jennifer.Jwt.Services.Abstracts;
 using Jennifer.Jwt.Services.AuthServices.Abstracts;
@@ -11,6 +9,12 @@ using Microsoft.AspNetCore.Routing;
 
 namespace Jennifer.Jwt.Endpoints;
 
+/// <summary>
+/// Provides functionality for mapping authentication-related API endpoints
+/// to an <see cref="IEndpointRouteBuilder"/>. These endpoints include user
+/// authentication operations such as signup, signin, signout, password management,
+/// and token refresh.
+/// </summary>
 public static class AuthEndpoint
 {
     /// <summary>
@@ -18,7 +22,6 @@ public static class AuthEndpoint
     /// These endpoints include operations for user signup, signin, signout, and identity verification.
     /// </summary>
     /// <param name="endpoints">The <see cref="IEndpointRouteBuilder"/> used to define the API routes.</param>
-    [EndpointDescription("test")]
     public static void MapAuthEndpoint(this IEndpointRouteBuilder endpoints)
     {
         var group = endpoints.MapGroup("/api/v1/auth")
@@ -39,6 +42,11 @@ public static class AuthEndpoint
             async (RegisterRequest request, ISignUpService service, CancellationToken ct) => 
                 await service.HandleAsync(request,ct))
             .WithName("SignUp");
+
+        group.MapPost("/signup/admin", 
+                async (Microsoft.AspNetCore.Identity.Data.RegisterRequest request, ISignUpAdminService service, CancellationToken ct) => 
+                    await service.HandleAsync(request, ct))
+            .WithName("SignUpAdmin");
         
         group.MapPost("/signin", 
             async (SignInRequest request, ISignInService service, CancellationToken ct) => 
@@ -74,11 +82,8 @@ public static class AuthEndpoint
         
         group.MapPost("/external/signin", 
             async (ExternalSignInRequest request, IExternalSignService service, CancellationToken ct) =>
-            {
-                var result = await service.SignIn(request.Provider, request.ProviderToken, ct);
-                if(result is null) return Results.Unauthorized();
-                return Results.Ok(result);
-            });
+                await service.HandleAsync(request, ct))
+            .WithName("ExternalSignIn");
     }
 }
 

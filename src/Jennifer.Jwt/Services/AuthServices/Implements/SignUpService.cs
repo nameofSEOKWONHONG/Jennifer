@@ -3,7 +3,6 @@ using Jennifer.Jwt.Models.Contracts;
 using Jennifer.Jwt.Services.AuthServices.Abstracts;
 using Jennifer.Jwt.Services.AuthServices.Contracts;
 using Jennifer.SharedKernel.Base;
-using Jennifer.SharedKernel.Domains;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
@@ -70,3 +69,4 @@ public class SignUpService: ServiceBase<SignUpService, RegisterRequest, IResult>
         return TypedResults.Ok(user.Id.ToString());
     }
 }
+

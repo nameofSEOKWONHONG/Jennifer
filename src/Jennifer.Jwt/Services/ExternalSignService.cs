@@ -1,22 +1,40 @@
 ﻿using System.Security.Claims;
-using Jennifer.Jwt.Domains;
 using Jennifer.Jwt.Models;
 using Jennifer.Jwt.Services.Abstracts;
 using Jennifer.Jwt.Services.AuthServices.Contracts;
+using Jennifer.SharedKernel.Base;
 using Jennifer.SharedKernel.Infrastructure.SignHandlers;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Jennifer.Jwt.Services;
 
-public class ExternalSignService: IExternalSignService
+/// <summary>
+/// Represents a service that handles external sign-in operations using third-party providers.
+/// </summary>
+public class ExternalSignService: ServiceBase<ExternalSignService, ExternalSignInRequest, IResult>, IExternalSignService
 {
     private readonly UserManager<User> _userManager;
     private readonly RoleManager<Role> _roleManager;
     private readonly JwtService _jwtService;
     private readonly IHttpClientFactory _httpClientFactory;
 
-    public ExternalSignService(UserManager<User> userManager, RoleManager<Role> roleManager, IOptions<JwtService> options, IHttpClientFactory httpClientFactory)
+    /// <summary>
+    /// Handles external sign-in operations using third-party authentication providers.
+    /// </summary>
+    /// <remarks>
+    /// This service processes the external authentication requests by validating the provided token
+    /// with the third-party provider, retrieves user and role information,
+    /// and generates necessary authentication tokens for the application.
+    /// </remarks>
+    public ExternalSignService(ILogger<ExternalSignService> logger,
+        UserManager<User> userManager,
+        RoleManager<Role> roleManager,
+        IOptions<JwtService> options,
+        IHttpClientFactory httpClientFactory)
+        : base(logger)
     {
         _userManager = userManager;
         _roleManager = roleManager;
@@ -24,18 +42,25 @@ public class ExternalSignService: IExternalSignService
         _httpClientFactory = httpClientFactory;
     }
 
-    public async Task<TokenResponse> SignIn(string provider, string providerToken, CancellationToken ct)
+    /// <summary>
+    /// Handles external authentication requests by validating tokens with third-party providers,
+    /// associating users with external login information, and generating authentication tokens for the application.
+    /// </summary>
+    /// <param name="request">The external sign-in request containing the provider and provider token.</param>
+    /// <param name="cancellationToken">Cancellation token for asynchronous operation handling.</param>
+    /// <returns>A result containing authentication tokens or null if the process fails.</returns>
+    public async Task<IResult> HandleAsync(ExternalSignInRequest request, CancellationToken cancellationToken)
     {
         // 1. 외부 서비스에 access_token을 전달하여 사용자 정보 확인
-        var instance = ExternalSignHandlerFactory.Create(provider, _httpClientFactory);
-        var verified = await instance.Verify(providerToken, ct);
+        var instance = ExternalSignHandlerFactory.Create(request.Provider, _httpClientFactory);
+        var verified = await instance.Verify(request.ProviderToken, cancellationToken);
         if (verified is null) return null;
 
         // 2. provider별 ID 가져오기
         string providerId = verified.ProviderId;
 
         // 3. 이미 연결된 외부 로그인 사용자 확인
-        var user = await _userManager.FindByLoginAsync(provider, providerId);
+        var user = await _userManager.FindByLoginAsync(request.Provider, providerId);
         if (user is null)
         {
             // 4. 동일 이메일의 기존 사용자 확인
@@ -60,7 +85,7 @@ public class ExternalSignService: IExternalSignService
             }
 
             // 6. 외부 로그인 정보 연결
-            var loginInfo = new UserLoginInfo(provider, providerId, provider);
+            var loginInfo = new UserLoginInfo(request.Provider, providerId, request.Provider);
             var linkResult = await _userManager.AddLoginAsync(user, loginInfo);
             if (!linkResult.Succeeded) return null;
         }
@@ -86,8 +111,7 @@ public class ExternalSignService: IExternalSignService
         var refreshToken = _jwtService.GenerateRefreshToken();
         var refreshTokenObj = new RefreshToken(refreshToken, DateTime.UtcNow.AddDays(7), DateTime.UtcNow, user.Id.ToString());
         await _userManager.SetAuthenticationTokenAsync(user, loginProvider:"internal", tokenName:"refreshToken", tokenValue:refreshToken);
-        return new TokenResponse(_jwtService.GenerateJwtToken(user, userClaims.ToList(), roleClaims), _jwtService.ObjectToTokenString(refreshTokenObj));
+        var token = new TokenResponse(_jwtService.GenerateJwtToken(user, userClaims.ToList(), roleClaims), _jwtService.ObjectToTokenString(refreshTokenObj));
+        return Results.Ok(token);
     }
 }
-
-public record ExternalSignInRequest(string Provider, string ProviderToken);

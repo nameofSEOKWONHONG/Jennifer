@@ -8,42 +8,42 @@ public class ApiResponse<T>
     
     public dynamic Errors { get; set; }
     
-    public new static ApiResponse<T> Fail()
+    public static ApiResponse<T> Fail()
     {
         return new ApiResponse<T> { Succeeded = false };
     }
 
-    public new static ApiResponse<T> Fail(string message)
+    public static ApiResponse<T> Fail(string message)
     {
         return new ApiResponse<T> { Succeeded = false, Messages = new List<string> { message } };
     }
 
-    public new static ApiResponse<T> Fail(List<string> messages, dynamic errors)
+    public static ApiResponse<T> Fail(List<string> messages, dynamic errors)
     {
         return new ApiResponse<T> { Succeeded = false, Messages = messages, Errors = errors};
     }
 
-    public new static Task<ApiResponse<T>> FailAsync()
+    public static Task<ApiResponse<T>> FailAsync()
     {
         return Task.FromResult(Fail());
     }
 
-    public new static Task<ApiResponse<T>> FailAsync(string message)
+    public static Task<ApiResponse<T>> FailAsync(string message)
     {
         return Task.FromResult(Fail(message));
     }
 
-    public new static Task<ApiResponse<T>> FailAsync(string message, dynamic errors)
+    public static Task<ApiResponse<T>> FailAsync(string message, dynamic errors)
     {
         return Task.FromResult(Fail(new List<string>{ message }, errors));
     }
 
-    public new static Task<ApiResponse<T>> FailAsync(List<string> messages, dynamic errors)
+    public static Task<ApiResponse<T>> FailAsync(List<string> messages, dynamic errors)
     {
         return Task.FromResult(Fail(messages, errors));
     }
 
-    public new static ApiResponse<T> Success(string message)
+    public static ApiResponse<T> Success(string message)
     {
         return new ApiResponse<T> { Succeeded = true, Messages = new List<string>() {message} };
     }
@@ -63,7 +63,7 @@ public class ApiResponse<T>
         return new ApiResponse<T> { Succeeded = true, Data = data, Messages = messages };
     }
 
-    public new static Task<ApiResponse<T>> SuccessAsync(string message)
+    public static Task<ApiResponse<T>> SuccessAsync(string message)
     {
         return Task.FromResult(Success(message));
     }

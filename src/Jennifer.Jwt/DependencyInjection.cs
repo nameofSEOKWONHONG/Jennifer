@@ -13,7 +13,9 @@ using Jennifer.Jwt.Models;
 using Jennifer.Jwt.Services;
 using Jennifer.Jwt.Services.Abstracts;
 using Jennifer.Jwt.Services.AuthServices;
+using Jennifer.Jwt.Services.UserServices;
 using Jennifer.SharedKernel.Infrastructure.Email;
+using Jennifer.SharedKernel.Infrastructure.Session;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http.Json;
@@ -32,6 +34,11 @@ using Serilog;
 
 namespace Jennifer.Jwt;
 
+/// <summary>
+/// Provides extension methods for integrating Jennifer's functionalities
+/// within an application, including database setup, caching, authentication,
+/// email services, and middleware setup.
+/// </summary>
 public static class DependencyInjection
 {
     /// <summary>
@@ -65,6 +72,9 @@ public static class DependencyInjection
         });
         
         JenniferSetting.Schema = schema;
+        JenniferSetting.AesKey = Environment.GetEnvironmentVariable("AES_KEY");
+        JenniferSetting.AesIV = Environment.GetEnvironmentVariable("AES_IV");
+        
         builder.Services.AddDbContext<JenniferDbContext>(dbContextOptions);
         if (identityOptions is null)
         {
@@ -174,6 +184,7 @@ public static class DependencyInjection
         builder.Services.Configure<BrotliCompressionProviderOptions>(options => options.Level = System.IO.Compression.CompressionLevel.Fastest);     
         
         builder.Services.AddAuthService();
+        builder.Services.AddUserService();
         
         builder.Services.AddScoped<ISessionContext, SessionContext>();
         builder.Services.AddScoped<IJwtService, JwtService>();
@@ -302,8 +313,8 @@ public static class DependencyInjection
         app.UseAuthentication();
         app.UseAuthorization();
         
-        app.UseMiddleware<SessionContextMiddleware>(); // 반드시 인증 이후에 실행
+        app.UseMiddleware<JenniferSessionContextMiddleware>(); // 반드시 인증 이후에 실행
 
-        app.MapHub<AuthHub>("/jenniferHub");
+        app.MapHub<JenniferHub>("/jenniferHub");
     }
 }

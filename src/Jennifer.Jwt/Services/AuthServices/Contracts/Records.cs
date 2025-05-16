@@ -1,8 +1,6 @@
-﻿using Jennifer.Jwt.Models;
-using Jennifer.Jwt.Models.Contracts;
+﻿using Jennifer.Jwt.Models.Contracts;
 
 namespace Jennifer.Jwt.Services.AuthServices.Contracts;
-
 
 public record TokenResponse(string AccessToken, string RefreshToken);
 
@@ -10,11 +8,7 @@ public record SignInRequest(string Email, string Password);
 
 public record PasswordChangeRequest(string OldPassword, string NewPassword);
 
-public class PasswordForgotChangeRequest(
-    string Email,
-    string Code,
-    string NewPassword,
-    ENUM_EMAIL_VERIFICATION_TYPE Type)
+public class PasswordForgotChangeRequest
 {
     public string Email { get; set; }
     public string Code { get; set; }
@@ -25,20 +19,8 @@ public class PasswordForgotChangeRequest(
 /// <summary>
 /// Represents a registration request for creating a new user account.
 /// </summary>
-/// <param name="Email">The email address provided by the user for registration.</param>
-/// <param name="Password">The password chosen by the user for account security.</param>
-/// <param name="UserName">The username selected by the user for the account.</param>
-/// <param name="PhoneNumber">The phone number associated with the user account.</param>
-/// <param name="VerifyCode">The verification code used for account validation.</param>
-/// <param name="Type">The type of email verification being applied.</param>
 /// <see cref="ENUM_EMAIL_VERIFICATION_TYPE"/>
-public class RegisterRequest(
-    string Email,
-    string Password,
-    string UserName,
-    string PhoneNumber,
-    string VerifyCode,
-    ENUM_EMAIL_VERIFICATION_TYPE Type)
+public class RegisterRequest
 {
     /// <summary>
     /// Gets or sets the email address associated with the user or registration process.
@@ -92,23 +74,35 @@ public class RegisterRequest(
 }
 
 /// <summary>
-/// Represents a request to verify a code for authentication or validation purposes.
+/// Represents a request for verifying an email address using a verification code.
 /// </summary>
-/// <param name="Email">The email address associated with the request.</param>
-/// <param name="Code">The verification code provided by the user.</param>
-/// <param name="Type">The type of verification being performed.</param>
 /// <see cref="ENUM_EMAIL_VERIFICATION_TYPE"/>
-public class VerifyCodeRequest(string Email, string Code, ENUM_EMAIL_VERIFICATION_TYPE Type)
+public class VerifyCodeRequest
 {
+    public VerifyCodeRequest(string email, string code, ENUM_EMAIL_VERIFICATION_TYPE type)
+    {
+        Email = email;
+        Code = code;
+        Type = type;
+    }
+
     public string Email { get; set; }
     public string Code { get; set; }
     public ENUM_EMAIL_VERIFICATION_TYPE Type { get; set; }   
 }
 
-public class VerifyCodeResponse(ENUM_VERITY_RESULT_STATUS Status, string Message)
+public class VerifyCodeResponse
 {
+    public VerifyCodeResponse(ENUM_VERITY_RESULT_STATUS status, string message)
+    {
+        Status = status;
+        Message = message;
+    }
+
     public ENUM_VERITY_RESULT_STATUS Status { get; set; }
     public string Message { get; set; }   
 }
 
 public record VerifyCodeByEmailSendRequest(string Email, ENUM_EMAIL_VERIFICATION_TYPE Type);
+
+public record ExternalSignInRequest(string Provider, string ProviderToken);

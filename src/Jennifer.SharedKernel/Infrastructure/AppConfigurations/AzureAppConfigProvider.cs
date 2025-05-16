@@ -11,12 +11,12 @@ public class AzureAppConfigProvider : IAppConfigProvider
         _configuration = configuration;
     }
 
-    public Task<string?> GetAsync(string key)
+    public Task<string> GetAsync(string key)
     {
         return Task.FromResult(_configuration[key]);
     }
 
-    public Task<IDictionary<string, string>> GetAllAsync(string? prefix = null)
+    public Task<IDictionary<string, string>> GetAllAsync(string prefix = null)
     {
         var values = _configuration
             .AsEnumerable()
