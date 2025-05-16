@@ -2,6 +2,7 @@
 using Jennifer.Jwt.Domains;
 using Jennifer.Jwt.Models;
 using Jennifer.Jwt.Services.Abstracts;
+using Jennifer.Jwt.Services.AuthServices.Contracts;
 using Jennifer.SharedKernel.Infrastructure.SignHandlers;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
@@ -85,7 +86,7 @@ public class ExternalSignService: IExternalSignService
         var refreshToken = _jwtService.GenerateRefreshToken();
         var refreshTokenObj = new RefreshToken(refreshToken, DateTime.UtcNow.AddDays(7), DateTime.UtcNow, user.Id.ToString());
         await _userManager.SetAuthenticationTokenAsync(user, loginProvider:"internal", tokenName:"refreshToken", tokenValue:refreshToken);
-        return new TokenResponse(_jwtService.GenerateJwtToken(user, userClaims.ToList(), roleClaims), _jwtService.GenerateRefreshTokenString(refreshTokenObj));
+        return new TokenResponse(_jwtService.GenerateJwtToken(user, userClaims.ToList(), roleClaims), _jwtService.ObjectToTokenString(refreshTokenObj));
     }
 }
 

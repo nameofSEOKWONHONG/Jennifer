@@ -7,6 +7,7 @@ using Jennifer.SharedKernel.Infrastructure;
 using Jennifer.Jwt.Data;
 using Jennifer.Jwt.Models;
 using Jennifer.Jwt.Services.Abstracts;
+using Jennifer.SharedKernel.Extenstions;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
@@ -25,6 +26,7 @@ public class JwtService : IJwtService
         var claims = new List<Claim>()
         {
             new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+            new Claim("cs", user.ConcurrencyStamp!)
         };
         claims.AddRange(userClaims);
         claims.AddRange(roleClaims);
@@ -42,14 +44,14 @@ public class JwtService : IJwtService
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
     
-    public string GenerateRefreshTokenString(RefreshToken refreshToken)
+    public string ObjectToTokenString(RefreshToken refreshToken)
     {
         var json = JsonSerializer.Serialize(refreshToken);
         var src = Convert.ToBase64String(Encoding.UTF8.GetBytes(json));
         return src.ToAesEncrypt();
     }
 
-    public RefreshToken GenerateRefreshToken(string refreshToken)
+    public RefreshToken TokenStringToObject(string refreshToken)
     {
         var src = refreshToken.ToAesDecrypt();
         var json = Encoding.UTF8.GetString(Convert.FromBase64String(src));

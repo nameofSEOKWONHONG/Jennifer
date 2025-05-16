@@ -1,10 +1,11 @@
-﻿using Jennifer.SharedKernel.Domains;
-using Jennifer.Jwt.Domains;
+﻿using Jennifer.Jwt.Domains;
+using Jennifer.Jwt.Models;
 using Jennifer.Jwt.Services;
 using Jennifer.Jwt.Services.Abstracts;
+using Jennifer.Jwt.Services.AuthServices.Abstracts;
+using Jennifer.Jwt.Services.AuthServices.Contracts;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Routing;
 
 namespace Jennifer.Jwt.Endpoints;
@@ -22,47 +23,61 @@ public static class AuthEndpoint
                 .WithGroupName("v1")
                 .WithTags("Auth");
         
-        group.MapPost("/signup", async (RegisterRequest request, IAuthService authService) => await authService.Register(request));
+        group.MapPost("/check", 
+                async (string email, ICheckEmailService service, CancellationToken ct) =>
+                    await service.HandleAsync(email, ct))
+            .WithName("CheckEmail");
         
-        group.MapPost("/signin", async (SignInRequest request, IAuthService authService) =>
-        {
-            var result = await authService.Signin(request.Email, request.Password);
-            if(result is null) return Results.Unauthorized();
-            return Results.Ok(result);
-        });
-        group.MapPost("/cookie/signin", async (SignInRequest request, IAuthService authService) => Results.Ok(await authService.CookieSignIn(request.Email, request.Password)));
+        group.MapPost("/verify", 
+            async (string email, IVerifyCodeByEmailSendService service, CancellationToken ct) => 
+                await service.HandleAsync(new VerifyCodeByEmailSendRequest(email, ENUM_EMAIL_VERIFICATION_TYPE.SIGN_UP_BEFORE.Name), ct))
+            .WithName("VerifyEmail");
         
-        group.MapPost("/signout", (IAuthService authService) => Results.Ok(authService.SignOut())).RequireAuthorization();
+        group.MapPost("/signup", 
+            async (RegisterRequest request, ISignUpService service, CancellationToken ct) => 
+                await service.HandleAsync(request,ct))
+            .WithName("SignUp");
         
-        group.MapPost("/refreshtoken", async (string refreshToken, IAuthService authService) =>
-        {
-            var result = await authService.RefreshToken(refreshToken);
-            if(result is null) return Results.Unauthorized();
-            return Results.Ok(result);
-        });
+        group.MapPost("/signin", 
+            async (SignInRequest request, ISignInService service, CancellationToken ct) => 
+                await service.HandleAsync(request, ct))
+            .WithName("SignIn");
+        
+        group.MapPost("/signout", 
+            async (ISignOutService authService, CancellationToken ct) => 
+                await authService.HandleAsync(false, ct))
+            .WithName("SignOut")
+            .RequireAuthorization();
+        
+        group.MapPost("/refreshtoken", 
+            async (string refreshToken, IRefreshTokenService service, CancellationToken ct) =>
+                await service.HandleAsync(refreshToken, ct))
+            .WithName("RefreshToken");
+        
+        group.MapPost("/password/forgot",
+            async (string email, IVerifyCodeByEmailSendService service, CancellationToken ct) => 
+                await service.HandleAsync(new VerifyCodeByEmailSendRequest(email, ENUM_EMAIL_VERIFICATION_TYPE.PASSWORD_FORGOT.Name), ct))
+            .WithName("PasswordForgot");
 
-        group.MapGet("/password/forgot",
-            async (string email, IAuthService authService) => Results.Ok(await authService.RequestChangePasswordToken(email)));
-        group.MapPost("/password/reset", 
-            async (PasswordResetRequest request, IAuthService authService) => 
-            Results.Ok(await authService.ChangePasswordWithToken(request.ResetToken, request.Password, request.NewPassword)));
+        group.MapPost("/password/forgot/change", 
+                async (PasswordForgotChangeRequest request, IPasswordForgotChangeService service, CancellationToken ct) => 
+                    await service.HandleAsync(request, ct))
+            .WithName("PasswordForgotChange");
 
-        group.MapPost("/external/signin", async (ExternalSignInRequest request, IExternalSignService service, CancellationToken ct) 
-            =>
-        {
-            var result = await service.SignIn(request.Provider, request.ProviderToken, ct);
-            if(result is null) return Results.Unauthorized();
-            return Results.Ok(result);
-        });
-        group.MapPost("/external/signin/apple", () => Results.Ok("apple"));
-        group.MapPatch("/{userId}/user",
-            async (string userId, UpdateUserDto updateUserDto, IAuthService authService) =>
+        group.MapPost("/password/change",
+            async (PasswordChangeRequest request, IPasswordChangeService service, CancellationToken ct) =>
+                await service.HandleAsync(request, ct))
+            .WithName("PasswordChange")
+            .RequireAuthorization();
+        
+        group.MapPost("/external/signin", 
+            async (ExternalSignInRequest request, IExternalSignService service, CancellationToken ct) =>
             {
-                var result = await authService.UpdateUserInfo(userId, updateUserDto.Username, updateUserDto.PhoneNumber);
-                if (result) return Results.Ok();
-                return Results.BadRequest();
-            });        
+                var result = await service.SignIn(request.Provider, request.ProviderToken, ct);
+                if(result is null) return Results.Unauthorized();
+                return Results.Ok(result);
+            });
     }
 }
 
-public record UpdateUserDto(string Username, string PhoneNumber);
+

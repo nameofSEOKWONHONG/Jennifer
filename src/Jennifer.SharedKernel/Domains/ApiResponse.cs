@@ -28,6 +28,11 @@ public class ApiResponse<T>
         return Task.FromResult(Fail());
     }
 
+    public new static Task<ApiResponse<T>> FailAsync(string message)
+    {
+        return Task.FromResult(Fail(message));
+    }
+
     public new static Task<ApiResponse<T>> FailAsync(string message, dynamic errors)
     {
         return Task.FromResult(Fail(new List<string>{ message }, errors));

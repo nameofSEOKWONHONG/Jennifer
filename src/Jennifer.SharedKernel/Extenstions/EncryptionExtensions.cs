@@ -1,14 +1,15 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
+using Jennifer.SharedKernel.Consts;
 
-namespace Jennifer.SharedKernel.Infrastructure;
+namespace Jennifer.SharedKernel.Extenstions;
 
-public static class Infra
+public static class EncryptionExtensions
 {
     public static string ToAesEncrypt(this string value)
     {
-        var key = Convert.FromBase64String(Environment.GetEnvironmentVariable("AES_KEY")!);
-        var iv  = Convert.FromBase64String(Environment.GetEnvironmentVariable("AES_IV")!);
+        var key = Convert.FromBase64String(JenniferSetting.AesKey);
+        var iv  = Convert.FromBase64String(JenniferSetting.AesIV);
         byte[] data = Encoding.UTF8.GetBytes(value);
 
         using Aes aes = Aes.Create();
@@ -22,8 +23,8 @@ public static class Infra
 
     public static string ToAesDecrypt(this string value)
     {
-        var key = Convert.FromBase64String(Environment.GetEnvironmentVariable("AES_KEY")!);
-        var iv  = Convert.FromBase64String(Environment.GetEnvironmentVariable("AES_IV")!);
+        var key = Convert.FromBase64String(JenniferSetting.AesKey);
+        var iv  = Convert.FromBase64String(JenniferSetting.AesIV);
         byte[] data = Encoding.UTF8.GetBytes(value);
 
         using Aes aes = Aes.Create();

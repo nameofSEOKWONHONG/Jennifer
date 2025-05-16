@@ -35,6 +35,8 @@ public class UserDtoValidator : AbstractValidator<UserDto>
     }
 }
 
+public record UpdateUserDto(string Username, string PhoneNumber);
+
 public class RegisterUserDto
 {
     public Guid Id { get; set; }

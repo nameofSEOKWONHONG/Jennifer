@@ -1,0 +1,47 @@
+﻿using eXtensionSharp;
+using Jennifer.Jwt.Data;
+using Jennifer.Jwt.Models;
+using Jennifer.Jwt.Services.AuthServices.Abstracts;
+using Jennifer.Jwt.Services.AuthServices.Contracts;
+using Jennifer.Jwt.Services.Bases;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+
+namespace Jennifer.Jwt.Services.AuthServices.Implements;
+
+public class VerifyCodeService: ServiceBase<VerifyCodeService, VerifyCodeRequest, VerifyCodeResponse>, IVerifyCodeService
+{
+    private readonly JenniferDbContext _dbContext;
+
+    public VerifyCodeService(ILogger<VerifyCodeService> logger,
+        JenniferDbContext dbContext) : base(logger)
+    {
+        _dbContext = dbContext;
+    }
+
+    public async Task<VerifyCodeResponse> HandleAsync(VerifyCodeRequest request, CancellationToken cancellationToken)
+    {
+        var type = ENUM_EMAIL_VERIFICATION_TYPE.FromName(request.Type);
+        var emailVerify = await _dbContext.EmailVerificationCodes
+            .Where(m => m.Email == request.email
+                        && m.Type == type
+                        && !m.IsUsed 
+                        && m.ExpiresAt > DateTimeOffset.UtcNow)
+            .OrderByDescending(m => m.CreatedAt)
+            .FirstOrDefaultAsync(cancellationToken: cancellationToken);
+        
+        if (emailVerify.xIsEmpty()) return new VerifyCodeResponse(ENUM_VERITY_RESULT_STATUS.NOT_FOUND, "인증 코드가 존재하지 않습니다.");
+        if (emailVerify.FailedCount >= 5) return new VerifyCodeResponse(ENUM_VERITY_RESULT_STATUS.FAILED_COUNT_LIMIT, "인증 시도 횟수를 초과했습니다. 새 코드를 요청하세요.");
+        if (emailVerify.Code != request.Code)
+        {
+            emailVerify.FailedCount++;
+            await _dbContext.SaveChangesAsync(cancellationToken);
+            return new VerifyCodeResponse(ENUM_VERITY_RESULT_STATUS.WRONG_CODE, "잘못된 인증 코드입니다.");
+        }
+        
+        emailVerify.IsUsed = true;
+        await _dbContext.SaveChangesAsync(cancellationToken);
+
+        return new VerifyCodeResponse(ENUM_VERITY_RESULT_STATUS.EMAIL_CONFIRM, string.Empty);
+    }
+}

@@ -1,4 +1,5 @@
 ﻿using eXtensionSharp;
+using Jennifer.SharedKernel.Extenstions;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Jennifer.SharedKernel.Infrastructure.Converters;

@@ -1,5 +1,6 @@
 ﻿using Jennifer.SharedKernel.Infrastructure;
 using Jennifer.Jwt.Models;
+using Jennifer.Jwt.Models.EntityConfigurations;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SmartEnum.EFCore;
@@ -27,13 +28,14 @@ public class JenniferDbContext : IdentityDbContext<User, Role, Guid,
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.ApplyConfiguration(new User.UserEntityConfiguration());
-        modelBuilder.ApplyConfiguration(new UserClaim.UserClaimEntityConfiguration());
-        modelBuilder.ApplyConfiguration(new UserLogin.UserLoginEntityConfiguration());
-        modelBuilder.ApplyConfiguration(new UserRole.UserRoleEntityConfiguration());
-        modelBuilder.ApplyConfiguration(new UserToken.UserTokenEntityConfiguration());
-        modelBuilder.ApplyConfiguration(new Role.RoleEntityConfiguration());
-        modelBuilder.ApplyConfiguration(new RoleClaim.RoleClaimEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new UserEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new UserClaimEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new UserLoginEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new UserRoleEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new UserTokenEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new RoleEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new RoleClaimEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new EmailVerificationCodeEntityConfiguration());
     }
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
@@ -47,4 +49,6 @@ public class JenniferDbContext : IdentityDbContext<User, Role, Guid,
         }
         return base.SaveChangesAsync(cancellationToken);
     }
+    
+    public DbSet<EmailVerificationCode> EmailVerificationCodes { get; set; }
 }

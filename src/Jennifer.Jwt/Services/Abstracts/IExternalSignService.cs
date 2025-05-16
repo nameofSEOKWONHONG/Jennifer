@@ -1,4 +1,5 @@
 ﻿using Jennifer.Jwt.Domains;
+using Jennifer.Jwt.Services.AuthServices.Contracts;
 
 namespace Jennifer.Jwt.Services.Abstracts;
 

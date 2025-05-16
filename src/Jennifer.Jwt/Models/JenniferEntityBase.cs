@@ -1,18 +1,18 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Jennifer.Models;
+namespace Jennifer.Jwt.Models;
 
 public class JenniferEntityBase
 {
     [Column(Order = 97)]
     [Required]
-    public string CreatedBy { get; set; }
+    public Guid CreatedBy { get; set; }
     [Column(Order = 98)]
     [Required]
     public DateTime CreatedOn { get; set; }
     [Column(Order = 99)]
-    public string ModifiedBy { get; set; }
+    public Guid? ModifiedBy { get; set; }
     [Column(Order = 100)]
     public DateTime? ModifiedOn { get; set; }
 }

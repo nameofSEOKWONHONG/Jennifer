@@ -8,6 +8,7 @@ public class ExternalSignHandlerFactory
         {
             "kakao" => new KakaoSignHandler(httpClientFactory),
             "google" => new GoogleSignHandler(httpClientFactory),
+            "apple" => new AppleSignHandler(httpClientFactory),
             _ => null
         };
     }

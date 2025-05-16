@@ -9,6 +9,7 @@ using Jennifer.Jwt.Hubs;
 using Jennifer.Jwt.Models;
 using Jennifer.Jwt.Services;
 using Jennifer.Jwt.Services.Abstracts;
+using Jennifer.Jwt.Services.AuthServices;
 using Jennifer.SharedKernel.Infrastructure.Email;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -59,7 +60,7 @@ public static class DependencyInjection
                 .ReadFrom.Configuration(context.Configuration);
         });
         
-        EntitySettings.Schema = schema;
+        JenniferSetting.Schema = schema;
         builder.Services.AddDbContext<JenniferDbContext>(dbContextOptions);
         if (identityOptions is null)
         {
@@ -70,7 +71,7 @@ public static class DependencyInjection
                 options.SignIn.RequireConfirmedAccount = false;
                 options.SignIn.RequireConfirmedEmail = false;
                 options.SignIn.RequireConfirmedPhoneNumber = false;
-                options.Tokens.AuthenticatorTokenProvider = null!; // 선택적     
+                options.Tokens.AuthenticatorTokenProvider = null!; // optional     
                 options.User.RequireUniqueEmail = true;
             };
         }
@@ -133,7 +134,7 @@ public static class DependencyInjection
                     // SignalR 요청인지 확인
                     var path = context.HttpContext.Request.Path;
                     if (!string.IsNullOrEmpty(accessToken) &&
-                        path.StartsWithSegments("/authHub")) // Hub 경로와 일치해야 함
+                        path.StartsWithSegments("/jenniferHub"))
                     {
                         context.Token = accessToken;
                     }
@@ -168,8 +169,9 @@ public static class DependencyInjection
         builder.Services.Configure<GzipCompressionProviderOptions>(options => options.Level = System.IO.Compression.CompressionLevel.Fastest);
         builder.Services.Configure<BrotliCompressionProviderOptions>(options => options.Level = System.IO.Compression.CompressionLevel.Fastest);     
         
+        builder.Services.AddAuthService();
+        
         builder.Services.AddScoped<ISessionContext, SessionContext>();
-        builder.Services.AddScoped<IAuthService, AuthService>();
         builder.Services.AddScoped<IJwtService, JwtService>();
         builder.Services.AddScoped<IExternalSignService, ExternalSignService>();
         builder.Services.AddScoped<IUserService, UserService>();
@@ -180,6 +182,27 @@ public static class DependencyInjection
         
         builder.Services.AddValidatorsFromAssemblyContaining<UserDtoValidator>(); // 자동 검증 필터 추가
 
+        #if DEBUG
+        builder.Services.AddCors(options =>
+        {
+            options.AddDefaultPolicy(policy =>
+            {
+                policy.AllowAnyOrigin()
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+            });
+        });
+        #else 
+        builder.Services.AddCors(op =>
+        {
+            op.AddPolicy("AllowSpecificOrigin", policy =>
+            {
+                policy.WithOrigins("https://example.com") // 허용할 도메인
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+            });
+        });
+        #endif
     }
 
     /// <summary>
@@ -263,6 +286,12 @@ public static class DependencyInjection
     /// <param name="app">The WebApplication instance where the middleware and SignalR hub will be configured.</param>
     public static void UseJennifer(this WebApplication app)
     {
+#if DEBUG
+        app.UseCors(); // 이름 지정 없이 default policy 사용
+#else
+        app.UseCors("AllowSpecificOrigin");
+#endif
+        
         // set account route api endpoint jennifer manager
         app.UseJenniferEndpoints();
 
@@ -271,6 +300,6 @@ public static class DependencyInjection
         
         app.UseMiddleware<SessionContextMiddleware>(); // 반드시 인증 이후에 실행
 
-        app.MapHub<AuthHub>("/authHub");
+        app.MapHub<AuthHub>("/jenniferHub");
     }
 }
