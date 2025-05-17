@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using Jennifer.Jwt.Abstractions;
 using Jennifer.Jwt.Domains;
 using Jennifer.Jwt.Models;
 using Jennifer.Jwt.Services.Abstracts;

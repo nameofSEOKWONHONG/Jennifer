@@ -14,5 +14,5 @@ public class ExternalOAuthResult : IExternalOAuthResult
         => new() { IsSuccess = true, ExternalId = id, Email = email, Name = name };
 
     public static ExternalOAuthResult Fail(string reason)
-        => new() { IsSuccess = false, Reason = reason }; // 실패 이유를 Email에 임시 보관해도 되고 별도 필드로 확장 가능
+        => new() { IsSuccess = false, Reason = reason };
 }

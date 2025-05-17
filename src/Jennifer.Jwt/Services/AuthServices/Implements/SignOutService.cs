@@ -1,4 +1,5 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using Jennifer.Jwt.Abstractions;
 using Jennifer.Jwt.Models;
 using Jennifer.Jwt.Services.AuthServices.Abstracts;
 using Jennifer.SharedKernel;

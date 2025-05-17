@@ -9,7 +9,8 @@ public static class DependencyInjection
 {
     public static void AddCacheResolver(this IServiceCollection services)
     {
-        services.AddScoped<ISessionContext, SessionContext>();
+        services.AddScoped<IUserContext, UserContext>();
+                                                         services.AddScoped<ISessionContext, SessionContext>();
         services.AddScoped<IUserRoleFetcher, UserRoleFetcher>();
         services.Decorate<IUserRoleFetcher, CachedUserRoleFetcher>();
     }

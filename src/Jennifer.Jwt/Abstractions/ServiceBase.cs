@@ -1,7 +1,8 @@
 ﻿using eXtensionSharp;
+using Jennifer.Jwt.Infrastructure.Session;
 using Microsoft.Extensions.Logging;
 
-namespace Jennifer.SharedKernel;
+namespace Jennifer.Jwt.Abstractions;
 
 public abstract class ServiceBase<T, TRequest, TResponse>
 {

@@ -1,4 +1,5 @@
 ﻿using eXtensionSharp;
+using Jennifer.Jwt.Abstractions;
 using Jennifer.Jwt.Data;
 using Jennifer.Jwt.Models;
 using Jennifer.Jwt.Services.AuthServices.Abstracts;

@@ -1,31 +1,34 @@
 ﻿using eXtensionSharp;
+using Jennifer.Jwt.Data;
 using Jennifer.Jwt.Infrastructure.Session.Abstracts;
 using Jennifer.Jwt.Models;
 using Jennifer.SharedKernel;
+using Microsoft.EntityFrameworkCore;
 
 namespace Jennifer.Jwt.Infrastructure.Session;
 
 public class SessionContext : ISessionContext, ISessionContextInitializer
 {
-    private readonly IUserRoleFetcher _userRoleFetcher;
-    public string Email { get; set; }
-    public string UserId { get; set; }
-    public Guid UserGuid => Guid.Parse(UserId);
-    public bool IsAuthenticated => !string.IsNullOrEmpty(UserId);
+    public IUserContext UserContext { get; }
+    public Guid UserGuid => Guid.Parse(UserContext.UserId);
+    public bool IsAuthenticated => !string.IsNullOrEmpty(UserContext?.UserId);
     public IApplicationDbContext ApplicationDbContext { get; set; }
 
-    public SessionContext(IUserRoleFetcher userRoleFetcher)
+    public SessionContext(IUserContext userContext)
     {
-        _userRoleFetcher = userRoleFetcher;
+        UserContext = userContext;
     }
 
-    public void Initialize(string userId, string email, IApplicationDbContext applicationDbContext)
+    public async Task Initialize(IApplicationDbContext applicationDbContext)
     {
-        this.UserId = userId;
-        this.Email = email;
         this.ApplicationDbContext = applicationDbContext;
+        
+        var user = await applicationDbContext.xAs<JenniferDbContext>().Users
+            .AsNoTracking()
+            .Where(u => u.Id == UserContext.UserGuid)
+            .Select(u => new { u.Email, u.UserName })
+            .FirstAsync();
+        
+        UserContext.SetContext(user.UserName);
     }
-    
-    public async Task<IEnumerable<UserRole>> GetUserRolesAsync() 
-        => await _userRoleFetcher.FetchAsync(UserGuid);
 }

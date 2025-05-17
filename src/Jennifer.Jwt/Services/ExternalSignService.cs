@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using eXtensionSharp;
 using Jennifer.External.OAuth.Abstracts;
+using Jennifer.Jwt.Abstractions;
 using Jennifer.Jwt.Models;
 using Jennifer.Jwt.Services.Abstracts;
 using Jennifer.Jwt.Services.AuthServices.Contracts;

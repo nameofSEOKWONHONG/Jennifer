@@ -2,6 +2,7 @@
 using FluentValidation;
 using Jennifer.Jwt.Data;
 using Jennifer.Jwt.Domains;
+using Jennifer.Jwt.Infrastructure.Session;
 using Jennifer.Jwt.Models;
 using Jennifer.Jwt.Services.Abstracts;
 using Jennifer.SharedKernel;

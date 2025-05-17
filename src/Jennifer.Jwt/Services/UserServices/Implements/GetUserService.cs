@@ -1,5 +1,7 @@
-﻿using Jennifer.Jwt.Data;
+﻿using Jennifer.Jwt.Abstractions;
+using Jennifer.Jwt.Data;
 using Jennifer.Jwt.Domains;
+using Jennifer.Jwt.Infrastructure.Session;
 using Jennifer.Jwt.Services.UserServices.Abstracts;
 using Jennifer.SharedKernel;
 using Microsoft.EntityFrameworkCore;

@@ -21,18 +21,8 @@ public class JenniferSessionContextMiddleware
     {
         if (context.User.Identity?.IsAuthenticated == true)
         {
-            var sid = context.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (Guid.TryParse(sid, out var guid))
-            {
-                var user = await applicationDbContext.Users
-                    .AsNoTracking()
-                    .Where(u => u.Id == guid)
-                    .Select(u => new { u.Id, u.Email })
-                    .FirstAsync();
-                
-                var sessionInitializer = sessionContext.xAs<ISessionContextInitializer>();
-                sessionInitializer.Initialize(user.Id.ToString(), user.Email, applicationDbContext);
-            }
+            var sessionInitializer = sessionContext.xAs<ISessionContextInitializer>();
+            await sessionInitializer.Initialize(applicationDbContext);
         }
         await _next(context);
     }
