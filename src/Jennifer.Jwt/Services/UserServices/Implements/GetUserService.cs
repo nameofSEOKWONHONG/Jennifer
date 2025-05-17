@@ -1,9 +1,7 @@
 ﻿using Jennifer.Jwt.Data;
 using Jennifer.Jwt.Domains;
 using Jennifer.Jwt.Services.UserServices.Abstracts;
-using Jennifer.SharedKernel.Base;
-using Jennifer.SharedKernel.Domains;
-using Jennifer.SharedKernel.Infrastructure.Session;
+using Jennifer.SharedKernel;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 

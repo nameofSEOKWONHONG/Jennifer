@@ -1,7 +1,6 @@
 ﻿using Jennifer.Jwt.Services.AuthServices.Contracts;
 using Jennifer.Jwt.Services.AuthServices.Implements;
-using Jennifer.SharedKernel.Base;
-using Jennifer.SharedKernel.Domains;
+using Jennifer.SharedKernel;
 
 namespace Jennifer.Jwt.Services.AuthServices.Abstracts;
 

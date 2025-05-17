@@ -1,9 +1,10 @@
 ﻿using System.Security.Claims;
+using eXtensionSharp;
+using Jennifer.External.OAuth.Abstracts;
 using Jennifer.Jwt.Models;
 using Jennifer.Jwt.Services.Abstracts;
 using Jennifer.Jwt.Services.AuthServices.Contracts;
-using Jennifer.SharedKernel.Base;
-using Jennifer.SharedKernel.Infrastructure.SignHandlers;
+using Jennifer.SharedKernel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
@@ -18,8 +19,8 @@ public class ExternalSignService: ServiceBase<ExternalSignService, ExternalSignI
 {
     private readonly UserManager<User> _userManager;
     private readonly RoleManager<Role> _roleManager;
+    private readonly IExternalOAuthHandlerFactory _externalOAuthHandlerFactory;
     private readonly JwtService _jwtService;
-    private readonly IHttpClientFactory _httpClientFactory;
 
     /// <summary>
     /// Handles external sign-in operations using third-party authentication providers.
@@ -33,13 +34,13 @@ public class ExternalSignService: ServiceBase<ExternalSignService, ExternalSignI
         UserManager<User> userManager,
         RoleManager<Role> roleManager,
         IOptions<JwtService> options,
-        IHttpClientFactory httpClientFactory)
+        IExternalOAuthHandlerFactory externalOAuthHandlerFactory)
         : base(logger)
     {
         _userManager = userManager;
         _roleManager = roleManager;
+        _externalOAuthHandlerFactory = externalOAuthHandlerFactory;
         _jwtService = options.Value;
-        _httpClientFactory = httpClientFactory;
     }
 
     /// <summary>
@@ -52,12 +53,13 @@ public class ExternalSignService: ServiceBase<ExternalSignService, ExternalSignI
     public async Task<IResult> HandleAsync(ExternalSignInRequest request, CancellationToken cancellationToken)
     {
         // 1. 외부 서비스에 access_token을 전달하여 사용자 정보 확인
-        var instance = ExternalSignHandlerFactory.Create(request.Provider, _httpClientFactory);
+        var instance = _externalOAuthHandlerFactory.Resolve(request.Provider);
         var verified = await instance.Verify(request.ProviderToken, cancellationToken);
-        if (verified is null) return null;
+        if (!verified.IsSuccess) return Results.Unauthorized();
 
         // 2. provider별 ID 가져오기
-        string providerId = verified.ProviderId;
+        string providerId = verified.ExternalId;
+        if (providerId.xIsEmpty()) return null;
 
         // 3. 이미 연결된 외부 로그인 사용자 확인
         var user = await _userManager.FindByLoginAsync(request.Provider, providerId);

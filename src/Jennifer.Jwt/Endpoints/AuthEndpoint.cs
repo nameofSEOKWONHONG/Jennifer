@@ -1,8 +1,12 @@
-﻿using Jennifer.Jwt.Models.Contracts;
+﻿using Jennifer.Jwt.Abstractions.Messaging;
+using Jennifer.Jwt.Application.SignUpAdmin;
+using Jennifer.Jwt.Models.Contracts;
 using Jennifer.Jwt.Services;
 using Jennifer.Jwt.Services.Abstracts;
 using Jennifer.Jwt.Services.AuthServices.Abstracts;
 using Jennifer.Jwt.Services.AuthServices.Contracts;
+using Jennifer.Jwt.Services.AuthServices.Implements;
+using Jennifer.SharedKernel.Extenstions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -43,9 +47,20 @@ public static class AuthEndpoint
                 await service.HandleAsync(request,ct))
             .WithName("SignUp");
 
-        group.MapPost("/signup/admin", 
-                async (Microsoft.AspNetCore.Identity.Data.RegisterRequest request, ISignUpAdminService service, CancellationToken ct) => 
-                    await service.HandleAsync(request, ct))
+        // group.MapPost("/signup/admin", 
+        //         async (Microsoft.AspNetCore.Identity.Data.RegisterRequest request, ISignUpAdminService service, CancellationToken ct) => 
+        //             await service.HandleAsync(request, ct))
+        //     .WithName("SignUpAdmin");
+        
+        group.MapPost("/signup/admin",
+            async (Microsoft.AspNetCore.Identity.Data.RegisterRequest request,
+                ICommandHandler<SignUpAdminCommand, Guid> handler,
+                CancellationToken ct) =>
+            {
+                var command = new SignUpAdminCommand(request.Email, request.Password);
+                var result = await handler.Handle(command, ct);
+                return result.IsSuccess ? Results.Ok() : Results.Problem();
+            })
             .WithName("SignUpAdmin");
         
         group.MapPost("/signin", 

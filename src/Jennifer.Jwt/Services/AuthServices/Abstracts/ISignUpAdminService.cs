@@ -1,4 +1,4 @@
-﻿using Jennifer.SharedKernel.Base;
+﻿using Jennifer.SharedKernel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.Data;
 

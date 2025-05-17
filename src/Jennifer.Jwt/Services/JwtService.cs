@@ -5,8 +5,11 @@ using System.Text;
 using System.Text.Json;
 using Jennifer.SharedKernel.Infrastructure;
 using Jennifer.Jwt.Data;
+using Jennifer.Jwt.Infrastructure.Consts;
+using Jennifer.Jwt.Infrastructure.Extenstions;
 using Jennifer.Jwt.Models;
 using Jennifer.Jwt.Services.Abstracts;
+using Jennifer.SharedKernel;
 using Jennifer.SharedKernel.Extenstions;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -15,10 +18,8 @@ namespace Jennifer.Jwt.Services;
 
 public class JwtService : IJwtService
 {
-    private readonly JwtOptions _jwtOptions;
-    public JwtService(IOptions<JwtOptions> options)
+    public JwtService()
     {
-        _jwtOptions = options.Value;   
     }
     
     public string GenerateJwtToken(User user, List<Claim> userClaims, List<Claim> roleClaims)
@@ -31,14 +32,15 @@ public class JwtService : IJwtService
         claims.AddRange(userClaims);
         claims.AddRange(roleClaims);
 
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.SecretKey));
+        var jwtOptions = JenniferOptionSingleton.Instance.Options.Jwt;
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Key));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(
-            issuer: _jwtOptions.Issuer,
-            audience: _jwtOptions.Audience,
+            issuer: jwtOptions.Issuer,
+            audience: jwtOptions.Audience,
             claims: claims,
-            expires: DateTime.UtcNow.AddMinutes(_jwtOptions.ExpiryMinutes),
+            expires: DateTime.UtcNow.AddMinutes(jwtOptions.ExpireMinutes),
             signingCredentials: creds);
 
         return new JwtSecurityTokenHandler().WriteToken(token);

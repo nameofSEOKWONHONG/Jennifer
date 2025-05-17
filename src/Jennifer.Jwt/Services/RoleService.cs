@@ -1,6 +1,6 @@
 ﻿using eXtensionSharp;
 using Jennifer.Jwt.Models;
-using Jennifer.SharedKernel.Domains;
+using Jennifer.SharedKernel;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 

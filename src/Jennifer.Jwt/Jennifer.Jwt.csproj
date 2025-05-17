@@ -16,6 +16,7 @@
         <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="9.0.5" />
         <PackageReference Include="Microsoft.AspNetCore.SignalR.StackExchangeRedis" Version="9.0.5" />
         <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.5" />        
+        <PackageReference Include="Scrutor" Version="6.0.1" />        
         <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
         <PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1" />
         <PackageReference Include="Serilog.Enrichers.Process" Version="3.0.0" />
@@ -25,6 +26,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Jennifer.External.OAuth\Jennifer.External.OAuth.csproj" />
       <ProjectReference Include="..\Jennifer.SharedKernel\Jennifer.SharedKernel.csproj" />
     </ItemGroup>
 

@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Jennifer.SharedKernel;
 using Jennifer.SharedKernel.Infrastructure;
 
 namespace Jennifer.Jwt.Domains;

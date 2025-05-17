@@ -1,24 +1,21 @@
 ﻿using System.Text;
-using System.Text.Json.Serialization;
-using Ardalis.SmartEnum.EFCore;
-using Ardalis.SmartEnum.SystemTextJson;
+using eXtensionSharp;
 using FluentValidation;
-using Jennifer.SharedKernel.Consts;
-using Jennifer.SharedKernel.Infrastructure;
+using Jennifer.External.OAuth;
 using Jennifer.Jwt.Endpoints;
 using Jennifer.Jwt.Data;
 using Jennifer.Jwt.Domains;
 using Jennifer.Jwt.Hubs;
+using Jennifer.Jwt.Infrastructure.Consts;
+using Jennifer.Jwt.Infrastructure.Session;
 using Jennifer.Jwt.Models;
 using Jennifer.Jwt.Services;
 using Jennifer.Jwt.Services.Abstracts;
 using Jennifer.Jwt.Services.AuthServices;
 using Jennifer.Jwt.Services.UserServices;
 using Jennifer.SharedKernel.Infrastructure.Email;
-using Jennifer.SharedKernel.Infrastructure.Session;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http.Json;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.Routing;
@@ -27,10 +24,8 @@ using Microsoft.AspNetCore.SignalR.StackExchangeRedis;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Caching.StackExchangeRedis;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using Serilog;
 
 namespace Jennifer.Jwt;
 
@@ -42,41 +37,25 @@ namespace Jennifer.Jwt;
 public static class DependencyInjection
 {
     /// <summary>
-    /// Adds the Jennifer.Jwt services to the dependency injection container.
+    /// Configures and adds Jennifer.Jwt services, including authentication, authorization, database context, identity services, compression, and other related services.
     /// </summary>
-    /// <param name="builder">The service collection to which the Jennifer.Jwt.Tenant services will be added.</param>
-    /// <param name="schema">The database schema to be used by Jennifer.Jwt.Tenant.</param>
-    /// <param name="dbContextOptions">A delegate to configure database context options. Accepts a service provider and a database context options builder.</param>
-    /// <param name="identityOptions">A delegate to configure ASP.NET Core Identity options. Allows configuration of password policies, user lockout settings, login settings, and other Identity-related options.
-    /// Default values:
-    /// - Password.RequiredLength = 8
-    /// - Password.RequireNonAlphanumeric = true
-    /// - SignIn.RequireConfirmedAccount = false
-    /// - SignIn.RequireConfirmedEmail = false
-    /// - SignIn.RequireConfirmedPhoneNumber = false
-    /// - Tokens.AuthenticatorTokenProvider = null
-    /// - User.RequireUniqueEmail = true</param>
-    /// <exception cref="ArgumentNullException">Thrown when the provided schema is null, empty, or consists only of whitespace.</exception>
-    public static void AddJennifer(this WebApplicationBuilder builder, string schema,
+    /// <param name="services">The service collection to which Jennifer.Jwt services will be added.</param>
+    /// <param name="configuration">The configuration object used to bind settings required for Jennifer.Jwt, such as "JwtOptions".</param>
+    /// <param name="schema">The schema name to be set for Jennifer.Jwt. It cannot be null or empty.</param>
+    /// <param name="aesKey">The AES encryption key to be used by Jennifer.Jwt. It cannot be null or empty.</param>
+    /// <param name="aesIV">The AES initialization vector (IV) to be used by Jennifer.Jwt. It cannot be null or empty.</param>
+    /// <param name="dbContextOptions">A delegate to configure database context options for Jennifer.Jwt, such as connection strings, providers, etc.</param>
+    /// <param name="identityOptions">A delegate to configure identity options for user authentication and management. If null, default settings will be applied.</param>
+    public static void AddJennifer(this IServiceCollection services,
+        JenniferOptions jenniferOptions,
         Action<IServiceProvider, DbContextOptionsBuilder> dbContextOptions,
         Action<IdentityOptions> identityOptions)
     {
-        if (string.IsNullOrWhiteSpace(schema)) throw new ArgumentNullException(nameof(schema));
+        JenniferOptionSingleton.Attach(jenniferOptions);
         
-        DotNetEnv.Env.Load();
+        services.AddDbContext<JenniferDbContext>(dbContextOptions);
         
-        builder.Host.UseSerilog((context, services, config) =>
-        {
-            config
-                .ReadFrom.Configuration(context.Configuration);
-        });
-        
-        JenniferSetting.Schema = schema;
-        JenniferSetting.AesKey = Environment.GetEnvironmentVariable("AES_KEY");
-        JenniferSetting.AesIV = Environment.GetEnvironmentVariable("AES_IV");
-        
-        builder.Services.AddDbContext<JenniferDbContext>(dbContextOptions);
-        if (identityOptions is null)
+        if (identityOptions.xIsEmpty())
         {
             identityOptions = (options) =>
             {
@@ -89,16 +68,10 @@ public static class DependencyInjection
                 options.User.RequireUniqueEmail = true;
             };
         }
-        builder.Services.AddIdentity<User, Role>(identityOptions)
+        
+        services.AddIdentity<User, Role>(identityOptions)
             .AddEntityFrameworkStores<JenniferDbContext>()
             .AddDefaultTokenProviders();
-        
-        builder.Services.AddOptions<JwtOptions>()
-            .Bind(builder.Configuration.GetSection("JwtOptions"))
-            .ValidateDataAnnotations();
-        
-        var jwtSection = builder.Configuration.GetSection("JwtOptions");
-        var jwtOptions = jwtSection.Get<JwtOptions>();
 
         /* [as cookie]
          *         builder.Services.AddAuthentication(options =>
@@ -107,7 +80,7 @@ public static class DependencyInjection
             })
             .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
          */
-        builder.Services.AddAuthentication(options =>
+        services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -117,11 +90,11 @@ public static class DependencyInjection
             options.TokenValidationParameters = new TokenValidationParameters()
             {
                 ValidateIssuer = true,
-                ValidIssuer = jwtOptions!.Issuer,
+                ValidIssuer = JenniferOptionSingleton.Instance.Options.Jwt.Issuer,
                 ValidateAudience = true,
-                ValidAudience = jwtOptions.Audience,
+                ValidAudience = JenniferOptionSingleton.Instance.Options.Jwt.Audience,
                 ValidateLifetime = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.SecretKey)),
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JenniferOptionSingleton.Instance.Options.Jwt.Key)),
                 ValidateIssuerSigningKey = true
             };
             options.Events = new JwtBearerEvents()
@@ -158,47 +131,34 @@ public static class DependencyInjection
             };
         });
         
-        builder.Services.AddAuthorization();
-        builder.Services.AddHttpContextAccessor();
-        builder.Services.AddHttpClient("kakao", client =>
-        {
-            client.BaseAddress = new Uri("https://kapi.kakao.com");
-        });
-        builder.Services.AddHttpClient("google", client =>
-        {
-            client.BaseAddress = new Uri("https://www.googleapis.com");
-        });
-        builder.Services.AddHttpClient("naver", client =>
-        {
-            client.BaseAddress = new Uri("https://openapi.naver.com");
-        });
-        
-        builder.Services.AddResponseCompression(options =>
+        services.AddAuthorization();
+        services.AddResponseCompression(options =>
         {
             options.EnableForHttps = true;
             options.Providers.Add<GzipCompressionProvider>();
             options.Providers.Add<BrotliCompressionProvider>();
-            options.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(new[] { "application/octet-stream", "application/json" });
+            options.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(["application/octet-stream", "application/json"]);
         });
-        builder.Services.Configure<GzipCompressionProviderOptions>(options => options.Level = System.IO.Compression.CompressionLevel.Fastest);
-        builder.Services.Configure<BrotliCompressionProviderOptions>(options => options.Level = System.IO.Compression.CompressionLevel.Fastest);     
+        services.Configure<GzipCompressionProviderOptions>(options => options.Level = System.IO.Compression.CompressionLevel.Fastest);
+        services.Configure<BrotliCompressionProviderOptions>(options => options.Level = System.IO.Compression.CompressionLevel.Fastest);     
         
-        builder.Services.AddAuthService();
-        builder.Services.AddUserService();
+        services.AddAuthService();
+        services.AddUserService();
+        services.AddCacheResolver();
         
-        builder.Services.AddScoped<ISessionContext, SessionContext>();
-        builder.Services.AddScoped<IJwtService, JwtService>();
-        builder.Services.AddScoped<IExternalSignService, ExternalSignService>();
-        builder.Services.AddScoped<IUserService, UserService>();
-        builder.Services.AddScoped<IUserRoleService, UserRoleService>();
-        builder.Services.AddScoped<IUserClaimService, UserClaimService>();
-        builder.Services.AddScoped<IRoleService, RoleService>();
-        builder.Services.AddScoped<IRoleClaimService, RoleClaimService>();
+        services.AddScoped<IJwtService, JwtService>();
+        services.AddScoped<IExternalSignService, ExternalSignService>();
+        services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IUserRoleService, UserRoleService>();
+        services.AddScoped<IUserClaimService, UserClaimService>();
+        services.AddScoped<IRoleService, RoleService>();
+        services.AddScoped<IRoleClaimService, RoleClaimService>();
         
-        builder.Services.AddValidatorsFromAssemblyContaining<UserDtoValidator>(); // 자동 검증 필터 추가
+        services.AddValidatorsFromAssemblyContaining<UserDtoValidator>(); // 자동 검증 필터 추가
+        services.AddExternalOAuthHandler();
 
         #if DEBUG
-        builder.Services.AddCors(options =>
+        services.AddCors(options =>
         {
             options.AddDefaultPolicy(policy =>
             {
@@ -208,7 +168,7 @@ public static class DependencyInjection
             });
         });
         #else 
-        builder.Services.AddCors(op =>
+        services.AddCors(op =>
         {
             op.AddPolicy("AllowSpecificOrigin", policy =>
             {
@@ -235,7 +195,7 @@ public static class DependencyInjection
         Action<HybridCacheOptions> cacheOptions,
         Action<RedisCacheOptions> redisOptions)
     {
-        if (cacheOptions is null)
+        if (cacheOptions.xIsEmpty())
         {
             cacheOptions = (options) =>
             {
@@ -250,7 +210,7 @@ public static class DependencyInjection
         }
         services.AddHybridCache(cacheOptions);
         
-        if (redisOptions is not null)
+        if (redisOptions.xIsNotEmpty())
         {
             services.AddStackExchangeRedisCache(redisOptions);    
         }
@@ -263,7 +223,7 @@ public static class DependencyInjection
     /// <param name="redisOptions">An optional delegate to configure Redis options for SignalR. If null, the default SignalR setup will be used without Redis integration.</param>
     public static void AddJenniferAuthHub(this IServiceCollection services, Action<RedisOptions> redisOptions)
     {
-        if(redisOptions is null)
+        if(redisOptions.xIsEmpty())
             services.AddSignalR();
         else
             services.AddSignalR().AddStackExchangeRedis(redisOptions);

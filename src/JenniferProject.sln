@@ -10,6 +10,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jennifer.SharedKernel", "Je
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jennifer.Tenant.Api", "Jennifer.Tenant.Api\Jennifer.Tenant.Api.csproj", "{A3037848-D895-491E-9BFF-E14437D350A1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jennifer.External.OAuth", "Jennifer.External.OAuth\Jennifer.External.OAuth.csproj", "{BCD80EA7-5A0C-432F-8458-D3177E62FFD7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +38,9 @@ Global
 		{A3037848-D895-491E-9BFF-E14437D350A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A3037848-D895-491E-9BFF-E14437D350A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A3037848-D895-491E-9BFF-E14437D350A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BCD80EA7-5A0C-432F-8458-D3177E62FFD7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BCD80EA7-5A0C-432F-8458-D3177E62FFD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BCD80EA7-5A0C-432F-8458-D3177E62FFD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BCD80EA7-5A0C-432F-8458-D3177E62FFD7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

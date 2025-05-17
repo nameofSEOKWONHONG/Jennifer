@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+    
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+        <PackageReference Include="eXtensionSharp" Version="1.0.2" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.5" />
+    </ItemGroup>
+    
+    <ItemGroup>
+      <Content Remove="C:\Users\h2091\.nuget\packages\extensionsharp\1.0.2\contentFiles\any\net9.0\README.md" />
+    </ItemGroup>
+
+</Project>

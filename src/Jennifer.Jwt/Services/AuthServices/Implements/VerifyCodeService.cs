@@ -3,7 +3,7 @@ using Jennifer.Jwt.Data;
 using Jennifer.Jwt.Models;
 using Jennifer.Jwt.Services.AuthServices.Abstracts;
 using Jennifer.Jwt.Services.AuthServices.Contracts;
-using Jennifer.SharedKernel.Base;
+using Jennifer.SharedKernel;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -11,17 +11,17 @@ namespace Jennifer.Jwt.Services.AuthServices.Implements;
 
 public class VerifyCodeService: ServiceBase<VerifyCodeService, VerifyCodeRequest, VerifyCodeResponse>, IVerifyCodeService
 {
-    private readonly JenniferDbContext _dbContext;
+    private readonly JenniferDbContext _applicationDbContext;
 
     public VerifyCodeService(ILogger<VerifyCodeService> logger,
-        JenniferDbContext dbContext) : base(logger)
+        JenniferDbContext applicationDbContext) : base(logger)
     {
-        _dbContext = dbContext;
+        _applicationDbContext = applicationDbContext;
     }
 
     public async Task<VerifyCodeResponse> HandleAsync(VerifyCodeRequest request, CancellationToken cancellationToken)
     {
-        var emailVerify = await _dbContext.EmailVerificationCodes
+        var emailVerify = await _applicationDbContext.EmailVerificationCodes
             .Where(m => m.Email == request.Email
                         && m.Type == request.Type
                         && !m.IsUsed 
@@ -34,12 +34,12 @@ public class VerifyCodeService: ServiceBase<VerifyCodeService, VerifyCodeRequest
         if (emailVerify.Code != request.Code)
         {
             emailVerify.FailedCount++;
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            await _applicationDbContext.SaveChangesAsync(cancellationToken);
             return new VerifyCodeResponse(ENUM_VERITY_RESULT_STATUS.WRONG_CODE, "잘못된 인증 코드입니다.");
         }
         
         emailVerify.IsUsed = true;
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        await _applicationDbContext.SaveChangesAsync(cancellationToken);
 
         return new VerifyCodeResponse(ENUM_VERITY_RESULT_STATUS.EMAIL_CONFIRM, string.Empty);
     }

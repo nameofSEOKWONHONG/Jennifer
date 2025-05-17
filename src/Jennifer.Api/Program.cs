@@ -1,8 +1,15 @@
+using eXtensionSharp;
 using Jennifer.Api;
 using Jennifer.Jwt;
+using Jennifer.Jwt.Infrastructure.Consts;
+using Jennifer.SharedKernel;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
 using Scalar.AspNetCore;
+using Serilog;
+using JwtOptions = Jennifer.Jwt.Infrastructure.Consts.JwtOptions;
+
+DotNetEnv.Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,12 +21,27 @@ builder.Services.AddOpenApi(options =>
     options.AddDocumentTransformer<OpenApiSecuritySchemeTransformer>();
 });
 
+builder.Host.UseSerilog((context, services, config) =>
+{
+    config
+        .ReadFrom.Configuration(context.Configuration);
+});
+
+var cryptoOptions = new CryptoOptions(Environment.GetEnvironmentVariable("AES_KEY"),
+    Environment.GetEnvironmentVariable("AES_IV"));
+var jwtOptions = new JwtOptions(Environment.GetEnvironmentVariable("JWT_KEY"),
+    Environment.GetEnvironmentVariable("JWT_ISSUER"),
+    Environment.GetEnvironmentVariable("JWT_AUDIANCE"),
+    Environment.GetEnvironmentVariable("JWT_EXPIRYMINUTES").xValue<int>(),
+    Environment.GetEnvironmentVariable("JWT_REFRESHEXPIRYMINUTES").xValue<int>());
+
+var options = new JenniferOptions("account", cryptoOptions, jwtOptions);
+
 // Add jennifer account manager
-builder.AddJennifer("account", 
+builder.Services.AddJennifer(options,
     (provider, optionsBuilder) =>
     {
-        var con = builder.Configuration.GetConnectionString("DefaultConnection");
-        optionsBuilder.UseSqlServer(con);
+        optionsBuilder.UseSqlServer(Environment.GetEnvironmentVariable("SQLSERVER_CONNECTION"));
         if (builder.Environment.IsDevelopment())
         {
             optionsBuilder.EnableSensitiveDataLogging()

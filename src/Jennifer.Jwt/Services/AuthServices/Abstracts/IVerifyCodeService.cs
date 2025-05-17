@@ -1,5 +1,5 @@
 ﻿using Jennifer.Jwt.Services.AuthServices.Contracts;
-using Jennifer.SharedKernel.Base;
+using Jennifer.SharedKernel;
 
 namespace Jennifer.Jwt.Services.AuthServices.Abstracts;
 

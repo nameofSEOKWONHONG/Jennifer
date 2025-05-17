@@ -3,7 +3,7 @@ using Jennifer.Jwt.Models;
 using Jennifer.Jwt.Models.Contracts;
 using Jennifer.Jwt.Services.AuthServices.Abstracts;
 using Jennifer.Jwt.Services.AuthServices.Contracts;
-using Jennifer.SharedKernel.Base;
+using Jennifer.SharedKernel;
 using Jennifer.SharedKernel.Infrastructure.Email;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -12,15 +12,15 @@ namespace Jennifer.Jwt.Services.AuthServices.Implements;
 
 public class VerifyCodeByEmailSendService : ServiceBase<VerifyCodeByEmailSendService, VerifyCodeByEmailSendRequest, IResult>, IVerifyCodeByEmailSendService
 {
-    private readonly JenniferDbContext _dbContext;
+    private readonly JenniferDbContext _applicationDbContext;
     private readonly IEmailQueue _emailQueue;
 
     public VerifyCodeByEmailSendService(
         ILogger<VerifyCodeByEmailSendService> logger,
-        JenniferDbContext dbContext,
+        JenniferDbContext applicationDbContext,
         IEmailQueue emailQueue) : base(logger)
     {
-        _dbContext = dbContext;
+        _applicationDbContext = applicationDbContext;
         _emailQueue = emailQueue;
     }
 
@@ -44,7 +44,7 @@ Jennifer 서비스 이용을 위한 이메일 인증 코드를 안내해 드립�
 감사합니다.
 Jennifer";
 
-        await _dbContext.EmailVerificationCodes.AddAsync(new EmailVerificationCode()
+        await _applicationDbContext.EmailVerificationCodes.AddAsync(new EmailVerificationCode()
         {
             Email = request.Email,
             Type = request.Type,

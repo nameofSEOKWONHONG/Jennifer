@@ -1,7 +1,6 @@
-﻿using Jennifer.SharedKernel.Infrastructure;
+﻿using Jennifer.Jwt.DomainEvents;
 using Jennifer.Jwt.Models;
-using Jennifer.Jwt.Models.EntityConfigurations;
-using Jennifer.SharedKernel.Infrastructure.Session;
+using Jennifer.SharedKernel;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SmartEnum.EFCore;
@@ -13,11 +12,14 @@ public class JenniferDbContext : IdentityDbContext<User, Role, Guid,
     UserRole, 
     UserLogin, 
     RoleClaim,
-    UserToken>, IDbContext
+    UserToken>, IApplicationDbContext
 {
-    public JenniferDbContext(DbContextOptions<JenniferDbContext> options): base(options)
+    private readonly IDomainEventsDispatcher _domainEventDispatcher;
+
+    public JenniferDbContext(DbContextOptions<JenniferDbContext> options,
+        IDomainEventsDispatcher domainEventDispatcher): base(options)
     {
-        
+        _domainEventDispatcher = domainEventDispatcher;
     }
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
@@ -39,7 +41,7 @@ public class JenniferDbContext : IdentityDbContext<User, Role, Guid,
         modelBuilder.ApplyConfiguration(new EmailVerificationCodeEntityConfiguration());
     }
 
-    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
+    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
     {
         foreach (var entry in ChangeTracker.Entries<IAuditable>())
         {
@@ -48,8 +50,31 @@ public class JenniferDbContext : IdentityDbContext<User, Role, Guid,
             if (entry.State == EntityState.Modified)
                 entry.Entity.ModifiedOn = DateTimeOffset.UtcNow;
         }
-        return base.SaveChangesAsync(cancellationToken);
+        
+        var result = await base.SaveChangesAsync(cancellationToken);
+
+        await PublishDomainEventsAsync();
+
+        return result;
     }
     
     public DbSet<EmailVerificationCode> EmailVerificationCodes { get; set; }
+    
+    private async Task PublishDomainEventsAsync()
+    {
+        var domainEvents = ChangeTracker
+            .Entries<IEntity>()
+            .Select(entry => entry.Entity)
+            .SelectMany(entity =>
+            {
+                List<IDomainEvent> domainEvents = entity.DomainEvents;
+
+                entity.ClearDomainEvents();
+
+                return domainEvents;
+            })
+            .ToList();
+
+        await _domainEventDispatcher.DispatchAsync(domainEvents);
+    }
 }

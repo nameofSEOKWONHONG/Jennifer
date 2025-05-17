@@ -1,6 +1,5 @@
 ﻿using Jennifer.Jwt.Domains;
-using Jennifer.SharedKernel.Base;
-using Jennifer.SharedKernel.Domains;
+using Jennifer.SharedKernel;
 
 namespace Jennifer.Jwt.Services.UserServices.Abstracts;
 
