@@ -15,12 +15,12 @@ public class JenniferSessionContextMiddleware
 
     public JenniferSessionContextMiddleware(RequestDelegate next) => _next = next;
 
-    public async Task InvokeAsync(HttpContext context, 
+    public async Task InvokeAsync(HttpContext context,
+        ISessionContext sessionContext,
         JenniferDbContext applicationDbContext)
     {
         if (context.User.Identity?.IsAuthenticated == true)
         {
-            var session = context.Request.HttpContext.RequestServices.GetRequiredService<ISessionContext>();
             var sid = context.User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (Guid.TryParse(sid, out var guid))
             {
@@ -30,7 +30,7 @@ public class JenniferSessionContextMiddleware
                     .Select(u => new { u.Id, u.Email })
                     .FirstAsync();
                 
-                var sessionInitializer = session.xAs<ISessionContextInitializer>();
+                var sessionInitializer = sessionContext.xAs<ISessionContextInitializer>();
                 sessionInitializer.Initialize(user.Id.ToString(), user.Email, applicationDbContext);
             }
         }

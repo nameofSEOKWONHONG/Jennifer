@@ -26,13 +26,6 @@ public class SessionContext : ISessionContext, ISessionContextInitializer
         this.ApplicationDbContext = applicationDbContext;
     }
     
-    private IEnumerable<UserRole> _userRoles;
-    public async Task<IEnumerable<UserRole>> GetUserRolesAsync()
-    {
-        if (_userRoles.xIsEmpty())
-        {
-            _userRoles = await _userRoleFetcher.FetchAsync(this.UserGuid);
-        }
-        return _userRoles;
-    }
+    public async Task<IEnumerable<UserRole>> GetUserRolesAsync() 
+        => await _userRoleFetcher.FetchAsync(UserGuid);
 }
