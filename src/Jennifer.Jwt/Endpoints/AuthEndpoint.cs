@@ -1,12 +1,9 @@
 ﻿using Jennifer.Jwt.Abstractions.Messaging;
 using Jennifer.Jwt.Application.SignUpAdmin;
 using Jennifer.Jwt.Models.Contracts;
-using Jennifer.Jwt.Services;
 using Jennifer.Jwt.Services.Abstracts;
 using Jennifer.Jwt.Services.AuthServices.Abstracts;
 using Jennifer.Jwt.Services.AuthServices.Contracts;
-using Jennifer.Jwt.Services.AuthServices.Implements;
-using Jennifer.SharedKernel.Extenstions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;

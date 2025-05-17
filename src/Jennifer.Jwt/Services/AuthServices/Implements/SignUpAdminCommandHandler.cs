@@ -1,13 +1,5 @@
-﻿using eXtensionSharp;
-using FluentValidation;
-using Jennifer.Jwt.Abstractions.Messaging;
-using Jennifer.Jwt.Data;
-using Jennifer.Jwt.Models;
+﻿using Jennifer.Jwt.Abstractions.Messaging;
 using Jennifer.SharedKernel;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.Data;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace Jennifer.Jwt.Services.AuthServices.Implements;
 

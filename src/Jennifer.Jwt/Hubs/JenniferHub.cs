@@ -1,10 +1,9 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using Microsoft.AspNetCore.SignalR;
 
 namespace Jennifer.Jwt.Hubs;
 
-public class JenniferHub: Hub
+internal class JenniferHub: Hub
 {
     public JenniferHub()
     {
@@ -17,7 +16,7 @@ public class JenniferHub: Hub
     }
 }
 
-public class SubUserIdProvider : IUserIdProvider
+internal class SubUserIdProvider : IUserIdProvider
 {
     public string GetUserId(HubConnectionContext connection)
     {

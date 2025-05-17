@@ -3,7 +3,6 @@ using Jennifer.Jwt.Abstractions;
 using Jennifer.Jwt.Models;
 using Jennifer.Jwt.Models.Contracts;
 using Jennifer.Jwt.Services.AuthServices.Abstracts;
-using Jennifer.SharedKernel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.Data;

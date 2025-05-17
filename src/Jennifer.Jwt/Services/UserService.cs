@@ -6,10 +6,8 @@ using Jennifer.Jwt.Infrastructure.Session;
 using Jennifer.Jwt.Models;
 using Jennifer.Jwt.Services.Abstracts;
 using Jennifer.SharedKernel;
-using Jennifer.SharedKernel.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace Jennifer.Jwt.Services;
 

@@ -1,6 +1,4 @@
-﻿using System.Net.Mail;
-using Microsoft.AspNetCore.StaticFiles;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.AspNetCore.StaticFiles;
 
 namespace Jennifer.SharedKernel.Infrastructure.Email;
 
@@ -13,12 +11,9 @@ namespace Jennifer.SharedKernel.Infrastructure.Email;
 /// </summary>
 public class EmailMessage
 {
-    public string From { get; private set; }
-    public string FromName { get; private set; }
-    public List<string> To { get; private set; } = new();
-    public List<string> ToName { get; private set; } = new();
-    public List<string> Cc { get; private set; } = new();
-    public List<string> CcName { get; private set; }  = new();
+    public (string From, string FromName) FromAndFromName;
+    public List<(string To, string ToName)> To { get; private set; } = new();
+    public List<(string Cc, string CcName)> Cc { get; private set; } = new();
     public string Subject { get; private set; }
     public string Body { get; private set; }
     public bool IsHtml { get; private set; }
@@ -34,22 +29,19 @@ public class EmailMessage
 
         public Builder From(string name, string from)
         {
-            _email.From = from;
-            _email.FromName = name;
+            _email.FromAndFromName = (from, name);
             return this;
         }
 
         public Builder To(string name, string to)
         {
-            _email.ToName.Add(name);
-            _email.To.Add(to);
+            _email.To.Add((to, name));
             return this;
         }
 
         public Builder Cc(string name, string cc)
         {
-            _email.CcName.Add(name);
-            _email.Cc.Add(cc);
+            _email.Cc.Add((cc, name));
             return this;
         }
 

@@ -1,11 +1,7 @@
-﻿using System.Security.Claims;
-using eXtensionSharp;
+﻿using eXtensionSharp;
 using Jennifer.Jwt.Data;
 using Jennifer.Jwt.Infrastructure.Session.Abstracts;
-using Jennifer.SharedKernel;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Jennifer.Jwt.Infrastructure.Session;
 

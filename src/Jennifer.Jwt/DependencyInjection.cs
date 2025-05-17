@@ -1,12 +1,14 @@
-﻿using System.Text;
+﻿using System.IO.Compression;
+using System.Text;
 using eXtensionSharp;
 using FluentValidation;
 using Jennifer.External.OAuth;
-using Jennifer.Jwt.Endpoints;
 using Jennifer.Jwt.Data;
 using Jennifer.Jwt.Domains;
+using Jennifer.Jwt.Endpoints;
 using Jennifer.Jwt.Hubs;
 using Jennifer.Jwt.Infrastructure.Consts;
+using Jennifer.Jwt.Infrastructure.Email;
 using Jennifer.Jwt.Infrastructure.Session;
 using Jennifer.Jwt.Models;
 using Jennifer.Jwt.Services;
@@ -139,8 +141,8 @@ public static class DependencyInjection
             options.Providers.Add<BrotliCompressionProvider>();
             options.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(["application/octet-stream", "application/json"]);
         });
-        services.Configure<GzipCompressionProviderOptions>(options => options.Level = System.IO.Compression.CompressionLevel.Fastest);
-        services.Configure<BrotliCompressionProviderOptions>(options => options.Level = System.IO.Compression.CompressionLevel.Fastest);     
+        services.Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);
+        services.Configure<BrotliCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);     
         
         services.AddAuthService();
         services.AddUserService();

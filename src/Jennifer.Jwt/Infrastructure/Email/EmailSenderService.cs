@@ -1,11 +1,12 @@
-﻿using MailKit.Net.Smtp;
+﻿using eXtensionSharp;
+using Jennifer.SharedKernel.Infrastructure.Email;
+using MailKit.Net.Smtp;
 using MailKit.Security;
-using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using MimeKit;
 
-namespace Jennifer.SharedKernel.Infrastructure.Email;
+namespace Jennifer.Jwt.Infrastructure.Email;
 
 /// <summary>
 /// A background service responsible for sending emails from a queue.
@@ -60,22 +61,22 @@ public class EmailSenderService : BackgroundService
     {
         var message = new MimeMessage();
         message.From.Add(new MailboxAddress(
-            email.FromName ?? email.From, // FromName이 없으면 주소 자체를 이름으로
-            email.From
+            email.FromAndFromName.FromName ?? email.FromAndFromName.From, // FromName이 없으면 주소 자체를 이름으로
+            email.FromAndFromName.From
         ));
         
-        for (var i = 0; i < email.To.Count; i++)
+        if(email.To.xIsEmpty()) throw new ArgumentNullException($"email.To is empty");
+        foreach (var item in email.To)
         {
-            var emailAddress = email.To[i];
-            var emailAddressName = email.ToName[i];
-            message.To.Add(new MailboxAddress(emailAddressName, emailAddress));    
+            message.To.Add(new MailboxAddress(item.ToName, item.To));            
         }
 
-        for (var i = 0; i < email.Cc.Count; i++)
+        if (email.Cc.xIsNotEmpty())
         {
-            var emailAddress = email.Cc[i];
-            var emailAddressName = email.CcName[i];
-            message.Cc.Add(new MailboxAddress(emailAddressName, emailAddress));   
+            foreach (var item in email.Cc)
+            {
+                message.Cc.Add(new MailboxAddress(item.CcName, item.Cc));    
+            }
         }
         
         message.Subject = email.Subject;

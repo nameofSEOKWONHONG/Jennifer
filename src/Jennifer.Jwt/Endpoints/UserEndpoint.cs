@@ -1,5 +1,4 @@
 ﻿using Jennifer.Jwt.Domains;
-using Jennifer.Jwt.Services;
 using Jennifer.Jwt.Services.Abstracts;
 using Jennifer.Jwt.Services.UserServices.Abstracts;
 using Microsoft.AspNetCore.Builder;

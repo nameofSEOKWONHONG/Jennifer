@@ -3,15 +3,10 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
-using Jennifer.SharedKernel.Infrastructure;
-using Jennifer.Jwt.Data;
 using Jennifer.Jwt.Infrastructure.Consts;
 using Jennifer.Jwt.Infrastructure.Extenstions;
 using Jennifer.Jwt.Models;
 using Jennifer.Jwt.Services.Abstracts;
-using Jennifer.SharedKernel;
-using Jennifer.SharedKernel.Extenstions;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Jennifer.Jwt.Services;

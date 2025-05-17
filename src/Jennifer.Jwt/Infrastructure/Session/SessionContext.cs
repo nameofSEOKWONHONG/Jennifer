@@ -1,7 +1,6 @@
 ﻿using eXtensionSharp;
 using Jennifer.Jwt.Data;
 using Jennifer.Jwt.Infrastructure.Session.Abstracts;
-using Jennifer.Jwt.Models;
 using Jennifer.SharedKernel;
 using Microsoft.EntityFrameworkCore;
 

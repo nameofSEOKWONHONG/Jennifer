@@ -1,6 +1,6 @@
-﻿namespace Jennifer.SharedKernel.Infrastructure.Email;
+﻿using System.Threading.Channels;
 
-using System.Threading.Channels;
+namespace Jennifer.SharedKernel.Infrastructure.Email;
 
 /// <summary>
 /// Represents a thread-safe queue for managing email messages in a producer-consumer model.

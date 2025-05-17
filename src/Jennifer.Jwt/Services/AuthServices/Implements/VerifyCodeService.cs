@@ -1,10 +1,8 @@
 ﻿using eXtensionSharp;
 using Jennifer.Jwt.Abstractions;
 using Jennifer.Jwt.Data;
-using Jennifer.Jwt.Models;
 using Jennifer.Jwt.Services.AuthServices.Abstracts;
 using Jennifer.Jwt.Services.AuthServices.Contracts;
-using Jennifer.SharedKernel;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 

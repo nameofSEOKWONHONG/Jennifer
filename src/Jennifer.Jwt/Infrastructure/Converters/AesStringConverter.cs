@@ -1,6 +1,5 @@
 ﻿using eXtensionSharp;
 using Jennifer.Jwt.Infrastructure.Extenstions;
-using Jennifer.SharedKernel.Extenstions;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Jennifer.Jwt.Infrastructure.Converters;

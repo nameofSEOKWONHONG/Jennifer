@@ -1,6 +1,5 @@
 ﻿using Jennifer.Jwt.Infrastructure.Session.Abstracts;
 using Jennifer.Jwt.Infrastructure.Session.Implements;
-using Jennifer.SharedKernel;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Jennifer.Jwt.Infrastructure.Session;
