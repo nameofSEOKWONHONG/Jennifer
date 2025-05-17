@@ -12,6 +12,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jennifer.Tenant.Api", "Jenn
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jennifer.External.OAuth", "Jennifer.External.OAuth\Jennifer.External.OAuth.csproj", "{BCD80EA7-5A0C-432F-8458-D3177E62FFD7}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Jennifer", "Jennifer", "{D2AC356E-8786-44F6-ABB6-122EC1C8A00C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,5 +44,10 @@ Global
 		{BCD80EA7-5A0C-432F-8458-D3177E62FFD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BCD80EA7-5A0C-432F-8458-D3177E62FFD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BCD80EA7-5A0C-432F-8458-D3177E62FFD7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{BCD80EA7-5A0C-432F-8458-D3177E62FFD7} = {D2AC356E-8786-44F6-ABB6-122EC1C8A00C}
+		{5123C87D-4B7E-498A-A714-2D50C03D643F} = {D2AC356E-8786-44F6-ABB6-122EC1C8A00C}
+		{DCF2128E-6E49-4ED1-B042-0271961F2765} = {D2AC356E-8786-44F6-ABB6-122EC1C8A00C}
 	EndGlobalSection
 EndGlobal
