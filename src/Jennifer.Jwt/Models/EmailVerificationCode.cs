@@ -1,5 +1,6 @@
 ﻿using Ardalis.SmartEnum.EFCore;
 using Jennifer.Jwt.Infrastructure.Consts;
+using Jennifer.Jwt.Infrastructure.Converters;
 using Jennifer.Jwt.Models.Contracts;
 using Jennifer.SharedKernel;
 using Microsoft.EntityFrameworkCore;

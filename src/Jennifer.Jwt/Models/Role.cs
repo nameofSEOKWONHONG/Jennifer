@@ -1,4 +1,5 @@
 ﻿using Jennifer.Jwt.Infrastructure.Consts;
+using Jennifer.Jwt.Infrastructure.Converters;
 using Jennifer.SharedKernel;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

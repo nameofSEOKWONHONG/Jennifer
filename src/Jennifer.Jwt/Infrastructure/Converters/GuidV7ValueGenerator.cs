@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.ValueGeneration;
 
-namespace Jennifer.SharedKernel;
+namespace Jennifer.Jwt.Infrastructure.Converters;
 
 public class GuidV7ValueGenerator: ValueGenerator<Guid>
 {
