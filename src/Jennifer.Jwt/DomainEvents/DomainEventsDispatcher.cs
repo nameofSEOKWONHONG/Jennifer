@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using eXtensionSharp;
 using Jennifer.SharedKernel;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -29,11 +30,11 @@ internal sealed class DomainEventsDispatcher : IDomainEventsDispatcher
                 domainEventType,
                 et => typeof(IDomainEventHandler<>).MakeGenericType(et));
 
-            IEnumerable<object?> handlers = scope.ServiceProvider.GetServices(handlerType);
+            IEnumerable<object> handlers = scope.ServiceProvider.GetServices(handlerType);
 
-            foreach (object? handler in handlers)
+            foreach (object handler in handlers)
             {
-                if (handler is null)
+                if (handler.xIsEmpty())
                 {
                     continue;
                 }

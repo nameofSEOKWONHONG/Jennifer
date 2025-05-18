@@ -51,11 +51,16 @@ public class EmailMessage
             return this;
         }
 
-        public Builder Body(string body, bool isHtml = true)
+        public Builder Body(string body)
         {
             _email.Body = body;
-            _email.IsHtml = isHtml;
             return this;
+        }
+
+        public Builder IsHtml(bool isHtml)
+        {
+            _email.IsHtml = isHtml;
+            return this;        
         }
 
         private static readonly FileExtensionContentTypeProvider _provider = new();

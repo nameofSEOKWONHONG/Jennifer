@@ -54,6 +54,8 @@ public class EmailSenderService : BackgroundService
                     // 여기에 저장 로직 (DB or 로그 파일 등) 추가 가능
                 }
             }
+
+            await Task.Delay(500, stoppingToken);
         }
     }
 

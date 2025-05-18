@@ -2,6 +2,7 @@
 using eXtensionSharp;
 using Jennifer.External.OAuth.Abstracts;
 using Jennifer.Jwt.Abstractions;
+using Jennifer.Jwt.Application.Auth.Services.Contracts;
 using Jennifer.Jwt.Models;
 using Jennifer.Jwt.Services.Abstracts;
 using Jennifer.Jwt.Services.AuthServices.Contracts;
@@ -54,7 +55,7 @@ public class ExternalSignService: ServiceBase<ExternalSignService, ExternalSignI
     {
         // 1. 외부 서비스에 access_token을 전달하여 사용자 정보 확인
         var instance = _externalOAuthHandlerFactory.Resolve(request.Provider);
-        var verified = await instance.Verify(request.ProviderToken, cancellationToken);
+        var verified = await instance.Verify(request.AccessToken, cancellationToken);
         if (!verified.IsSuccess) return Results.Unauthorized();
 
         // 2. provider별 ID 가져오기
@@ -113,7 +114,7 @@ public class ExternalSignService: ServiceBase<ExternalSignService, ExternalSignI
         var refreshToken = _jwtService.GenerateRefreshToken();
         var refreshTokenObj = new RefreshToken(refreshToken, DateTime.UtcNow.AddDays(7), DateTime.UtcNow, user.Id.ToString());
         await _userManager.SetAuthenticationTokenAsync(user, loginProvider:"internal", tokenName:"refreshToken", tokenValue:refreshToken);
-        var token = new TokenResponse(_jwtService.GenerateJwtToken(user, userClaims.ToList(), roleClaims), _jwtService.ObjectToTokenString(refreshTokenObj));
+        var token = TokenResponse.Success(_jwtService.GenerateJwtToken(user, userClaims.ToList(), roleClaims), _jwtService.ObjectToTokenString(refreshTokenObj));
         return Results.Ok(token);
     }
 }

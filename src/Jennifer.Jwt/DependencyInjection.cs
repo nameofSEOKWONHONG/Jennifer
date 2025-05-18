@@ -3,9 +3,11 @@ using System.Text;
 using eXtensionSharp;
 using FluentValidation;
 using Jennifer.External.OAuth;
+using Jennifer.Jwt.Application.Auth;
+using Jennifer.Jwt.Application.Auth.Services;
+using Jennifer.Jwt.Application.Endpoints;
 using Jennifer.Jwt.Data;
 using Jennifer.Jwt.Domains;
-using Jennifer.Jwt.Endpoints;
 using Jennifer.Jwt.Hubs;
 using Jennifer.Jwt.Infrastructure.Consts;
 using Jennifer.Jwt.Infrastructure.Email;
@@ -39,15 +41,23 @@ namespace Jennifer.Jwt;
 public static class DependencyInjection
 {
     /// <summary>
-    /// Configures and adds Jennifer.Jwt services, including authentication, authorization, database context, identity services, compression, and other related services.
+    /// Configures and adds Jennifer.Jwt services to the specified dependency injection container.
     /// </summary>
     /// <param name="services">The service collection to which Jennifer.Jwt services will be added.</param>
-    /// <param name="configuration">The configuration object used to bind settings required for Jennifer.Jwt, such as "JwtOptions".</param>
-    /// <param name="schema">The schema name to be set for Jennifer.Jwt. It cannot be null or empty.</param>
-    /// <param name="aesKey">The AES encryption key to be used by Jennifer.Jwt. It cannot be null or empty.</param>
-    /// <param name="aesIV">The AES initialization vector (IV) to be used by Jennifer.Jwt. It cannot be null or empty.</param>
-    /// <param name="dbContextOptions">A delegate to configure database context options for Jennifer.Jwt, such as connection strings, providers, etc.</param>
-    /// <param name="identityOptions">A delegate to configure identity options for user authentication and management. If null, default settings will be applied.</param>
+    /// <param name="jenniferOptions">The configuration options used to setup Jennifer features and behavior.</param>
+    /// <param name="dbContextOptions">A delegate to configure the DbContext options for Jennifer's database context.</param>
+    /// <param name="identityOptions">A delegate to configure options for ASP.NET Core Identity.</param>
+    /// <remarks>
+    /// identityOptions default value
+    /// <code>
+    /// options.Password.RequiredLength = 8;
+    /// options.Password.RequireNonAlphanumeric = true;
+    /// options.SignIn.RequireConfirmedAccount = false;
+    /// options.SignIn.RequireConfirmedEmail = false;
+    /// options.SignIn.RequireConfirmedPhoneNumber = false;
+    /// options.User.RequireUniqueEmail = true;
+    /// </code>
+    /// </remarks>
     public static void AddJennifer(this IServiceCollection services,
         JenniferOptions jenniferOptions,
         Action<IServiceProvider, DbContextOptionsBuilder> dbContextOptions,

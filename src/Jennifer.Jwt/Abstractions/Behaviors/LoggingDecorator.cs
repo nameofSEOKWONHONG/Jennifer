@@ -19,13 +19,13 @@ internal static class LoggingDecorator
             _logger = logger;
         }
 
-        public async Task<Result<TResponse>> Handle(TCommand command, CancellationToken cancellationToken)
+        public async Task<Result<TResponse>> HandleAsync(TCommand command, CancellationToken cancellationToken)
         {
             string commandName = typeof(TCommand).Name;
 
             _logger.LogInformation("Processing command {Command}", commandName);
 
-            Result<TResponse> result = await _innerHandler.Handle(command, cancellationToken);
+            Result<TResponse> result = await _innerHandler.HandleAsync(command, cancellationToken);
 
             if (result.IsSuccess)
             {
@@ -57,13 +57,13 @@ internal static class LoggingDecorator
             _logger = logger;
         }
         
-        public async Task<Result> Handle(TCommand command, CancellationToken cancellationToken)
+        public async Task<Result> HandleAsync(TCommand command, CancellationToken cancellationToken)
         {
             string commandName = typeof(TCommand).Name;
 
             _logger.LogInformation("Processing command {Command}", commandName);
 
-            Result result = await _innerHandler.Handle(command, cancellationToken);
+            Result result = await _innerHandler.HandleAsync(command, cancellationToken);
 
             if (result.IsSuccess)
             {
@@ -95,13 +95,13 @@ internal static class LoggingDecorator
             _logger = logger;
         }
         
-        public async Task<Result<TResponse>> Handle(TQuery query, CancellationToken cancellationToken)
+        public async Task<Result<TResponse>> HandleAsync(TQuery query, CancellationToken cancellationToken)
         {
             string queryName = typeof(TQuery).Name;
 
             _logger.LogInformation("Processing query {Query}", queryName);
 
-            Result<TResponse> result = await _innerHandler.Handle(query, cancellationToken);
+            Result<TResponse> result = await _innerHandler.HandleAsync(query, cancellationToken);
 
             if (result.IsSuccess)
             {
