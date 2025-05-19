@@ -1,0 +1,41 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>disable</Nullable>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Dapper" Version="2.1.66" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.5" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.5" />
+        <PackageReference Include="Microsoft.Extensions.Caching.Hybrid" Version="9.5.0" />
+        <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="9.0.5" />
+        <PackageReference Include="Microsoft.AspNetCore.SignalR.StackExchangeRedis" Version="9.0.5" />
+        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.5" />        
+
+        <PackageReference Include="Ardalis.SmartEnum" Version="8.2.0" />
+        <PackageReference Include="Ardalis.SmartEnum.EFCore" Version="8.2.0" />
+        <PackageReference Include="Ardalis.SmartEnum.SystemTextJson" Version="8.1.0" />
+
+        <PackageReference Include="DotNetEnv" Version="3.1.1" />
+        
+        
+        <PackageReference Include="Microsoft.Azure.AppConfiguration.AspNetCore" Version="8.1.2" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.5" />
+        <PackageReference Include="RabbitMQ.Client" Version="7.1.2" />        
+    </ItemGroup>
+    
+    <ItemGroup>
+      <Folder Include="Services\UserServices\Contracts\" />
+    </ItemGroup>
+    
+    <ItemGroup>
+      <ProjectReference Include="..\..\Jennifer.External.OAuth\Jennifer.External.OAuth.csproj" />
+      <ProjectReference Include="..\..\Jennifer.Infrastructure\Jennifer.Infrastructure.csproj" />
+      <ProjectReference Include="..\..\Jennifer.SharedKernel\Jennifer.SharedKernel.csproj" />
+    </ItemGroup>
+    
+</Project>
