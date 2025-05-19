@@ -1,4 +1,5 @@
-﻿using Jennifer.Jwt.DomainEvents;
+﻿using Jennifer.Jwt.Abstractions.DomainEvents;
+using Jennifer.Jwt.Infrastructure.Session;
 using Jennifer.Jwt.Models;
 using Jennifer.SharedKernel;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -15,10 +16,13 @@ public class JenniferDbContext : IdentityDbContext<User, Role, Guid,
     UserToken>, IApplicationDbContext
 {
     private readonly IDomainEventsDispatcher _domainEventDispatcher;
+    private readonly IUserContext _userContext;
 
     public JenniferDbContext(DbContextOptions<JenniferDbContext> options,
+        IUserContext userContext,
         IDomainEventsDispatcher domainEventDispatcher): base(options)
     {
+        _userContext = userContext;
         _domainEventDispatcher = domainEventDispatcher;
     }
 
@@ -39,6 +43,7 @@ public class JenniferDbContext : IdentityDbContext<User, Role, Guid,
         modelBuilder.ApplyConfiguration(new RoleEntityConfiguration());
         modelBuilder.ApplyConfiguration(new RoleClaimEntityConfiguration());
         modelBuilder.ApplyConfiguration(new EmailVerificationCodeEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new ConfigurationEntityConfiguration());
     }
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
@@ -46,9 +51,16 @@ public class JenniferDbContext : IdentityDbContext<User, Role, Guid,
         foreach (var entry in ChangeTracker.Entries<IAuditable>())
         {
             if (entry.State == EntityState.Added)
+            {
+                entry.Entity.CreatedBy = _userContext.UserId ?? "SELF";
                 entry.Entity.CreatedOn = DateTimeOffset.UtcNow;
+            }
+
             if (entry.State == EntityState.Modified)
+            {
+                entry.Entity.ModifiedBy = _userContext.UserId ?? "SELF";
                 entry.Entity.ModifiedOn = DateTimeOffset.UtcNow;
+            }
         }
         
         var result = await base.SaveChangesAsync(cancellationToken);
@@ -59,6 +71,7 @@ public class JenniferDbContext : IdentityDbContext<User, Role, Guid,
     }
     
     public DbSet<EmailVerificationCode> EmailVerificationCodes { get; set; }
+    public DbSet<Configuration> Configurations { get; set; }
     
     private async Task PublishDomainEventsAsync()
     {

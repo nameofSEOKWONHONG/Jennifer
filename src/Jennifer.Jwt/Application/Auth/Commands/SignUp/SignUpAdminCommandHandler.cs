@@ -1,12 +1,11 @@
 ﻿using Jennifer.Jwt.Abstractions.Messaging;
-using Jennifer.Jwt.Application.Auth.Services.Contracts;
 using Jennifer.Jwt.Data;
 using Jennifer.Jwt.Models;
 using Jennifer.SharedKernel;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace Jennifer.Jwt.Application.Auth.Commands.SignUpAdmin;
+namespace Jennifer.Jwt.Application.Auth.Commands.SignUp;
 
 internal class SignUpAdminCommandHandler(JenniferDbContext context, IPasswordHasher<User> passwordHasher)
     : ICommandHandler<SignUpAdminCommand, Guid>
@@ -22,13 +21,15 @@ internal class SignUpAdminCommandHandler(JenniferDbContext context, IPasswordHas
         {
             Id = Guid.CreateVersion7(),
             Email = command.Email,
-            UserName = command.Email,
-            EmailConfirmed = true,
-            PhoneNumber = null,
+            NormalizedEmail = command.Email.ToUpper(),
+            UserName = command.UserName,
+            NormalizedUserName = command.UserName.ToUpper(),
+            EmailConfirmed = false,
+            PhoneNumber = command.PhoneNumber,
             PhoneNumberConfirmed = true,
             TwoFactorEnabled = false,
             ConcurrencyStamp = Guid.NewGuid().ToString(),
-            SecurityStamp = Guid.NewGuid().ToString()         
+            SecurityStamp = Guid.NewGuid().ToString(),
         };
         user.PasswordHash = passwordHasher.HashPassword(user, command.Password);
         

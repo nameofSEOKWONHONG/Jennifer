@@ -6,7 +6,6 @@ using Jennifer.Jwt.Application.Auth.Commands.RefreshToken;
 using Jennifer.Jwt.Application.Auth.Commands.SignIn;
 using Jennifer.Jwt.Application.Auth.Commands.SignOut;
 using Jennifer.Jwt.Application.Auth.Commands.SignUp;
-using Jennifer.Jwt.Application.Auth.Commands.SignUpAdmin;
 using Jennifer.Jwt.Application.Auth.Services.Contracts;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -41,15 +40,20 @@ public static class AuthEndpoint
         #region [sign up process]
         
         /*
-         * 1. 회원 가입 및 가입 확인 메일 발송 : /signup (페이지 주소 포함)
-         * 2. 회원 메일 확인에 따라 페이지 주소로 연결 후 POST 인증 코드 확인 : /signup/verify
+         * [메일 주소 증명]
+         * 1. 회원 가입 및 가입 확인 메일 발송 : /signup (인증 코드 포함)
+         * 2. 회원 메일 확인에 따라 주소 클릭 후 페이지 접근에 따라 확정 : /signup/verify
+         * 
+         * [메일 코드 증명]
+         * 1. 회원 가입 및 가입 확인 메일 발송 : /signup (인증 코드 포함)
+         * 2. 회원 메일 확인에 따라 코드 확인 후 페이지 입력 및 확정 : /signup/verify
          */
 
         group.MapPost("/signup", 
                 async (RegisterRequest request,
                         ICommandHandler<SignUpCommand, IResult> handler, CancellationToken ct) => 
                     await handler.HandleAsync(
-                        new SignUpCommand(request.Email, request.Password, request.UserName, request.PhoneNumber, request.VerifyCode, request.Type), ct))
+                        new SignUpCommand(request.Email, request.Password, request.UserName, request.PhoneNumber, request.Type), ct))
             .WithName("SignUp");
         
         group.MapPost("/signup/verify", 
@@ -57,19 +61,27 @@ public static class AuthEndpoint
                     await handler.HandleAsync(new SignUpVerifyCommand(request.UserId, request.Code), ct))
             .WithName("SignUpVerify");
         
+        // group.MapGet("/signup/verify/{id}/{code}", 
+        //         async (Guid id, string code, ICommandHandler<SignUpVerifyCommand, IResult> handler, CancellationToken ct) => 
+        //             await handler.HandleAsync(new SignUpVerifyCommand(id, code), ct))
+        //     .WithName("SignUpVerify");
+
+        group.MapPost("/signup/retry",
+            async (SignUpRetryRequest request, ICommandHandler<SignUpRetryCommand, IResult> handler,
+                    CancellationToken ct) =>
+                await handler.HandleAsync(new SignUpRetryCommand(request.Email), ct))
+            .WithName("SignUpRetry");
 
         #endregion
         
         #region [admin sign up process]
 
         group.MapPost("/signup/admin",
-                async (Microsoft.AspNetCore.Identity.Data.RegisterRequest request,
-                    ICommandHandler<SignUpAdminCommand, Guid> handler,
-                    CancellationToken ct) =>
+                async (RegisterAdminRequest request, ICommandHandler<SignUpAdminCommand, Guid> handler, CancellationToken ct) =>
                 {
-                    var command = new SignUpAdminCommand(request.Email, request.Password);
+                    var command = new SignUpAdminCommand(request.Email, request.Password, request.UserName, request.PhoneNumber);
                     var result = await handler.HandleAsync(command, ct);
-                    return result.IsSuccess ? Results.Ok() : Results.Problem();
+                    return result.IsSuccess ? Results.Ok() : Results.Problem(result.Error.Description);
                 })
             .WithName("SignUpAdmin");
         
@@ -93,15 +105,16 @@ Use the refresh token to obtain a new JWT token. The refresh token expires after
                     await handler.HandleAsync(new ExternalOAuthCommand(request.Provider, request.AccessToken), ct))
             .WithName("ExternalSignIn");        
         
-        group.MapPost("/signout", 
+        group.MapPost("/signout",
             async (ICommandHandler<SignOutCommand, IResult> handler, CancellationToken ct) => 
                 await handler.HandleAsync(new SignOutCommand(true), ct))
             .WithName("SignOut")
             .RequireAuthorization();
-        
-        group.MapPost("/refreshtoken", 
-            async (string refreshToken, ICommandHandler<RefreshTokenCommand, IResult> handler, CancellationToken ct) =>
-                await handler.HandleAsync(new RefreshTokenCommand(refreshToken), ct))
+
+        group.MapPost("/refreshtoken",
+                async (string refreshToken, ICommandHandler<RefreshTokenCommand, IResult> handler,
+                        CancellationToken ct) =>
+                    await handler.HandleAsync(new RefreshTokenCommand(refreshToken), ct))
             .WithName("RefreshToken");
         
         #region [none login state change password]
@@ -113,8 +126,8 @@ Use the refresh token to obtain a new JWT token. The refresh token expires after
          */
         
         group.MapPost("/password/forgot",
-                async (string email, ICommandHandler<PasswordForgotCommand, IResult> handler, CancellationToken ct) =>
-                    await handler.HandleAsync(new PasswordForgotCommand(email), ct))
+                async (PasswordForgotRequest request, ICommandHandler<PasswordForgotCommand, IResult> handler, CancellationToken ct) =>
+                    await handler.HandleAsync(new PasswordForgotCommand(request.Email, request.UserName), ct))
             .WithName("PasswordForgot")
             ;
         

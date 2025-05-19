@@ -42,21 +42,46 @@ public class CryptoOptions
 
 }
 
+public class EmailSmtpOptions
+{
+    public string SmtpHost { get; }
+    public int SmtpPort { get; }
+    public string SmtpUser { get; }
+    public string SmtpPass { get; }
+
+    public EmailSmtpOptions(string smtpHost, int smtpPort, string smtpUser, string smtpPass)
+    {
+        SmtpHost = smtpHost;
+        SmtpPort = smtpPort;
+        SmtpUser = smtpUser;
+        SmtpPass = smtpPass;
+    }
+}
+
 public class JenniferOptions
 {
     public string Schema { get;  }
+    public string ConnectionString { get;  }
     public JwtOptions Jwt { get;  }
     public CryptoOptions Crypto { get;  }
+    
+    public EmailSmtpOptions EmailSmtp { get;  }
 
-    public JenniferOptions(string schema, CryptoOptions cryptoOptions, JwtOptions jwtOptions)
+    public JenniferOptions(string schema, 
+        string connectionString, 
+        CryptoOptions cryptoOptions, 
+        JwtOptions jwtOptions,
+        EmailSmtpOptions emailSmtpOptions)
     {
         if(schema.xIsEmpty()) throw new ArgumentNullException(nameof(schema));
         if(jwtOptions.xIsEmpty()) throw new ArgumentNullException(nameof(JwtOptions));
         if(cryptoOptions.xIsEmpty()) throw new ArgumentNullException(nameof(CryptoOptions));
         
         this.Schema = schema;
+        this.ConnectionString = connectionString;
         this.Jwt = jwtOptions;
         this.Crypto = cryptoOptions;
+        this.EmailSmtp = emailSmtpOptions;
     }
 }
 

@@ -3,17 +3,16 @@ using Jennifer.Jwt.Abstractions;
 using Jennifer.Jwt.Application.Auth.Services.Abstracts;
 using Jennifer.Jwt.Application.Auth.Services.Contracts;
 using Jennifer.Jwt.Data;
-using Jennifer.Jwt.Services.AuthServices.Contracts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Jennifer.Jwt.Application.Auth.Services.Implements;
 
-public class VerifyCodeService: ServiceBase<VerifyCodeService, VerifyCodeRequest, VerifyCodeResponse>, IVerifyCodeService
+public class VerifyCodeConfirmService: ServiceBase<VerifyCodeConfirmService, VerifyCodeRequest, VerifyCodeResponse>, IVerifyCodeConfirmService
 {
     private readonly JenniferDbContext _dbContext;
 
-    public VerifyCodeService(ILogger<VerifyCodeService> logger,
+    public VerifyCodeConfirmService(ILogger<VerifyCodeConfirmService> logger,
         JenniferDbContext dbContext) : base(logger)
     {
         _dbContext = dbContext;

@@ -1,7 +1,9 @@
 ﻿using System.Security.Claims;
+using Jennifer.Jwt.Application.Auth.Services.Implements;
 using Jennifer.Jwt.Models;
+using Jennifer.Jwt.Services;
 
-namespace Jennifer.Jwt.Services.Abstracts;
+namespace Jennifer.Jwt.Application.Auth.Services.Abstracts;
 
 public interface IJwtService
 {

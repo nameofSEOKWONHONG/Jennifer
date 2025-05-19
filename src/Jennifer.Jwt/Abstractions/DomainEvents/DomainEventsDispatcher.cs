@@ -3,7 +3,7 @@ using eXtensionSharp;
 using Jennifer.SharedKernel;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Jennifer.Jwt.DomainEvents;
+namespace Jennifer.Jwt.Abstractions.DomainEvents;
 
 internal sealed class DomainEventsDispatcher : IDomainEventsDispatcher
 {

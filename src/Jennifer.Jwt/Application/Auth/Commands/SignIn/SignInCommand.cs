@@ -1,8 +1,8 @@
 ﻿using System.Security.Claims;
 using Jennifer.Jwt.Abstractions.Messaging;
+using Jennifer.Jwt.Application.Auth.Services.Abstracts;
 using Jennifer.Jwt.Application.Auth.Services.Contracts;
 using Jennifer.Jwt.Models;
-using Jennifer.Jwt.Services.Abstracts;
 using Jennifer.SharedKernel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -46,7 +46,7 @@ public class SignInCommandHandler(
         }
 
         var refreshToken = jwtService.GenerateRefreshToken();
-        var refreshTokenObj = new Jwt.Services.RefreshToken(refreshToken, DateTime.UtcNow.AddDays(7), DateTime.UtcNow, user.Id.ToString());
+        var refreshTokenObj = new Services.Implements.RefreshToken(refreshToken, DateTime.UtcNow.AddDays(7), DateTime.UtcNow, user.Id.ToString());
         await userManager.SetAuthenticationTokenAsync(user, loginProvider:"internal", tokenName:"refreshToken", tokenValue:refreshToken);
         var encodedRefreshToken = jwtService.ObjectToTokenString(refreshTokenObj);
         var token = TokenResponse.Success(jwtService.GenerateJwtToken(user, userClaims.ToList(), roleClaims), encodedRefreshToken);

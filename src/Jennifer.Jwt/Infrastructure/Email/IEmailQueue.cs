@@ -1,4 +1,6 @@
-﻿namespace Jennifer.SharedKernel.Infrastructure.Email;
+﻿using Jennifer.Jwt.Infrastructure.Email;
+
+namespace Jennifer.SharedKernel.Infrastructure.Email;
 
 /// <summary>
 /// Defines a contract for a queue system responsible for managing email messages

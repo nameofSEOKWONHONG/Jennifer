@@ -3,6 +3,7 @@ using eXtensionSharp;
 using FluentValidation;
 using Jennifer.External.OAuth.Abstracts;
 using Jennifer.Jwt.Abstractions.Messaging;
+using Jennifer.Jwt.Application.Auth.Services.Abstracts;
 using Jennifer.Jwt.Application.Auth.Services.Contracts;
 using Jennifer.Jwt.Models;
 using Jennifer.Jwt.Services.Abstracts;
@@ -81,7 +82,7 @@ public class ExternalOAuthHandler(
         }
 
         var refreshToken = jwtService.GenerateRefreshToken();
-        var refreshTokenObj = new Jwt.Services.RefreshToken(refreshToken, DateTime.UtcNow.AddDays(7), DateTime.UtcNow, user.Id.ToString());
+        var refreshTokenObj = new Services.Implements.RefreshToken(refreshToken, DateTime.UtcNow.AddDays(7), DateTime.UtcNow, user.Id.ToString());
         await userManager.SetAuthenticationTokenAsync(user, loginProvider:"internal", tokenName:"refreshToken", tokenValue:refreshToken);
         var token = TokenResponse.Success(jwtService.GenerateJwtToken(user, userClaims.ToList(), roleClaims), jwtService.ObjectToTokenString(refreshTokenObj));
         return TypedResults.Ok(token);

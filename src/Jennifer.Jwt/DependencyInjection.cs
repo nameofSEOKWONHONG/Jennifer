@@ -1,21 +1,15 @@
 ﻿using System.IO.Compression;
 using System.Text;
 using eXtensionSharp;
-using FluentValidation;
 using Jennifer.External.OAuth;
 using Jennifer.Jwt.Application.Auth;
-using Jennifer.Jwt.Application.Auth.Services;
 using Jennifer.Jwt.Application.Endpoints;
 using Jennifer.Jwt.Data;
-using Jennifer.Jwt.Domains;
 using Jennifer.Jwt.Hubs;
 using Jennifer.Jwt.Infrastructure.Consts;
 using Jennifer.Jwt.Infrastructure.Email;
 using Jennifer.Jwt.Infrastructure.Session;
 using Jennifer.Jwt.Models;
-using Jennifer.Jwt.Services;
-using Jennifer.Jwt.Services.Abstracts;
-using Jennifer.Jwt.Services.AuthServices;
 using Jennifer.Jwt.Services.UserServices;
 using Jennifer.SharedKernel.Infrastructure.Email;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -66,6 +60,7 @@ public static class DependencyInjection
         JenniferOptionSingleton.Attach(jenniferOptions);
         
         services.AddDbContext<JenniferDbContext>(dbContextOptions);
+        services.AddSingleton<IJenniferSqlConnection, JenniferSqlConnection>();
         
         if (identityOptions.xIsEmpty())
         {
@@ -157,16 +152,6 @@ public static class DependencyInjection
         services.AddAuthService();
         services.AddUserService();
         services.AddCacheResolver();
-        
-        services.AddScoped<IJwtService, JwtService>();
-        services.AddScoped<IExternalSignService, ExternalSignService>();
-        services.AddScoped<IUserService, UserService>();
-        services.AddScoped<IUserRoleService, UserRoleService>();
-        services.AddScoped<IUserClaimService, UserClaimService>();
-        services.AddScoped<IRoleService, RoleService>();
-        services.AddScoped<IRoleClaimService, RoleClaimService>();
-        
-        services.AddValidatorsFromAssemblyContaining<UserDtoValidator>(); // 자동 검증 필터 추가
         services.AddExternalOAuthHandler();
 
         #if DEBUG

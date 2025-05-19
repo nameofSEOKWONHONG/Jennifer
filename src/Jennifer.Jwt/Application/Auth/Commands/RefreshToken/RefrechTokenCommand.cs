@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using FluentValidation;
 using Jennifer.Jwt.Abstractions.Messaging;
+using Jennifer.Jwt.Application.Auth.Services.Abstracts;
 using Jennifer.Jwt.Application.Auth.Services.Contracts;
 using Jennifer.Jwt.Models;
 using Jennifer.Jwt.Services.Abstracts;
@@ -56,7 +57,7 @@ public class RefreshTokenCommandHandler(
         }
         
         var newRefreshToken = jwtService.GenerateRefreshToken();
-        var newRefreshTokenObj = new Jwt.Services.RefreshToken(newRefreshToken, DateTime.UtcNow.AddDays(7), DateTime.UtcNow, user.Id.ToString());
+        var newRefreshTokenObj = new Services.Implements.RefreshToken(newRefreshToken, DateTime.UtcNow.AddDays(7), DateTime.UtcNow, user.Id.ToString());
         await userManager.SetAuthenticationTokenAsync(user, loginProvider:"internal", tokenName:"refreshToken", tokenValue:newRefreshToken);
         var newToken = TokenResponse.Success(jwtService.GenerateJwtToken(user, userClaims.ToList(), roleClaims), jwtService.ObjectToTokenString(newRefreshTokenObj));
         return TypedResults.Ok(newToken); 

@@ -1,6 +1,6 @@
 ﻿using Jennifer.SharedKernel;
 
-namespace Jennifer.Jwt.Application.Auth.Services.Contracts;
+namespace Jennifer.Jwt.Application.Auth.Commands.SignUp;
 
 public static class UserErrors
 {

@@ -1,4 +1,4 @@
-﻿using Jennifer.Jwt.Domains;
+﻿using Jennifer.Jwt.Application.Auth.Services.Contracts;
 using Jennifer.Jwt.Services.Abstracts;
 using Jennifer.Jwt.Services.UserServices.Abstracts;
 using Microsoft.AspNetCore.Builder;

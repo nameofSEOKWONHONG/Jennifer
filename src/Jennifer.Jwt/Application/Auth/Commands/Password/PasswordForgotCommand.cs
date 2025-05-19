@@ -10,16 +10,17 @@ namespace Jennifer.Jwt.Application.Auth.Commands.Password;
 
 //PasswordForgot은 비로그인 상태에서 암호변경
 
-public sealed record PasswordForgotCommand(string Email):ICommand<IResult>;
+public sealed record PasswordForgotRequest(string Email, string UserName);
+public sealed record PasswordForgotCommand(string Email, string UserName):ICommand<IResult>;
 
 public class PasswordForgotCommandHandler(
-    IVerifyCodeByEmailSendService verifyCodeByEmailSendService
+    IVerifyCodeSendEmailService verifyCodeSendEmailService
     ): ICommandHandler<PasswordForgotCommand, IResult>
 {
     public async Task<Result<IResult>> HandleAsync(PasswordForgotCommand command, CancellationToken cancellationToken)
     {
-        await verifyCodeByEmailSendService.HandleAsync(
-            new VerifyCodeByEmailSendRequest(command.Email, ENUM_EMAIL_VERIFICATION_TYPE.PASSWORD_FORGOT),
+        await verifyCodeSendEmailService.HandleAsync(
+            new VerifyCodeSendEmailRequest(command.Email, command.UserName, ENUM_EMAIL_VERIFICATION_TYPE.PASSWORD_FORGOT),
             cancellationToken);
         return TypedResults.Ok();
     }

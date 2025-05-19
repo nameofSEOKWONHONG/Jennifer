@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using Jennifer.SharedKernel;
 
-namespace Jennifer.Jwt.Domains;
+namespace Jennifer.Jwt.Application.Auth.Services.Contracts;
 
 public class UserPagingRequest : PagingRequest
 {

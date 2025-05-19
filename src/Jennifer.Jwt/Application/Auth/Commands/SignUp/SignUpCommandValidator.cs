@@ -1,7 +1,6 @@
 ﻿using FluentValidation;
-using Jennifer.Jwt.Application.Auth.Commands.SignUp;
 
-namespace Jennifer.Jwt.Application.SignUp;
+namespace Jennifer.Jwt.Application.Auth.Commands.SignUp;
 
 public class SignUpCommandValidator: AbstractValidator<SignUpCommand>
 {

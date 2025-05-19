@@ -1,4 +1,5 @@
 ﻿using Jennifer.Jwt.Abstractions.Messaging;
+using Jennifer.Jwt.Data;
 using Jennifer.Jwt.Models;
 using Jennifer.Jwt.Models.Contracts;
 using Jennifer.SharedKernel;
@@ -8,14 +9,23 @@ using Microsoft.AspNetCore.Identity;
 namespace Jennifer.Jwt.Application.Auth.Commands.SignUp;
 
 public class SignUpCommandHandler(
-    UserManager<User> userManager): ICommandHandler<SignUpCommand, IResult>
+    JenniferDbContext dbContext,
+    IPasswordHasher<User> passwordHasher): ICommandHandler<SignUpCommand, IResult>
 {
     public async Task<Result<IResult>> HandleAsync(SignUpCommand command, CancellationToken cancellationToken)
     {
+        var exists = dbContext.Users.Any(m => m.NormalizedEmail == command.Email.ToUpper());
+        if (exists)
+        {
+            return TypedResults.Problem("Already exists");
+        }
+        
         var user = new User
         {
             Email = command.Email,
+            NormalizedEmail = command.Email.ToUpper(),
             UserName = command.UserName,
+            NormalizedUserName = command.UserName.ToUpper(),
             EmailConfirmed = false,
             PhoneNumber = command.PhoneNumber,
             PhoneNumberConfirmed = true,
@@ -23,31 +33,13 @@ public class SignUpCommandHandler(
             LockoutEnabled = false,
             AccessFailedCount = 0,
             Type = ENUM_USER_TYPE.CUSTOMER,
-            CreatedOn = DateTimeOffset.UtcNow
         };
-        var result = await userManager.CreateAsync(user, command.Password);
-        if (!result.Succeeded)
-        {
-            // 충돌 에러 존재하면 409, 그 외는 400
-            if (result.Errors.Any(e => e.Code == "DuplicateUserName" || e.Code == "DuplicateEmail"))
-            {
-                return TypedResults.Conflict(new
-                {
-                    Message = "이미 등록된 사용자입니다.",
-                    Errors = result.Errors
-                });
-            }
-
-            return TypedResults.BadRequest(new
-            {
-                Message = "회원가입 실패",
-                Errors = result.Errors.Select(e => new
-                {
-                    e.Code,
-                    e.Description
-                })
-            });
-        }
+        user.PasswordHash = passwordHasher.HashPassword(user, command.Password);
+        await dbContext.Users.AddAsync(user, cancellationToken);
+        
+        user.Raise(new SignUpDomainEvent(user));
+        
+        await dbContext.SaveChangesAsync(cancellationToken);
 
         return TypedResults.Ok(user.Id.ToString());
     }

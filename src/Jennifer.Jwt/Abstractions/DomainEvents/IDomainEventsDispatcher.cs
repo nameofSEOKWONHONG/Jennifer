@@ -1,6 +1,6 @@
 ﻿using Jennifer.SharedKernel;
 
-namespace Jennifer.Jwt.DomainEvents;
+namespace Jennifer.Jwt.Abstractions.DomainEvents;
 
 public interface IDomainEventsDispatcher
 {

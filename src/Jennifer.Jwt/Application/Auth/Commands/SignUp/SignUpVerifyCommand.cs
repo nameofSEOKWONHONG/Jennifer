@@ -5,7 +5,6 @@ using Jennifer.Jwt.Application.Auth.Services.Abstracts;
 using Jennifer.Jwt.Application.Auth.Services.Contracts;
 using Jennifer.Jwt.Data;
 using Jennifer.Jwt.Models.Contracts;
-using Jennifer.Jwt.Services.AuthServices.Contracts;
 using Jennifer.SharedKernel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -17,7 +16,7 @@ public sealed record SignUpVerifyRequest(Guid UserId, string Code);
 public sealed record SignUpVerifyCommand(Guid UserId, string Code):ICommand<IResult>;
 
 public class SignUpVerifyCommandHandler(JenniferDbContext dbContext,
-    IVerifyCodeService verifyCodeService): ICommandHandler<SignUpVerifyCommand, IResult>
+    IVerifyCodeConfirmService verifyCodeConfirmService): ICommandHandler<SignUpVerifyCommand, IResult>
 {
     public async Task<Result<IResult>> HandleAsync(SignUpVerifyCommand command, CancellationToken cancellationToken)
     {
@@ -25,11 +24,13 @@ public class SignUpVerifyCommandHandler(JenniferDbContext dbContext,
         if(user.xIsEmpty()) 
             return TypedResults.BadRequest("Not found");
         
-        var verified = await verifyCodeService.HandleAsync(new VerifyCodeRequest(user.Email, command.Code, ENUM_EMAIL_VERIFICATION_TYPE.SIGN_UP_BEFORE), cancellationToken);
+        var verified = await verifyCodeConfirmService.HandleAsync(new VerifyCodeRequest(user.Email, command.Code, ENUM_EMAIL_VERIFICATION_TYPE.SIGN_UP_BEFORE), cancellationToken);
         if(verified.Status != ENUM_VERITY_RESULT_STATUS.EMAIL_CONFIRM) 
             return TypedResults.BadRequest(verified.Message);
 
         user.EmailConfirmed = true;
+
+        await dbContext.SaveChangesAsync(cancellationToken);
         
         return TypedResults.Ok();
     }

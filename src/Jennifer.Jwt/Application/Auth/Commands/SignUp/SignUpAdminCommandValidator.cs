@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace Jennifer.Jwt.Application.Auth.Commands.SignUpAdmin;
+namespace Jennifer.Jwt.Application.Auth.Commands.SignUp;
 
 internal sealed class SignUpAdminCommandValidator : AbstractValidator<SignUpAdminCommand>
 {
@@ -8,5 +8,7 @@ internal sealed class SignUpAdminCommandValidator : AbstractValidator<SignUpAdmi
     {
         RuleFor(c => c.Email).NotEmpty().EmailAddress();
         RuleFor(c => c.Password).NotEmpty().MinimumLength(8);
+        RuleFor(c => c.UserName).NotEmpty().MaximumLength(30);
+        RuleFor(c => c.PhoneNumber).NotEmpty().MaximumLength(20);
     }
 }

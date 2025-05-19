@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Http;
 
 namespace Jennifer.Jwt.Application.Auth.Services.Abstracts;
 
-public interface IVerifyCodeByEmailSendService : IServiceBase<VerifyCodeByEmailSendRequest, IResult>
+public interface IExternalOAuthService: IServiceBase<ExternalSignInRequest, IResult>
 {
-    
 }

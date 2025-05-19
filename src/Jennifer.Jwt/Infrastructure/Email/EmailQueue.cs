@@ -1,4 +1,5 @@
 ﻿using System.Threading.Channels;
+using Jennifer.Jwt.Infrastructure.Email;
 
 namespace Jennifer.SharedKernel.Infrastructure.Email;
 

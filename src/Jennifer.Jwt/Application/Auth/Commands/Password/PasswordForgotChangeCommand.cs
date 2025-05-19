@@ -4,7 +4,6 @@ using Jennifer.Jwt.Application.Auth.Services.Abstracts;
 using Jennifer.Jwt.Application.Auth.Services.Contracts;
 using Jennifer.Jwt.Models;
 using Jennifer.Jwt.Models.Contracts;
-using Jennifer.Jwt.Services.AuthServices.Contracts;
 using Jennifer.SharedKernel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -15,11 +14,11 @@ public sealed record PasswordForgotChangeCommand(string Email, string Code, stri
 
 public class PasswordForgotChangeCommandHandler(UserManager<User> userManager,
     IPasswordHasher<User> passwordHasher,
-    IVerifyCodeService verifyCodeService): ICommandHandler<PasswordForgotChangeCommand, IResult>
+    IVerifyCodeConfirmService verifyCodeConfirmService): ICommandHandler<PasswordForgotChangeCommand, IResult>
 {
     public async Task<Result<IResult>> HandleAsync(PasswordForgotChangeCommand command, CancellationToken cancellationToken)
     {
-        var verified = await verifyCodeService.HandleAsync(new VerifyCodeRequest(command.Email, command.Code, ENUM_EMAIL_VERIFICATION_TYPE.PASSWORD_FORGOT), cancellationToken);
+        var verified = await verifyCodeConfirmService.HandleAsync(new VerifyCodeRequest(command.Email, command.Code, ENUM_EMAIL_VERIFICATION_TYPE.PASSWORD_FORGOT), cancellationToken);
         if(verified.Status != ENUM_VERITY_RESULT_STATUS.EMAIL_CONFIRM)
             return TypedResults.BadRequest(verified.Message);
         

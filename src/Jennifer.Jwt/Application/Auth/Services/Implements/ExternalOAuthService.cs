@@ -2,21 +2,20 @@
 using eXtensionSharp;
 using Jennifer.External.OAuth.Abstracts;
 using Jennifer.Jwt.Abstractions;
+using Jennifer.Jwt.Application.Auth.Services.Abstracts;
 using Jennifer.Jwt.Application.Auth.Services.Contracts;
 using Jennifer.Jwt.Models;
-using Jennifer.Jwt.Services.Abstracts;
-using Jennifer.Jwt.Services.AuthServices.Contracts;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Jennifer.Jwt.Services;
+namespace Jennifer.Jwt.Application.Auth.Services.Implements;
 
 /// <summary>
 /// Represents a service that handles external sign-in operations using third-party providers.
 /// </summary>
-public class ExternalSignService: ServiceBase<ExternalSignService, ExternalSignInRequest, IResult>, IExternalSignService
+public class ExternalOAuthService: ServiceBase<ExternalOAuthService, ExternalSignInRequest, IResult>, IExternalOAuthService
 {
     private readonly UserManager<User> _userManager;
     private readonly RoleManager<Role> _roleManager;
@@ -31,7 +30,7 @@ public class ExternalSignService: ServiceBase<ExternalSignService, ExternalSignI
     /// with the third-party provider, retrieves user and role information,
     /// and generates necessary authentication tokens for the application.
     /// </remarks>
-    public ExternalSignService(ILogger<ExternalSignService> logger,
+    public ExternalOAuthService(ILogger<ExternalOAuthService> logger,
         UserManager<User> userManager,
         RoleManager<Role> roleManager,
         IOptions<JwtService> options,

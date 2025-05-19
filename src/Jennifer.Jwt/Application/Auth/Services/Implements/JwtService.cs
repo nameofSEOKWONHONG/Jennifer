@@ -3,13 +3,13 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using Jennifer.Jwt.Application.Auth.Services.Abstracts;
 using Jennifer.Jwt.Infrastructure.Consts;
 using Jennifer.Jwt.Infrastructure.Extenstions;
 using Jennifer.Jwt.Models;
-using Jennifer.Jwt.Services.Abstracts;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Jennifer.Jwt.Services;
+namespace Jennifer.Jwt.Application.Auth.Services.Implements;
 
 public class JwtService : IJwtService
 {
@@ -22,6 +22,7 @@ public class JwtService : IJwtService
         var claims = new List<Claim>()
         {
             new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+            new Claim("emailConfirmed", user.EmailConfirmed.ToString()),
             new Claim("cs", user.ConcurrencyStamp!)
         };
         claims.AddRange(userClaims);

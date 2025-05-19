@@ -41,12 +41,6 @@ public sealed class SignUpCommand : ICommand<IResult>
     public string PhoneNumber { get; set; }
 
     /// <summary>
-    /// Gets or sets the verification code used for account validation during the registration
-    /// process or other authentication-related operations.
-    /// </summary>
-    public string VerifyCode { get; set; }
-
-    /// <summary>
     /// Represents the type of email verification being applied.
     /// </summary>
     /// <remarks>
@@ -56,13 +50,12 @@ public sealed class SignUpCommand : ICommand<IResult>
     /// </remarks>
     public ENUM_EMAIL_VERIFICATION_TYPE Type { get; set; }
 
-    public SignUpCommand(string email, string password, string userName, string phoneNumber, string verifyCode, ENUM_EMAIL_VERIFICATION_TYPE type)
+    public SignUpCommand(string email, string password, string userName, string phoneNumber, ENUM_EMAIL_VERIFICATION_TYPE type)
     {
         Email = email;
         Password = password;
         UserName = userName;
         PhoneNumber = phoneNumber;
-        VerifyCode = verifyCode;
         Type = type;
     }
 }

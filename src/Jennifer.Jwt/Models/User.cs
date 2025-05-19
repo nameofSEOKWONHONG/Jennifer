@@ -15,7 +15,9 @@ public class User : IdentityUser<Guid>, IAuditable, IEntity
     public ENUM_USER_TYPE Type { get; set; }
     public bool IsDelete { get; set; }
     public DateTimeOffset CreatedOn { get; set; } = DateTimeOffset.UtcNow;
+    public string CreatedBy { get; set; }
     public DateTimeOffset? ModifiedOn { get; set; }
+    public string ModifiedBy { get; set; }
     public virtual ICollection<UserRole> UserRoles { get; set; }
     public virtual ICollection<UserClaim> Claims { get; set; }
     public virtual ICollection<UserLogin> Logins { get; set; }
@@ -23,7 +25,6 @@ public class User : IdentityUser<Guid>, IAuditable, IEntity
     
     private readonly List<IDomainEvent> _domainEvents = [];
 
-    [NotMapped]
     public List<IDomainEvent> DomainEvents => [.. _domainEvents];
     public void ClearDomainEvents()
     {
@@ -60,11 +61,19 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<User>
         
         builder.Property(e => e.Type)
             .HasConversion(new SmartEnumConverter<ENUM_USER_TYPE, int>());
+
+        builder.Property(m => m.CreatedBy)
+            .HasMaxLength(36)
+            .IsRequired();
         builder.Property(m => m.CreatedOn)
             .HasColumnType("datetimeoffset")
             .HasDefaultValueSql("SYSDATETIMEOFFSET()");
         builder.Property(m => m.ModifiedOn)
             .HasColumnType("datetimeoffset");
+        builder.Property(m => m.ModifiedBy)
+            .HasMaxLength(36);
+
+        builder.Ignore(m => m.DomainEvents);
         
         builder.HasMany(m => m.UserRoles)
             .WithOne(ur => ur.User)

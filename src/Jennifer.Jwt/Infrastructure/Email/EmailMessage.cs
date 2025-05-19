@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.StaticFiles;
+﻿using eXtensionSharp;
+using Jennifer.Jwt.Infrastructure.Consts;
+using Microsoft.AspNetCore.StaticFiles;
 
-namespace Jennifer.SharedKernel.Infrastructure.Email;
+namespace Jennifer.Jwt.Infrastructure.Email;
 
 /// <summary>
 /// Represents an email message for use in email sending systems.
@@ -11,7 +13,8 @@ namespace Jennifer.SharedKernel.Infrastructure.Email;
 /// </summary>
 public class EmailMessage
 {
-    public (string From, string FromName) FromAndFromName;
+    public string From { get; private set; }
+    public string FromName { get; private set; }
     public List<(string To, string ToName)> To { get; private set; } = new();
     public List<(string Cc, string CcName)> Cc { get; private set; } = new();
     public string Subject { get; private set; }
@@ -29,7 +32,8 @@ public class EmailMessage
 
         public Builder From(string name, string from)
         {
-            _email.FromAndFromName = (from, name);
+            _email.FromName = name;
+            _email.From = from;
             return this;
         }
 
@@ -81,7 +85,17 @@ public class EmailMessage
             return this;
         }
 
-        public EmailMessage Build() => _email;
+        public EmailMessage Build()
+        {
+            this._email.FromName = this._email.FromName.xValue<string>(this._email.From);
+            if (this._email.FromName.xIsEmpty())
+            {
+                this._email.FromName = "Jennifer";
+                this._email.From = JenniferOptionSingleton.Instance.Options.EmailSmtp.SmtpUser;
+            }
+
+            return _email;
+        }
     }
 }
 

@@ -1,4 +1,4 @@
-﻿using Jennifer.Jwt.Domains;
+﻿using Jennifer.Jwt.Application.Auth.Services.Contracts;
 using Jennifer.SharedKernel;
 
 namespace Jennifer.Jwt.Services.Abstracts;

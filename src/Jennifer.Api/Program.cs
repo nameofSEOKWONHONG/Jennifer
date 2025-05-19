@@ -34,8 +34,18 @@ var jwtOptions = new JwtOptions(Environment.GetEnvironmentVariable("JWT_KEY"),
     Environment.GetEnvironmentVariable("JWT_AUDIANCE"),
     Environment.GetEnvironmentVariable("JWT_EXPIRYMINUTES").xValue<int>(),
     Environment.GetEnvironmentVariable("JWT_REFRESHEXPIRYMINUTES").xValue<int>());
+var smtpOptions = new EmailSmtpOptions(
+    Environment.GetEnvironmentVariable("SMTP_HOST"),
+    Environment.GetEnvironmentVariable("SMTP_PORT").xValue<int>(),
+    Environment.GetEnvironmentVariable("SMTP_USERNAME"),
+    Environment.GetEnvironmentVariable("SMTP_PASSWORD")
+);
 
-var options = new JenniferOptions("account", cryptoOptions, jwtOptions);
+var options = new JenniferOptions("account", 
+    Environment.GetEnvironmentVariable("SQLSERVER_CONNECTION"), 
+    cryptoOptions, 
+    jwtOptions,
+    smtpOptions);
 
 // Add jennifer account manager
 builder.Services.AddJennifer(options,

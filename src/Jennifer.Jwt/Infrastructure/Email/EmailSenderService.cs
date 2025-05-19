@@ -1,4 +1,5 @@
 ﻿using eXtensionSharp;
+using Jennifer.Jwt.Infrastructure.Consts;
 using Jennifer.SharedKernel.Infrastructure.Email;
 using MailKit.Net.Smtp;
 using MailKit.Security;
@@ -13,12 +14,6 @@ namespace Jennifer.Jwt.Infrastructure.Email;
 /// </summary>
 public class EmailSenderService : BackgroundService
 {
-    //TODO: Modify the following settings. use IOptions<> or IConfiguration
-    private readonly string _smtpHost = "smtp.example.com";
-    private readonly int _smtpPort = 587;
-    private readonly string _smtpUser = "your@email.com";
-    private readonly string _smtpPass = "password";
-    
     private readonly IEmailQueue _emailQueue;
     private readonly ILogger<EmailSenderService> _logger;
 
@@ -63,8 +58,7 @@ public class EmailSenderService : BackgroundService
     {
         var message = new MimeMessage();
         message.From.Add(new MailboxAddress(
-            email.FromAndFromName.FromName ?? email.FromAndFromName.From, // FromName이 없으면 주소 자체를 이름으로
-            email.FromAndFromName.From
+            email.FromName, email.From
         ));
         
         if(email.To.xIsEmpty()) throw new ArgumentNullException($"email.To is empty");
@@ -82,11 +76,15 @@ public class EmailSenderService : BackgroundService
         }
         
         message.Subject = email.Subject;
-        var bodyBuilder = new BodyBuilder
+        var bodyBuilder = new BodyBuilder();
+        if (email.IsHtml)
         {
-            HtmlBody = email.IsHtml ? email.Body : null,
-            TextBody = !email.IsHtml ? email.Body : null
-        };
+            bodyBuilder.HtmlBody = email.Body;
+        }
+        else
+        {
+            bodyBuilder.TextBody = email.Body;
+        }
 
         foreach (var attachment in email.Attachments)
         {
@@ -96,10 +94,13 @@ public class EmailSenderService : BackgroundService
                 ContentType.Parse(attachment.ContentType) // 예: "application/pdf"
             );
         }
+        message.Body = bodyBuilder.ToMessageBody();
 
         using var client = new SmtpClient();
-        await client.ConnectAsync(_smtpHost, _smtpPort, SecureSocketOptions.StartTls);
-        await client.AuthenticateAsync(_smtpUser, _smtpPass);
+        await client.ConnectAsync(JenniferOptionSingleton.Instance.Options.EmailSmtp.SmtpHost,
+            JenniferOptionSingleton.Instance.Options.EmailSmtp.SmtpPort, SecureSocketOptions.SslOnConnect);
+        await client.AuthenticateAsync(JenniferOptionSingleton.Instance.Options.EmailSmtp.SmtpUser,
+            JenniferOptionSingleton.Instance.Options.EmailSmtp.SmtpPass);
         await client.SendAsync(message);
         await client.DisconnectAsync(true);
     }

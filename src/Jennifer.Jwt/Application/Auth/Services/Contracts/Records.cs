@@ -1,5 +1,4 @@
 ﻿using Jennifer.Jwt.Models.Contracts;
-using Jennifer.Jwt.Services.AuthServices.Contracts;
 
 namespace Jennifer.Jwt.Application.Auth.Services.Contracts;
 
@@ -86,6 +85,14 @@ public class RegisterRequest
     public ENUM_EMAIL_VERIFICATION_TYPE Type { get; set; }   
 }
 
+public class RegisterAdminRequest
+{
+    public string Email { get; set; }
+    public string Password { get; set; }
+    public string UserName { get; set; }
+    public string PhoneNumber { get; set; }
+}
+
 /// <summary>
 /// Represents a request for verifying an email address using a verification code.
 /// </summary>
@@ -116,6 +123,6 @@ public class VerifyCodeResponse
     public string Message { get; set; }   
 }
 
-public record VerifyCodeByEmailSendRequest(string Email, ENUM_EMAIL_VERIFICATION_TYPE Type);
+public record VerifyCodeSendEmailRequest(string Email, string UserName, ENUM_EMAIL_VERIFICATION_TYPE Type);
 
 public record ExternalSignInRequest(string Provider, string AccessToken);

@@ -1,7 +1,9 @@
-﻿using Jennifer.Jwt.Abstractions;
+﻿using eXtensionSharp;
+using Jennifer.Jwt.Abstractions;
 using Jennifer.Jwt.Application.Auth.Services.Abstracts;
 using Jennifer.Jwt.Application.Auth.Services.Contracts;
 using Jennifer.Jwt.Data;
+using Jennifer.Jwt.Infrastructure.Email;
 using Jennifer.Jwt.Models;
 using Jennifer.SharedKernel.Infrastructure.Email;
 using Microsoft.AspNetCore.Http;
@@ -9,13 +11,13 @@ using Microsoft.Extensions.Logging;
 
 namespace Jennifer.Jwt.Application.Auth.Services.Implements;
 
-public class VerifyCodeByEmailSendService : ServiceBase<VerifyCodeByEmailSendService, VerifyCodeByEmailSendRequest, IResult>, IVerifyCodeByEmailSendService
-{
+public class VerifyCodeSendEmailService : ServiceBase<VerifyCodeSendEmailService, VerifyCodeSendEmailRequest, IResult>, 
+    IVerifyCodeSendEmailService {
     private readonly JenniferDbContext _applicationDbContext;
     private readonly IEmailQueue _emailQueue;
 
-    public VerifyCodeByEmailSendService(
-        ILogger<VerifyCodeByEmailSendService> logger,
+    public VerifyCodeSendEmailService(
+        ILogger<VerifyCodeSendEmailService> logger,
         JenniferDbContext applicationDbContext,
         IEmailQueue emailQueue) : base(logger)
     {
@@ -23,16 +25,17 @@ public class VerifyCodeByEmailSendService : ServiceBase<VerifyCodeByEmailSendSer
         _emailQueue = emailQueue;
     }
 
-    public async Task<IResult> HandleAsync(VerifyCodeByEmailSendRequest request, CancellationToken cancellationToken)
+    public async Task<IResult> HandleAsync(VerifyCodeSendEmailRequest request, CancellationToken cancellationToken)
     {
         var code = new Random().Next(100000, 999999).ToString();
         var emailSubject = "Jennifer 이메일 인증 코드 안내";
-        var emailFormat = @"안녕하세요,
+        var emailFormat = @"안녕하세요. 
 
+{0}님,
 Jennifer 서비스 이용을 위한 이메일 인증 코드를 안내해 드립니다.
 아래의 인증 코드를 입력창에 입력해 주세요.
 
-인증 코드: {0}
+인증 코드: {1}
 
 ※ 인증 코드는 발급 시점으로부터 30분간 유효합니다.
 ※ 인증 시도 5회 실패 시 새로운 인증 코드를 발급받으셔야 합니다.
@@ -53,13 +56,14 @@ Jennifer";
             CreatedAt = DateTimeOffset.UtcNow,
             IsUsed = false
         }, cancellationToken);
+        await _applicationDbContext.SaveChangesAsync(cancellationToken);
 
-        var emailBody = string.Format(emailFormat, code);
+        var emailBody = string.Format(emailFormat, request.UserName.xValue<string>(request.Email), code);
         var mail = new EmailMessage.Builder()
-            .From("Jennifer", "<EMAIL>")
-            .To(request.Email, request.Email)
+            .To(request.UserName.xIsEmpty().xValue<string>(request.Email), request.Email)
             .Subject(emailSubject)
             .Body(emailBody)
+            .IsHtml(false)
             .Build();
         
         await _emailQueue.EnqueueAsync(mail, cancellationToken);

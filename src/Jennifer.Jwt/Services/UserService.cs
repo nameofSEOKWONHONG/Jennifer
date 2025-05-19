@@ -1,7 +1,7 @@
 ﻿using eXtensionSharp;
 using FluentValidation;
+using Jennifer.Jwt.Application.Auth.Services.Contracts;
 using Jennifer.Jwt.Data;
-using Jennifer.Jwt.Domains;
 using Jennifer.Jwt.Infrastructure.Session;
 using Jennifer.Jwt.Models;
 using Jennifer.Jwt.Services.Abstracts;
@@ -10,10 +10,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Jennifer.Jwt.Services;
-
-
-
-
 
 public class UserService: IUserService
 {
