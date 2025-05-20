@@ -399,3 +399,13 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+src/global.json
+src/.idea/.idea.JenniferProject/.idea/.gitignore
+src/.idea/.idea.JenniferProject/.idea/.name
+src/.idea/.idea.JenniferProject/.idea/AndroidProjectSystem.xml
+src/.idea/.idea.JenniferProject/.idea/dataSources.xml
+src/.idea/.idea.JenniferProject/.idea/encodings.xml
+src/.idea/.idea.JenniferProject/.idea/indexLayout.xml
+src/.idea/.idea.JenniferProject/.idea/vcs.xml
+src/.idea/.idea.JenniferProject/.idea/dictionaries/project.xml
+src/SingleTenant/Jennifer.Api/.env

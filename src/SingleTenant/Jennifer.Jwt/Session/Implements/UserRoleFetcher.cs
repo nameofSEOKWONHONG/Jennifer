@@ -16,6 +16,6 @@ public class UserRoleFetcher(IJenniferSqlConnection connection) : IUserRoleFetch
         return await connection.HandleAsync(con => con.QueryAsync<UserRole>(@"
 SELECT *
 FROM account.UserRoles
-WHERE UserId = @USER_ID", new { id }));
+WHERE UserId = @USER_ID", new { USER_ID = id }));
     }
 }
