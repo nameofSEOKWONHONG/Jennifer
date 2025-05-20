@@ -3,5 +3,5 @@
 public interface IAppConfigProvider
 {
     Task<string> GetAsync(string key);
-    Task<IDictionary<string, string>> GetAllAsync(string prefix = null);
+    Task<IDictionary<string, string>> GetAllAsync(string prefix);
 }

@@ -1,4 +1,4 @@
-﻿namespace Jennifer.Infrastructure.Events;
+﻿namespace Jennifer.Infrastructure.MessageQueues;
 
 public class RabbitMqProducer
 {

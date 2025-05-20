@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 using Jennifer.Infrastructure.Abstractions.Messaging;
 using Jennifer.Jwt.Application.Auth.Contracts;
 using Jennifer.Jwt.Application.Auth.Services.Abstracts;
@@ -47,8 +48,10 @@ public class SignInCommandHandler(
 
         var refreshToken = jwtService.GenerateRefreshToken();
         var refreshTokenObj = new Services.Implements.RefreshToken(refreshToken, DateTime.UtcNow.AddDays(7), DateTime.UtcNow, user.Id.ToString());
-        user.SecurityStamp = Guid.NewGuid().ToString();
+        
         var result = await userManager.SetAuthenticationTokenAsync(user, loginProvider:"internal", tokenName:"refreshToken", tokenValue:refreshToken);
+        if(!result.Succeeded) throw new ValidationException(result.Errors.Select(m => m.Description).First());
+        
         var encodedRefreshToken = jwtService.ObjectToTokenString(refreshTokenObj);
         return new TokenResponse(jwtService.GenerateJwtToken(user, userClaims.ToList(), roleClaims), encodedRefreshToken);
     }

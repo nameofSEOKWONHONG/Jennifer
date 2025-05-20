@@ -2,6 +2,7 @@
 using System.Text;
 using eXtensionSharp;
 using Jennifer.External.OAuth;
+using Jennifer.Infrastructure;
 using Jennifer.Infrastructure.Data;
 using Jennifer.Infrastructure.Email;
 using Jennifer.Infrastructure.Options;
@@ -80,6 +81,9 @@ public static class DependencyInjection
         services.AddIdentity<User, Role>(identityOptions)
             .AddEntityFrameworkStores<JenniferDbContext>()
             .AddDefaultTokenProviders();
+        
+        services.AddTransient<IUserValidator<User>, UserNameValidator<User>>();
+
 
         /* [as cookie]
          *         builder.Services.AddAuthentication(options =>

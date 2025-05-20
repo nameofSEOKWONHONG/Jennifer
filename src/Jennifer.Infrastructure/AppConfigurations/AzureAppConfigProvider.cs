@@ -16,11 +16,11 @@ public class AzureAppConfigProvider : IAppConfigProvider
         return Task.FromResult(_configuration[key]);
     }
 
-    public Task<IDictionary<string, string>> GetAllAsync(string prefix = null)
+    public Task<IDictionary<string, string>> GetAllAsync(string prefix)
     {
         var values = _configuration
             .AsEnumerable()
-            .Where(kv => prefix == null || kv.Key.StartsWith(prefix))
+            .Where(kv => kv.Key.StartsWith(prefix))
             .ToDictionary(kv => kv.Key, kv => kv.Value ?? "");
         return Task.FromResult<IDictionary<string, string>>(values);
     }

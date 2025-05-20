@@ -57,7 +57,10 @@ public class RefreshTokenCommandHandler(
         
         var newRefreshToken = jwtService.GenerateRefreshToken();
         var newRefreshTokenObj = new Services.Implements.RefreshToken(newRefreshToken, DateTime.UtcNow.AddDays(7), DateTime.UtcNow, user.Id.ToString());
-        await userManager.SetAuthenticationTokenAsync(user, loginProvider:"internal", tokenName:"refreshToken", tokenValue:newRefreshToken);
+        
+        var result = await userManager.SetAuthenticationTokenAsync(user, loginProvider:"internal", tokenName:"refreshToken", tokenValue:newRefreshToken);
+        if(!result.Succeeded) throw new ValidationException(result.Errors.Select(m => m.Description).First());
+        
         return new TokenResponse(jwtService.GenerateJwtToken(user, userClaims.ToList(), roleClaims), jwtService.ObjectToTokenString(newRefreshTokenObj));
     }
 }

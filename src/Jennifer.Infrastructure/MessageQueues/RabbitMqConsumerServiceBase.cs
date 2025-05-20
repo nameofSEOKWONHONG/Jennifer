@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
-namespace Jennifer.Infrastructure.Events;
+namespace Jennifer.Infrastructure.MessageQueues;
 
 public class RabbitMqConsumerServiceBase : BackgroundService, IAsyncDisposable
 {
