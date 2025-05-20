@@ -1,20 +1,9 @@
 ﻿using System.Security.Claims;
 using Jennifer.Jwt.Models;
 using Jennifer.Jwt.Session.Abstracts;
-using Jennifer.SharedKernel;
 using Microsoft.AspNetCore.Http;
 
-namespace Jennifer.Jwt.Session;
-
-public interface IUserContext
-{
-    string UserId { get; }
-    string UserName { get; }
-    
-    Guid UserGuid { get; }
-
-    void SetContext(string userName);
-}
+namespace Jennifer.Jwt.Session.Implements;
 
 public class UserContext : IUserContext
 {
@@ -25,9 +14,8 @@ public class UserContext : IUserContext
     public UserContext(IHttpContextAccessor httpContextAccessor,
         IUserRoleFetcher userRoleFetcher)
     {
+        UserId = httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
         _userRoleFetcher = userRoleFetcher;
-        var context = httpContextAccessor.HttpContext;
-        UserId = context?.User.FindFirstValue(ClaimTypes.NameIdentifier);
     }
     
     public void SetContext(string userName) => UserName = userName;
@@ -36,9 +24,3 @@ public class UserContext : IUserContext
         => await _userRoleFetcher.FetchAsync(UserGuid);
 }
 
-public interface ISessionContext
-{
-    IUserContext UserContext { get; }   
-    bool IsAuthenticated { get; }
-    IApplicationDbContext ApplicationDbContext { get; }
-}

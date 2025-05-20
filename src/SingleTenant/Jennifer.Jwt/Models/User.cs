@@ -1,4 +1,5 @@
-﻿using Jennifer.Infrastructure.Options;
+﻿using System.Linq.Expressions;
+using Jennifer.Infrastructure.Options;
 using Ardalis.SmartEnum.EFCore;
 using Jennifer.Infrastructure.Converters;
 using Jennifer.Jwt.Models.Contracts;

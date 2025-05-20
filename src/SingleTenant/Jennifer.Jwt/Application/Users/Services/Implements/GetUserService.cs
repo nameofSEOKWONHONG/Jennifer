@@ -3,6 +3,7 @@ using Jennifer.Jwt.Application.Auth.Contracts;
 using Jennifer.Jwt.Data;
 using Jennifer.Jwt.Services.UserServices.Abstracts;
 using Jennifer.Jwt.Session;
+using Jennifer.Jwt.Session.Abstracts;
 using Jennifer.SharedKernel;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;

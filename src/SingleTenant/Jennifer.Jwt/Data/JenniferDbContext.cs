@@ -1,6 +1,8 @@
 ﻿using Jennifer.Infrastructure.Abstractions.DomainEvents;
+using Jennifer.Infrastructure.Data;
 using Jennifer.Jwt.Models;
 using Jennifer.Jwt.Session;
+using Jennifer.Jwt.Session.Abstracts;
 using Jennifer.SharedKernel;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;

@@ -29,16 +29,17 @@ public static class UserEndpoint
                 await handler.HandleAsync(new GetUserQuery(id), ct))
             .WithName("GetUser");
         
-        group.MapPost("/",
-            async (UserDto user, IUserService service) => 
-                await service.AddUser(user)).WithName("AddUser");
-        
-        group.MapPut("/", 
-            async (UserDto user, IUserService service, CancellationToken ct) =>
-                await service.ModifyUser(user, ct)).WithName("ModifyUser");
+        // group.MapPost("/",
+        //     async (UserDto user, IUserService service) => 
+        //         await service.AddUser(user)).WithName("AddUser");
+        //
+        // group.MapPut("/", 
+        //     async (UserDto user, IUserService service, CancellationToken ct) =>
+        //         await service.ModifyUser(user, ct)).WithName("ModifyUser");
         
         group.MapDelete("/{id}", 
-            async (Guid id, IUserService service, CancellationToken ct) =>
-                await service.RemoveUser(id, ct)).WithName("RemoveUser");
+            async (Guid id, ICommandHandler<RemoveUserCommand> handler, CancellationToken ct) =>
+                await handler.HandleAsync(new RemoveUserCommand(id), ct))
+            .WithName("RemoveUser");
     }
 }

@@ -2,7 +2,7 @@
 using System.Text;
 using eXtensionSharp;
 using Jennifer.External.OAuth;
-using Jennifer.Infrastructure;
+using Jennifer.Infrastructure.Data;
 using Jennifer.Infrastructure.Email;
 using Jennifer.Infrastructure.Options;
 using Jennifer.Jwt.Application.Auth;
@@ -11,7 +11,6 @@ using Jennifer.Jwt.Application.Users;
 using Jennifer.Jwt.Data;
 using Jennifer.Jwt.Hubs;
 using Jennifer.Jwt.Models;
-using Jennifer.Jwt.Services.UserServices;
 using Jennifer.Jwt.Session;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -61,7 +60,7 @@ public static class DependencyInjection
         JenniferOptionSingleton.Attach(jenniferOptions);
         
         services.AddDbContext<JenniferDbContext>(dbContextOptions);
-        services.AddSingleton<IJenniferSqlConnection, JenniferSqlConnection>();
+        services.AddScoped<IJenniferSqlConnection, JenniferSqlConnection>();
         
         if (identityOptions.xIsEmpty())
         {
@@ -74,6 +73,7 @@ public static class DependencyInjection
                 options.SignIn.RequireConfirmedPhoneNumber = false;
                 options.Tokens.AuthenticatorTokenProvider = null!; // optional     
                 options.User.RequireUniqueEmail = true;
+                options.User.AllowedUserNameCharacters = null;
             };
         }
         
@@ -152,7 +152,7 @@ public static class DependencyInjection
         
         services.AddAuthService();
         services.AddUserService();
-        services.AddCacheResolver();
+        services.AddSessionService();
         services.AddExternalOAuthHandler();
 
         #if DEBUG

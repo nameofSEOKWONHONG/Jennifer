@@ -48,7 +48,7 @@ public class SignInCommandHandler(
         var refreshToken = jwtService.GenerateRefreshToken();
         var refreshTokenObj = new Services.Implements.RefreshToken(refreshToken, DateTime.UtcNow.AddDays(7), DateTime.UtcNow, user.Id.ToString());
         user.SecurityStamp = Guid.NewGuid().ToString();
-        await userManager.SetAuthenticationTokenAsync(user, loginProvider:"internal", tokenName:"refreshToken", tokenValue:refreshToken);
+        var result = await userManager.SetAuthenticationTokenAsync(user, loginProvider:"internal", tokenName:"refreshToken", tokenValue:refreshToken);
         var encodedRefreshToken = jwtService.ObjectToTokenString(refreshTokenObj);
         return new TokenResponse(jwtService.GenerateJwtToken(user, userClaims.ToList(), roleClaims), encodedRefreshToken);
     }

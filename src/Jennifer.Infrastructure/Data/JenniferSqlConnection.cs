@@ -1,12 +1,7 @@
 ﻿using Jennifer.Infrastructure.Options;
 using Microsoft.Data.SqlClient;
 
-namespace Jennifer.Infrastructure;
-
-public interface IJenniferSqlConnection
-{
-    Task<T> HandleAsync<T>(Func<SqlConnection, Task<T>> handler);
-}
+namespace Jennifer.Infrastructure.Data;
 
 public class JenniferSqlConnection: IJenniferSqlConnection
 {

@@ -1,4 +1,4 @@
-﻿using Jennifer.SharedKernel;
+﻿using Jennifer.Infrastructure.Data;
 
 namespace Jennifer.Jwt.Session.Abstracts;
 

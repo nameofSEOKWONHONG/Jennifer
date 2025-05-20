@@ -1,10 +1,10 @@
 ﻿using eXtensionSharp;
+using Jennifer.Infrastructure.Data;
 using Jennifer.Jwt.Data;
 using Jennifer.Jwt.Session.Abstracts;
-using Jennifer.SharedKernel;
 using Microsoft.EntityFrameworkCore;
 
-namespace Jennifer.Jwt.Session;
+namespace Jennifer.Jwt.Session.Implements;
 
 public class SessionContext : ISessionContext, ISessionContextInitializer
 {
