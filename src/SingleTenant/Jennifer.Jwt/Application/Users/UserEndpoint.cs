@@ -1,10 +1,13 @@
-﻿using Jennifer.Jwt.Application.Auth.Services.Contracts;
+﻿using Jennifer.Infrastructure.Abstractions.Messaging;
+using Jennifer.Jwt.Application.Auth.Contracts;
+using Jennifer.Jwt.Application.Users.Commands;
 using Jennifer.Jwt.Services.UserServices.Abstracts;
+using Jennifer.SharedKernel;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
-namespace Jennifer.Jwt.Application.Endpoints;
+namespace Jennifer.Jwt.Application.Users;
 
 public static class UserEndpoint
 {
@@ -17,13 +20,13 @@ public static class UserEndpoint
             ;
 
         group.MapGet("/", 
-            async ([AsParameters]UserPagingRequest request, IUserService service, CancellationToken ct) => 
-                await service.GetUsers(request.Email, request.PageNo, request.PageSize, ct))
+            async ([AsParameters]GetsUserRequest request, IQueryHandler<GetsUserQuery, PagingResult<UserDto>> handler, CancellationToken ct) => 
+                await handler.HandleAsync(new GetsUserQuery(request.Email,  request.UserName, request.PageNo, request.PageSize), ct))
             .WithName("GetUsers");
         
         group.MapGet("/{id}", 
-            async (Guid id, IGetUserService service, CancellationToken ct) => 
-                await service.HandleAsync(id, ct))
+            async (Guid id, IQueryHandler<GetUserQuery, UserDto> handler, CancellationToken ct) => 
+                await handler.HandleAsync(new GetUserQuery(id), ct))
             .WithName("GetUser");
         
         group.MapPost("/",

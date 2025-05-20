@@ -25,6 +25,12 @@ public class Result
     public static Result Success() => new(true, Error.None);
 
     public static Result Failure(Error error) => new(false, error);
+    
+    public static Result<TValue> Success<TValue>(TValue value) =>
+        new(value, true, Error.None);
+    
+    public static Result<TValue> Failure<TValue>(Error error) =>
+        new(default, false, error);   
 }
 
 public class Result<TValue> : Result
@@ -36,20 +42,11 @@ public class Result<TValue> : Result
     {
         _value = value;
     }
-    
-    public static Result<TValue> Success(TValue value) =>
-        new(value, true, Error.None);
-    
-    public static Result<TValue> Failure(Error error) =>
-        new(default, false, error);    
 
-    [NotNull]
-    public TValue Value => IsSuccess
-        ? _value!
-        : throw new InvalidOperationException("The value of a failure result can't be accessed.");
+    public TValue Value => _value;
 
     public static implicit operator Result<TValue>(TValue value) =>
-        value is not null ? Success(value) : Failure(Error.NullValue);
+        value is not null ? Success<TValue>(value) : Failure<TValue>(Error.NullValue);
 
     public static Result<TValue> ValidationFailure(Error error) =>
         new(default, false, error);

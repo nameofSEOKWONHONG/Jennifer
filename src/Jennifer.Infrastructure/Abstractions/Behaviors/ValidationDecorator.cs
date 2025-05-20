@@ -28,7 +28,7 @@ public static class ValidationDecorator
                 return await _innerHandler.HandleAsync(command, cancellationToken);
             }
 
-            return Result<TResponse>.Failure(CreateValidationError(validationFailures));
+            return Result.Failure<TResponse>(CreateValidationError(validationFailures));
         }
     }
 

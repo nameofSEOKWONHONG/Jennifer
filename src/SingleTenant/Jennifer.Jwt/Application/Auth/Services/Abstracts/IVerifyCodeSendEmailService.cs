@@ -1,4 +1,4 @@
-﻿using Jennifer.Jwt.Application.Auth.Services.Contracts;
+﻿using Jennifer.Jwt.Application.Auth.Contracts;
 using Jennifer.SharedKernel;
 using Microsoft.AspNetCore.Http;
 

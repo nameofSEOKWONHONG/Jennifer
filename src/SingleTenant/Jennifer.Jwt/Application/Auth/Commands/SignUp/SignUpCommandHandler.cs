@@ -17,7 +17,7 @@ public class SignUpCommandHandler(
         var exists = dbContext.Users.Any(m => m.NormalizedEmail == command.Email.ToUpper());
         if (exists)
         {
-            return Result<Guid>.Failure(Error.NotFound(string.Empty, "Email already exists"));
+            return Result.Failure<Guid>(Error.NotFound(string.Empty, "Email already exists"));
         }
         
         var user = new User

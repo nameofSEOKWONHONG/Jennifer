@@ -1,19 +1,8 @@
 ﻿using Jennifer.Jwt.Models.Contracts;
 
-namespace Jennifer.Jwt.Application.Auth.Services.Contracts;
+namespace Jennifer.Jwt.Application.Auth.Contracts;
 
-public record TokenResponse(bool IsSuccess, string Message, string AccessToken, string RefreshToken)
-{
-    public static TokenResponse Success(string accessToken, string refreshToken)
-    {
-        return new TokenResponse(true, string.Empty, accessToken, refreshToken);
-    }
-
-    public static TokenResponse Fail(string message)
-    {
-        return new TokenResponse(false, message, string.Empty, string.Empty);
-    }
-}
+public record TokenResponse(string AccessToken, string RefreshToken);
 
 public record SignInRequest(string Email, string Password);
 

@@ -14,7 +14,7 @@ internal class SignUpAdminCommandHandler(JenniferDbContext context, IPasswordHas
     {
         if (await context.Users.AnyAsync(m => m.Email == command.Email, cancellationToken: cancellationToken))
         {
-            return Result<Guid>.Failure(UserErrors.EmailNotUnique);
+            return Result.Failure<Guid>(UserErrors.EmailNotUnique);
         }
 
         var user = new User()

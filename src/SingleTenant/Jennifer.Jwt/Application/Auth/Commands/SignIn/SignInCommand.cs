@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using Jennifer.Infrastructure.Abstractions.Messaging;
+using Jennifer.Jwt.Application.Auth.Contracts;
 using Jennifer.Jwt.Application.Auth.Services.Abstracts;
-using Jennifer.Jwt.Application.Auth.Services.Contracts;
 using Jennifer.Jwt.Models;
 using Jennifer.SharedKernel;
 using Microsoft.AspNetCore.Http;
@@ -19,13 +19,13 @@ public class SignInCommandHandler(
     public async Task<Result<TokenResponse>> HandleAsync(SignInCommand command, CancellationToken cancellationToken)
     {
         var user = await userManager.FindByEmailAsync(command.Email);
-        if(user is null) return TokenResponse.Fail("Not found");
+        if(user is null) return Result.Failure<TokenResponse>(Error.NotFound("", "Not found"));
 
         var locked = await userManager.IsLockedOutAsync(user);
-        if(locked) return TokenResponse.Fail("Locked");
+        if(locked) return Result.Failure<TokenResponse>(Error.Failure("", "Locked"));
         
         if(!await userManager.CheckPasswordAsync(user, command.Password))
-            return TokenResponse.Fail("Password is wrong");
+            return Result.Failure<TokenResponse>(Error.Failure("", "Password is wrong"));
 
         var userClaims = await userManager.GetClaimsAsync(user);
         var roles = await userManager.GetRolesAsync(user);
@@ -50,6 +50,6 @@ public class SignInCommandHandler(
         user.SecurityStamp = Guid.NewGuid().ToString();
         await userManager.SetAuthenticationTokenAsync(user, loginProvider:"internal", tokenName:"refreshToken", tokenValue:refreshToken);
         var encodedRefreshToken = jwtService.ObjectToTokenString(refreshTokenObj);
-        return TokenResponse.Success(jwtService.GenerateJwtToken(user, userClaims.ToList(), roleClaims), encodedRefreshToken);
+        return new TokenResponse(jwtService.GenerateJwtToken(user, userClaims.ToList(), roleClaims), encodedRefreshToken);
     }
 }

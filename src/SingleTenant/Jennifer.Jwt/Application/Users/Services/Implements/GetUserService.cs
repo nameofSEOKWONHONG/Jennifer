@@ -1,5 +1,5 @@
 ﻿using Jennifer.Infrastructure.Abstractions;
-using Jennifer.Jwt.Application.Auth.Services.Contracts;
+using Jennifer.Jwt.Application.Auth.Contracts;
 using Jennifer.Jwt.Data;
 using Jennifer.Jwt.Services.UserServices.Abstracts;
 using Jennifer.Jwt.Session;

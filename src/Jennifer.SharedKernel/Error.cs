@@ -20,6 +20,8 @@ public record Error
     public string Description { get; }
 
     public ErrorType Type { get; }
+    
+    public Error[] Errors { get; set; }
 
     public static Error Failure(string code, string description) =>
         new(code, description, ErrorType.Failure);

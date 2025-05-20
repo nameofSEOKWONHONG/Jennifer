@@ -20,11 +20,11 @@ public class SignOutCommandHandler(
     {
         var sid = accessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (sid.xIsEmpty()) 
-            return Result<bool>.Failure(Error.NotFound(string.Empty, "Not found"));
+            return Result.Failure<bool>(Error.NotFound(string.Empty, "Not found"));
         
         var user = await userManager.FindByIdAsync(sid);
         if(user is null) 
-            return Result<bool>.Failure(Error.NotFound(string.Empty, "Not found"));
+            return Result.Failure<bool>(Error.NotFound(string.Empty, "Not found"));
         
         var result = await userManager.RemoveAuthenticationTokenAsync(user, loginProvider:"internal", tokenName:"refreshToken");
         return result.Succeeded;

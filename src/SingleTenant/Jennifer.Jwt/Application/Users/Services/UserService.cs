@@ -1,6 +1,6 @@
 ﻿using eXtensionSharp;
 using FluentValidation;
-using Jennifer.Jwt.Application.Auth.Services.Contracts;
+using Jennifer.Jwt.Application.Auth.Contracts;
 using Jennifer.Jwt.Data;
 using Jennifer.Jwt.Models;
 using Jennifer.Jwt.Services.UserServices.Abstracts;

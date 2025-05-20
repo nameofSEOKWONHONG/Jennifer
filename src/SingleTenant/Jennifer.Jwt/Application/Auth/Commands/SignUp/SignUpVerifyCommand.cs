@@ -1,8 +1,8 @@
 ﻿using eXtensionSharp;
 using FluentValidation;
 using Jennifer.Infrastructure.Abstractions.Messaging;
+using Jennifer.Jwt.Application.Auth.Contracts;
 using Jennifer.Jwt.Application.Auth.Services.Abstracts;
-using Jennifer.Jwt.Application.Auth.Services.Contracts;
 using Jennifer.Jwt.Data;
 using Jennifer.Jwt.Models.Contracts;
 using Jennifer.SharedKernel;
@@ -22,11 +22,11 @@ public class SignUpVerifyCommandHandler(JenniferDbContext dbContext,
     {
         var user = await dbContext.Users.FirstOrDefaultAsync(m => m.Id == command.UserId, cancellationToken: cancellationToken);
         if (user.xIsEmpty())
-            return Result<bool>.Failure(Error.NotFound(string.Empty, "User not found"));
+            return Result.Failure<bool>(Error.NotFound(string.Empty, "User not found"));
         
         var verified = await verifyCodeConfirmService.HandleAsync(new VerifyCodeRequest(user.Email, command.Code, ENUM_EMAIL_VERIFICATION_TYPE.SIGN_UP_BEFORE), cancellationToken);
         if(verified.Status != ENUM_VERITY_RESULT_STATUS.EMAIL_CONFIRM) 
-            return Result<bool>.Failure(Error.NotFound(string.Empty, verified.Message));
+            return Result.Failure<bool>(Error.NotFound(string.Empty, verified.Message));
 
         user.EmailConfirmed = true;
 

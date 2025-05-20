@@ -2,8 +2,8 @@
 using eXtensionSharp;
 using Jennifer.External.OAuth.Abstracts;
 using Jennifer.Infrastructure.Abstractions;
+using Jennifer.Jwt.Application.Auth.Contracts;
 using Jennifer.Jwt.Application.Auth.Services.Abstracts;
-using Jennifer.Jwt.Application.Auth.Services.Contracts;
 using Jennifer.Jwt.Models;
 using Jennifer.Jwt.Session;
 using Microsoft.AspNetCore.Http;
@@ -16,7 +16,7 @@ namespace Jennifer.Jwt.Application.Auth.Services.Implements;
 /// <summary>
 /// Represents a service that handles external sign-in operations using third-party providers.
 /// </summary>
-public class ExternalOAuthService: ServiceBase<ExternalOAuthService, ExternalSignInRequest, IResult>, IExternalOAuthService
+public class ExternalOAuthService: ServiceBase<ExternalOAuthService, ExternalSignInRequest, TokenResponse>, IExternalOAuthService
 {
     private readonly UserManager<User> _userManager;
     private readonly RoleManager<Role> _roleManager;
@@ -51,12 +51,12 @@ public class ExternalOAuthService: ServiceBase<ExternalOAuthService, ExternalSig
     /// <param name="request">The external sign-in request containing the provider and provider token.</param>
     /// <param name="cancellationToken">Cancellation token for asynchronous operation handling.</param>
     /// <returns>A result containing authentication tokens or null if the process fails.</returns>
-    public async Task<IResult> HandleAsync(ExternalSignInRequest request, CancellationToken cancellationToken)
+    public async Task<TokenResponse> HandleAsync(ExternalSignInRequest request, CancellationToken cancellationToken)
     {
         // 1. 외부 서비스에 access_token을 전달하여 사용자 정보 확인
         var instance = _externalOAuthHandlerFactory.Resolve(request.Provider);
         var verified = await instance.Verify(request.AccessToken, cancellationToken);
-        if (!verified.IsSuccess) return Results.Unauthorized();
+        if (!verified.IsSuccess) return null;
 
         // 2. provider별 ID 가져오기
         string providerId = verified.ExternalId;
@@ -114,7 +114,6 @@ public class ExternalOAuthService: ServiceBase<ExternalOAuthService, ExternalSig
         var refreshToken = _jwtService.GenerateRefreshToken();
         var refreshTokenObj = new RefreshToken(refreshToken, DateTime.UtcNow.AddDays(7), DateTime.UtcNow, user.Id.ToString());
         await _userManager.SetAuthenticationTokenAsync(user, loginProvider:"internal", tokenName:"refreshToken", tokenValue:refreshToken);
-        var token = TokenResponse.Success(_jwtService.GenerateJwtToken(user, userClaims.ToList(), roleClaims), _jwtService.ObjectToTokenString(refreshTokenObj));
-        return Results.Ok(token);
+        return new TokenResponse(_jwtService.GenerateJwtToken(user, userClaims.ToList(), roleClaims), _jwtService.ObjectToTokenString(refreshTokenObj));
     }
 }

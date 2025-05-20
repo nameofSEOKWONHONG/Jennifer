@@ -1,10 +1,11 @@
-﻿using Jennifer.Jwt.Services.UserServices.Abstracts;
+﻿using Jennifer.Jwt.Services;
+using Jennifer.Jwt.Services.UserServices.Abstracts;
 using Jennifer.Jwt.Services.UserServices.Implements;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Jennifer.Jwt.Services.UserServices;
+namespace Jennifer.Jwt.Application.Users;
 
-internal static class DependencyInjection
+public static class DependencyInjection
 {
     public static void AddUserService(this IServiceCollection services)
     {

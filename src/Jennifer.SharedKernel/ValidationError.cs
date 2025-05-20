@@ -11,8 +11,6 @@ public sealed record ValidationError : Error
         Errors = errors;
     }
 
-    public Error[] Errors { get; }
-
     public static ValidationError FromResults(IEnumerable<Result> results) =>
         new(results.Where(r => r.IsFailure).Select(r => r.Error).ToArray());
 }

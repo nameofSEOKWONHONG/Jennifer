@@ -7,6 +7,7 @@ using Jennifer.Infrastructure.Email;
 using Jennifer.Infrastructure.Options;
 using Jennifer.Jwt.Application.Auth;
 using Jennifer.Jwt.Application.Endpoints;
+using Jennifer.Jwt.Application.Users;
 using Jennifer.Jwt.Data;
 using Jennifer.Jwt.Hubs;
 using Jennifer.Jwt.Models;

@@ -3,8 +3,8 @@ using eXtensionSharp;
 using FluentValidation;
 using Jennifer.External.OAuth.Abstracts;
 using Jennifer.Infrastructure.Abstractions.Messaging;
+using Jennifer.Jwt.Application.Auth.Contracts;
 using Jennifer.Jwt.Application.Auth.Services.Abstracts;
-using Jennifer.Jwt.Application.Auth.Services.Contracts;
 using Jennifer.Jwt.Models;
 using Jennifer.SharedKernel;
 using Microsoft.AspNetCore.Http;
@@ -26,7 +26,7 @@ public class ExternalOAuthHandler(
         var instance = externalOAuthHandlerFactory.Resolve(command.Provider);
         var verified = await instance.Verify(command.AccessToken, cancellationToken);
         if (!verified.IsSuccess)
-            return Result<TokenResponse>.Failure(Error.NotFound(string.Empty, "Not found"));
+            return Result.Failure<TokenResponse>(Error.NotFound(string.Empty, "Not found"));
 
         // 2. provider별 ID 가져오기
         string providerId = verified.ExternalId;
@@ -84,7 +84,7 @@ public class ExternalOAuthHandler(
         var refreshToken = jwtService.GenerateRefreshToken();
         var refreshTokenObj = new Services.Implements.RefreshToken(refreshToken, DateTime.UtcNow.AddDays(7), DateTime.UtcNow, user.Id.ToString());
         await userManager.SetAuthenticationTokenAsync(user, loginProvider:"internal", tokenName:"refreshToken", tokenValue:refreshToken);
-        return TokenResponse.Success(jwtService.GenerateJwtToken(user, userClaims.ToList(), roleClaims), jwtService.ObjectToTokenString(refreshTokenObj));
+        return new TokenResponse(jwtService.GenerateJwtToken(user, userClaims.ToList(), roleClaims), jwtService.ObjectToTokenString(refreshTokenObj));
     }
 }
 

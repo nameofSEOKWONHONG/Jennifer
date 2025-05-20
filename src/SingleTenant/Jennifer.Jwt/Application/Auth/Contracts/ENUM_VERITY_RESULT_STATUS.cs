@@ -2,7 +2,7 @@
 using Ardalis.SmartEnum;
 using Ardalis.SmartEnum.EFCore;
 
-namespace Jennifer.Jwt.Application.Auth.Services.Contracts;
+namespace Jennifer.Jwt.Application.Auth.Contracts;
 
 [JsonConverter(typeof(SmartEnumConverter<ENUM_VERITY_RESULT_STATUS, int>))]
 public class ENUM_VERITY_RESULT_STATUS: SmartEnum<ENUM_VERITY_RESULT_STATUS, int>

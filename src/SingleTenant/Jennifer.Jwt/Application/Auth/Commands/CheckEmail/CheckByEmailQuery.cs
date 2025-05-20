@@ -16,7 +16,7 @@ public class CheckByEmailQueryHandler(UserManager<User> userManager): IQueryHand
     {
         var exists = await userManager.FindByEmailAsync(query.Email);
         if(exists.xIsNotEmpty())
-            return Result<bool>.Failure(Error.Conflict(string.Empty, "User already exists"));
+            return Result.Failure<bool>(Error.Conflict(string.Empty, "User already exists"));
 
         return true;
     }

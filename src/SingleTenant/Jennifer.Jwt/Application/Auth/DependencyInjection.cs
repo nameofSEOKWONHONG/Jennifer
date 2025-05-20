@@ -2,8 +2,8 @@
 using Jennifer.Infrastructure.Abstractions.Behaviors;
 using Jennifer.Infrastructure.Abstractions.DomainEvents;
 using Jennifer.Infrastructure.Abstractions.Messaging;
+using Jennifer.Jwt.Application.Auth.Contracts;
 using Jennifer.Jwt.Application.Auth.Services.Abstracts;
-using Jennifer.Jwt.Application.Auth.Services.Contracts;
 using Jennifer.Jwt.Application.Auth.Services.Implements;
 using Jennifer.Jwt.Services;
 using Jennifer.SharedKernel;

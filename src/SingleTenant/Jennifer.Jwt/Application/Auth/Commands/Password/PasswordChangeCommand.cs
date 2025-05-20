@@ -24,11 +24,11 @@ public class PasswordChangeCommandHandler(
         
         var user = await userManager.FindByIdAsync(userId);
         if(user.xIsEmpty()) 
-            return Result<bool>.Failure(Error.NotFound(string.Empty, "Not found"));
+            return Result.Failure<bool>(Error.NotFound(string.Empty, "Not found"));
         
         var result = await userManager.ChangePasswordAsync(user, command.OldPassword, command.NewPassword);
         if (!result.Succeeded) 
-            return Result<bool>.Failure(Error.Problem(string.Empty, result.Errors.Select(m => m.Description).First()));
+            return Result.Failure<bool>(Error.Problem(string.Empty, result.Errors.Select(m => m.Description).First()));
         
         return result.Succeeded;
     }

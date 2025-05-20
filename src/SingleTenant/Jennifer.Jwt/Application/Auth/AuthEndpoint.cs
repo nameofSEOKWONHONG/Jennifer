@@ -6,12 +6,12 @@ using Jennifer.Jwt.Application.Auth.Commands.RefreshToken;
 using Jennifer.Jwt.Application.Auth.Commands.SignIn;
 using Jennifer.Jwt.Application.Auth.Commands.SignOut;
 using Jennifer.Jwt.Application.Auth.Commands.SignUp;
-using Jennifer.Jwt.Application.Auth.Services.Contracts;
+using Jennifer.Jwt.Application.Auth.Contracts;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
-namespace Jennifer.Jwt.Application.Endpoints;
+namespace Jennifer.Jwt.Application.Auth;
 
 /// <summary>
 /// Provides functionality for mapping authentication-related API endpoints

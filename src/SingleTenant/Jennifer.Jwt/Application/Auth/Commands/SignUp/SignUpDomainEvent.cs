@@ -1,5 +1,5 @@
-﻿using Jennifer.Jwt.Application.Auth.Services.Abstracts;
-using Jennifer.Jwt.Application.Auth.Services.Contracts;
+﻿using Jennifer.Jwt.Application.Auth.Contracts;
+using Jennifer.Jwt.Application.Auth.Services.Abstracts;
 using Jennifer.Jwt.Models;
 using Jennifer.Jwt.Models.Contracts;
 using Jennifer.SharedKernel;
