@@ -1,11 +1,11 @@
-﻿using System.Data.Entity;
-using eXtensionSharp;
+﻿using eXtensionSharp;
 using Jennifer.Infrastructure.Abstractions.Messaging;
 using Jennifer.Jwt.Application.Auth.Contracts;
 using Jennifer.Jwt.Data;
 using Jennifer.Jwt.Session.Abstracts;
 using Jennifer.SharedKernel;
-using Microsoft.Identity.Client;
+using LinqKit;
+using Microsoft.EntityFrameworkCore;
 
 namespace Jennifer.Jwt.Application.Users.Commands;
 
@@ -17,6 +17,7 @@ public class GetUserQueryHandler(ISessionContext context,
             .xAs<JenniferDbContext>()
             .Users
             .AsNoTracking()
+            .AsExpandable()
             .Where(queryFilter.Where(query))
             .Select(queryFilter.Selector)
             .FirstOrDefaultAsync(cancellationToken);

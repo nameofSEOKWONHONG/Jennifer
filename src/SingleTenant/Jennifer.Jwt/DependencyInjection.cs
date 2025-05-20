@@ -152,8 +152,8 @@ public static class DependencyInjection
             options.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(["application/octet-stream", "application/json"]);
         });
         services.Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);
-        services.Configure<BrotliCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);     
-        
+        services.Configure<BrotliCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);
+        services.AddApiVersioning();
         services.AddAuthService();
         services.AddUserService();
         services.AddSessionService();

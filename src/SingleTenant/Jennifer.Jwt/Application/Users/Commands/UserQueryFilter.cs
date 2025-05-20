@@ -12,7 +12,7 @@ public class UserQueryFilter : IUserQueryFilter
     {
         var predicate = PredicateBuilder.New<User>(true);
         predicate = predicate.And(x => x.IsDelete == false);
-        if (query.xIsNotEmpty())
+        if (query.Email.xIsNotEmpty())
         {
             predicate = predicate.And(x => x.Email.Contains(query.Email));
         }
@@ -32,15 +32,7 @@ public class UserQueryFilter : IUserQueryFilter
         predicate = predicate.And(x => x.Id == query.UserId);
         return predicate;
     }
-
-    public Expression<Func<User, bool>> Where(RemoveUserCommand command)
-    {
-        var predicate = PredicateBuilder.New<User>(true);
-        predicate = predicate.And(x => x.IsDelete == false);
-        predicate = predicate.And(x => x.Id == command.UserId);
-        return predicate;
-    }
-
+    
     public Expression<Func<User, UserDto>> Selector { get; } = user => new UserDto
     {
         Id = user.Id,
@@ -49,4 +41,14 @@ public class UserQueryFilter : IUserQueryFilter
         UserName = user.UserName,
         IsDelete = user.IsDelete
     };
+    
+    
+
+    public Expression<Func<User, bool>> Where(RemoveUserCommand command)
+    {
+        var predicate = PredicateBuilder.New<User>(true);
+        predicate = predicate.And(x => x.IsDelete == false);
+        predicate = predicate.And(x => x.Id == command.UserId);
+        return predicate;
+    }
 }

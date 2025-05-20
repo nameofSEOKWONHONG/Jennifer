@@ -1,7 +1,7 @@
-﻿using Jennifer.Infrastructure.Abstractions.Messaging;
+﻿using Asp.Versioning;
+using Jennifer.Infrastructure.Abstractions.Messaging;
 using Jennifer.Jwt.Application.Auth.Contracts;
 using Jennifer.Jwt.Application.Users.Commands;
-using Jennifer.Jwt.Services.UserServices.Abstracts;
 using Jennifer.SharedKernel;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -13,29 +13,47 @@ public static class UserEndpoint
 {
     public static void MapUserEndpoint(this IEndpointRouteBuilder endpoint)
     {
-        var group = endpoint.MapGroup("/api/v1/user")
-            .WithGroupName("v1")
+        var apiVersionSet = endpoint.NewApiVersionSet()
+            .HasApiVersion(new ApiVersion(1))
+            .HasApiVersion(new ApiVersion(2))
+            .HasDeprecatedApiVersion(new ApiVersion(1))
+            .ReportApiVersions()
+            .Build();
+        
+        var group = endpoint.MapGroup("/api/v{version:apiVersion}/user")
             .WithTags("User")
+            .WithApiVersionSet(apiVersionSet)
             .RequireAuthorization()
             ;
 
         group.MapGet("/", 
             async ([AsParameters]GetsUserRequest request, IQueryHandler<GetsUserQuery, PagingResult<UserDto>> handler, CancellationToken ct) => 
                 await handler.HandleAsync(new GetsUserQuery(request.Email,  request.UserName, request.PageNo, request.PageSize), ct))
-            .WithName("GetUsers");
+            .MapToApiVersion(1)
+            .WithName("GetUsersV1");
+        
+        group.MapGet("/", 
+                async ([AsParameters]GetsUserRequest request, IQueryHandler<GetsUserQuery, PagingResult<UserDto>> handler, CancellationToken ct) => 
+                await handler.HandleAsync(new GetsUserQuery(request.Email,  request.UserName, request.PageNo, request.PageSize), ct))
+            .MapToApiVersion(2)
+            .WithName("GetUsersV2");        
         
         group.MapGet("/{id}", 
             async (Guid id, IQueryHandler<GetUserQuery, UserDto> handler, CancellationToken ct) => 
                 await handler.HandleAsync(new GetUserQuery(id), ct))
+            .MapToApiVersion(2)            
             .WithName("GetUser");
         
         // group.MapPost("/",
         //     async (UserDto user, IUserService service) => 
         //         await service.AddUser(user)).WithName("AddUser");
         //
-        // group.MapPut("/", 
-        //     async (UserDto user, IUserService service, CancellationToken ct) =>
-        //         await service.ModifyUser(user, ct)).WithName("ModifyUser");
+        
+        group.MapPut("/", 
+            async (UserDto user, ICommandHandler<ModifyUserCommand, bool> handler, CancellationToken ct) =>
+                await handler.HandleAsync(new ModifyUserCommand(user), ct))
+            .MapToApiVersion(1)
+            .WithName("ModifyUser");
         
         group.MapDelete("/{id}", 
             async (Guid id, ICommandHandler<RemoveUserCommand> handler, CancellationToken ct) =>
