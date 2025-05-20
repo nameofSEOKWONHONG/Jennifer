@@ -14,6 +14,8 @@ public class GetsUserQueryHandler(ISessionContext context,
 {
     public async Task<Result<PagingResult<UserDto>>> HandleAsync(GetsUserQuery query, CancellationToken cancellationToken)
     {
+        var roles1 = await context.UserContext.GetUserRolesAsync();
+        var roles2 = await context.UserContext.GetUserRolesAsync();
         var queryable = context.ApplicationDbContext.xAs<JenniferDbContext>()
             .Users.AsNoTracking()
             .AsExpandable()

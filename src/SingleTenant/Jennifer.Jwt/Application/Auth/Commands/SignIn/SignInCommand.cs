@@ -3,10 +3,13 @@ using System.Security.Claims;
 using Jennifer.Infrastructure.Abstractions.Messaging;
 using Jennifer.Jwt.Application.Auth.Contracts;
 using Jennifer.Jwt.Application.Auth.Services.Abstracts;
+using Jennifer.Jwt.Hubs;
 using Jennifer.Jwt.Models;
 using Jennifer.SharedKernel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Logging;
 
 namespace Jennifer.Jwt.Application.Auth.Commands.SignIn;
 
@@ -52,7 +55,22 @@ public class SignInCommandHandler(
         var result = await userManager.SetAuthenticationTokenAsync(user, loginProvider:"internal", tokenName:"refreshToken", tokenValue:refreshToken);
         if(!result.Succeeded) throw new ValidationException(result.Errors.Select(m => m.Description).First());
         
+        user.Raise(new SignInDomainEvent(user.Id));
+        
         var encodedRefreshToken = jwtService.ObjectToTokenString(refreshTokenObj);
         return new TokenResponse(jwtService.GenerateJwtToken(user, userClaims.ToList(), roleClaims), encodedRefreshToken);
+    }
+}
+
+public sealed record SignInDomainEvent(Guid UserId):IDomainEvent;
+public class SignInDomainEventHandler(ILogger<SignInDomainEventHandler> logger,
+    IHubContext<JenniferHub> hubContext):IDomainEventHandler<SignInDomainEvent>
+{
+    public async Task Handle(SignInDomainEvent domainEvent, CancellationToken cancellationToken)
+    {
+        await hubContext
+            .Clients
+            .User(domainEvent.UserId.ToString())
+            .SendAsync("SignIn", new {domainEvent.UserId}, cancellationToken: cancellationToken);
     }
 }

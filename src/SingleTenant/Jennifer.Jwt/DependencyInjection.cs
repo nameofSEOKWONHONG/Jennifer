@@ -1,4 +1,5 @@
-﻿using System.IO.Compression;
+﻿using System.Data;
+using System.IO.Compression;
 using System.Text;
 using eXtensionSharp;
 using Jennifer.External.OAuth;
@@ -20,6 +21,7 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.SignalR.StackExchangeRedis;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Caching.StackExchangeRedis;
@@ -61,7 +63,7 @@ public static class DependencyInjection
         JenniferOptionSingleton.Attach(jenniferOptions);
         
         services.AddDbContext<JenniferDbContext>(dbContextOptions);
-        services.AddScoped<IJenniferSqlConnection, JenniferSqlConnection>();
+        services.AddScoped<IDbConnection, SqlConnection>(_ => new SqlConnection(JenniferOptionSingleton.Instance.Options.ConnectionString));
         
         if (identityOptions.xIsEmpty())
         {
@@ -230,7 +232,7 @@ public static class DependencyInjection
         else
             services.AddSignalR().AddStackExchangeRedis(redisOptions);
         
-        services.AddSingleton<IUserIdProvider, SubUserIdProvider>();
+        services.AddSingleton<IUserIdProvider, UserIdProvider>();
     }
 
     /// <summary>
@@ -274,7 +276,7 @@ public static class DependencyInjection
 
         app.UseAuthentication();
         app.UseAuthorization();
-        
+
         app.UseMiddleware<JenniferSessionContextMiddleware>(); // 반드시 인증 이후에 실행
 
         app.MapHub<JenniferHub>("/jenniferHub");

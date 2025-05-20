@@ -30,18 +30,12 @@ public static class UserEndpoint
             async ([AsParameters]GetsUserRequest request, IQueryHandler<GetsUserQuery, PagingResult<UserDto>> handler, CancellationToken ct) => 
                 await handler.HandleAsync(new GetsUserQuery(request.Email,  request.UserName, request.PageNo, request.PageSize), ct))
             .MapToApiVersion(1)
-            .WithName("GetUsersV1");
-        
-        group.MapGet("/", 
-                async ([AsParameters]GetsUserRequest request, IQueryHandler<GetsUserQuery, PagingResult<UserDto>> handler, CancellationToken ct) => 
-                await handler.HandleAsync(new GetsUserQuery(request.Email,  request.UserName, request.PageNo, request.PageSize), ct))
-            .MapToApiVersion(2)
-            .WithName("GetUsersV2");        
+            .WithName("GetUsers");   
         
         group.MapGet("/{id}", 
             async (Guid id, IQueryHandler<GetUserQuery, UserDto> handler, CancellationToken ct) => 
                 await handler.HandleAsync(new GetUserQuery(id), ct))
-            .MapToApiVersion(2)            
+            .MapToApiVersion(1)            
             .WithName("GetUser");
         
         // group.MapPost("/",
@@ -58,6 +52,7 @@ public static class UserEndpoint
         group.MapDelete("/{id}", 
             async (Guid id, ICommandHandler<RemoveUserCommand> handler, CancellationToken ct) =>
                 await handler.HandleAsync(new RemoveUserCommand(id), ct))
+            .MapToApiVersion(1)
             .WithName("RemoveUser");
     }
 }
