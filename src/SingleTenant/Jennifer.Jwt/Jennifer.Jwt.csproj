@@ -27,7 +27,13 @@
         
         <PackageReference Include="Microsoft.Azure.AppConfiguration.AspNetCore" Version="8.1.2" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.5" />
-        <PackageReference Include="RabbitMQ.Client" Version="7.1.2" />        
+        <PackageReference Include="RabbitMQ.Client" Version="7.1.2" />
+
+        <PackageReference Include="Mediator.Abstractions" Version="3.0.0-preview.65" />
+        <PackageReference Include="Mediator.SourceGenerator" Version="3.0.0-preview.65">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
     
     <ItemGroup>

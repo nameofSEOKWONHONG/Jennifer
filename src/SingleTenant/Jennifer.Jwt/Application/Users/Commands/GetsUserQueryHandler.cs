@@ -1,18 +1,18 @@
 ﻿using eXtensionSharp;
-using Jennifer.Infrastructure.Abstractions.Messaging;
 using Jennifer.Jwt.Application.Auth.Contracts;
 using Jennifer.Jwt.Data;
 using Jennifer.Jwt.Session.Abstracts;
 using Jennifer.SharedKernel;
 using LinqKit;
+using Mediator;
 using Microsoft.EntityFrameworkCore;
 
 namespace Jennifer.Jwt.Application.Users.Commands;
 
 public class GetsUserQueryHandler(ISessionContext context,
-    IUserQueryFilter queryFilter) : IQueryHandler<GetsUserQuery, PagingResult<UserDto>>
+    IUserQueryFilter queryFilter) : IQueryHandler<GetsUserQuery, PagingResult<UserDto[]>>
 {
-    public async Task<Result<PagingResult<UserDto>>> HandleAsync(GetsUserQuery query, CancellationToken cancellationToken)
+    public async ValueTask<PagingResult<UserDto[]>> Handle(GetsUserQuery query, CancellationToken cancellationToken)
     {
         var queryable = context.ApplicationDbContext.xAs<JenniferDbContext>()
             .Users.AsNoTracking()
@@ -27,6 +27,6 @@ public class GetsUserQueryHandler(ISessionContext context,
             .Select(queryFilter.Selector)
             .ToArrayAsync(cancellationToken: cancellationToken);
         
-        return PagingResult<UserDto>.Create(total, result, query.PageNo, query.PageSize);
+        return PagingResult<UserDto[]>.Success(total, result, query.PageNo, query.PageSize);
     }
 }

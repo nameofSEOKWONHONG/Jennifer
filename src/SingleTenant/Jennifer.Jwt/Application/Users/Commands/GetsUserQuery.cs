@@ -1,6 +1,6 @@
-﻿using Jennifer.Infrastructure.Abstractions.Messaging;
-using Jennifer.Jwt.Application.Auth.Contracts;
+﻿using Jennifer.Jwt.Application.Auth.Contracts;
 using Jennifer.SharedKernel;
+using Mediator;
 
 namespace Jennifer.Jwt.Application.Users.Commands;
 
@@ -11,4 +11,4 @@ public class GetsUserRequest : PagingRequest
 }
 
 public sealed record GetsUserQuery(string Email, string UserName, int PageNo = 1, int PageSize = 10)
-    : IQuery<PagingResult<UserDto>>;
+    : IQuery<PagingResult<UserDto[]>>;

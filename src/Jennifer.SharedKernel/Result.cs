@@ -4,50 +4,18 @@ namespace Jennifer.SharedKernel;
 
 public class Result
 {
-    public Result(bool isSuccess, Error error)
-    {
-        if (isSuccess && error != Error.None ||
-            !isSuccess && error == Error.None)
-        {
-            throw new ArgumentException("Invalid error", nameof(error));
-        }
-
-        IsSuccess = isSuccess;
-        Error = error;
-    }
-
-    public bool IsSuccess { get; }
-
-    public bool IsFailure => !IsSuccess;
-
-    public Error Error { get; }
-
-    public static Result Success() => new(true, Error.None);
-
-    public static Result Failure(Error error) => new(false, error);
-    
-    public static Result<TValue> Success<TValue>(TValue value) =>
-        new(value, true, Error.None);
-    
-    public static Result<TValue> Failure<TValue>(Error error) =>
-        new(default, false, error);   
+    public bool IsSuccess { get; set; }
+    public string Message { get; set; }
+    public Error Error { get; set; }
+    public static Result Success() => new() { IsSuccess = true };
+    public static Result Failure(string message) => new() { IsSuccess = false, Message = message };
+    public static Result Failure(Error error) => new() { IsSuccess = false, Error = error};
 }
-
-public class Result<TValue> : Result
+public class Result<T>: Result
 {
-    private readonly TValue _value;
-
-    public Result(TValue value, bool isSuccess, Error error)
-        : base(isSuccess, error)
-    {
-        _value = value;
-    }
-
-    public TValue Value => _value;
-
-    public static implicit operator Result<TValue>(TValue value) =>
-        value is not null ? Success<TValue>(value) : Failure<TValue>(Error.NullValue);
-
-    public static Result<TValue> ValidationFailure(Error error) =>
-        new(default, false, error);
+    public T Data { get; set; }
+    
+    public static Result<T> Success(T data) => new() { IsSuccess = true, Data = data };
+    public static Result<T> Failure(string message) => new() { IsSuccess = false, Message = message };
+    public static Result<T> Failure(Error error) => new() { IsSuccess = false, Error = error};   
 }

@@ -1,7 +1,7 @@
 ﻿using Jennifer.Jwt.Application.Users.Commands;
+using Jennifer.Jwt.Application.Users.Services.Implements;
 using Jennifer.Jwt.Services;
 using Jennifer.Jwt.Services.UserServices.Abstracts;
-using Jennifer.Jwt.Services.UserServices.Implements;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Jennifer.Jwt.Application.Users;

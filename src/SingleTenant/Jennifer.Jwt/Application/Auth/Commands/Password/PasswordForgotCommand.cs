@@ -1,28 +1,27 @@
 ﻿using FluentValidation;
-using Jennifer.Infrastructure.Abstractions.Messaging;
 using Jennifer.Jwt.Application.Auth.Contracts;
 using Jennifer.Jwt.Application.Auth.Services.Abstracts;
 using Jennifer.Jwt.Models.Contracts;
 using Jennifer.SharedKernel;
-using Microsoft.AspNetCore.Http;
+using Mediator;
 
 namespace Jennifer.Jwt.Application.Auth.Commands.Password;
 
 //PasswordForgot은 비로그인 상태에서 암호변경
 
 public sealed record PasswordForgotRequest(string Email, string UserName);
-public sealed record PasswordForgotCommand(string Email, string UserName):ICommand<IResult>;
+public sealed record PasswordForgotCommand(string Email, string UserName):ICommand<Result>;
 
 public class PasswordForgotCommandHandler(
     IVerifyCodeSendEmailService verifyCodeSendEmailService
-    ): ICommandHandler<PasswordForgotCommand, IResult>
+    ): ICommandHandler<PasswordForgotCommand, Result>
 {
-    public async Task<Result<IResult>> HandleAsync(PasswordForgotCommand command, CancellationToken cancellationToken)
+    public async ValueTask<Result> Handle(PasswordForgotCommand command, CancellationToken cancellationToken)
     {
         await verifyCodeSendEmailService.HandleAsync(
             new VerifyCodeSendEmailRequest(command.Email, command.UserName, ENUM_EMAIL_VERIFICATION_TYPE.PASSWORD_FORGOT),
             cancellationToken);
-        return TypedResults.Ok();
+        return Result.Success();
     }
 }
 

@@ -1,16 +1,10 @@
 ﻿namespace Jennifer.SharedKernel;
 
-public sealed record ValidationError : Error
+public sealed class ValidationError : Error
 {
-    public ValidationError(Error[] errors)
-        : base(
-            "Validation.General",
-            "One or more validation errors occurred",
-            ErrorType.Validation)
+    public ValidationError(Error[] erros) : base("Validation.General",
+        "One or more validation errors occurred")
     {
-        Errors = errors;
+        this.Errors = erros;
     }
-
-    public static ValidationError FromResults(IEnumerable<Result> results) =>
-        new(results.Where(r => r.IsFailure).Select(r => r.Error).ToArray());
 }

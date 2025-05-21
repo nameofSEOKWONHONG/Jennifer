@@ -1,3 +1,3 @@
-﻿namespace Jennifer.Infrastructure.Abstractions.Messaging;
-
-public interface IQuery<TResponse>;
+﻿// namespace Jennifer.Infrastructure.Abstractions.Messaging;
+//
+// public interface IQuery<TResponse>;

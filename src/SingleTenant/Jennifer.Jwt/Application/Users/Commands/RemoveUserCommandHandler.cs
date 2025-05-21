@@ -1,16 +1,16 @@
 ﻿using eXtensionSharp;
-using Jennifer.Infrastructure.Abstractions.Messaging;
 using Jennifer.Jwt.Data;
 using Jennifer.Jwt.Session.Abstracts;
 using Jennifer.SharedKernel;
+using Mediator;
 using Microsoft.EntityFrameworkCore;
 
 namespace Jennifer.Jwt.Application.Users.Commands;
 
-public class RemoveUserCommandHandler(ISessionContext context,
-    IUserQueryFilter queryFilter): ICommandHandler<RemoveUserCommand>
+public sealed class RemoveUserCommandHandler(ISessionContext context,
+    IUserQueryFilter queryFilter): ICommandHandler<RemoveUserCommand, Result>
 {
-    public async Task<Result> HandleAsync(RemoveUserCommand command, CancellationToken cancellationToken)
+    public async ValueTask<Result> Handle(RemoveUserCommand command, CancellationToken cancellationToken)
     {
         var dbContext = context.ApplicationDbContext.xAs<JenniferDbContext>();
         var user = await dbContext

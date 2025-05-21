@@ -4,6 +4,7 @@ using Ardalis.SmartEnum.EFCore;
 using Jennifer.Infrastructure.Converters;
 using Jennifer.Jwt.Models.Contracts;
 using Jennifer.SharedKernel;
+using Mediator;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -23,17 +24,17 @@ public class User : IdentityUser<Guid>, IAuditable, IEntity
     public virtual ICollection<UserLogin> Logins { get; set; }
     public virtual ICollection<UserToken> Tokens { get; set; }
     
-    private readonly List<IDomainEvent> _domainEvents = [];
+    private readonly List<INotification> _notifications = [];
 
-    public List<IDomainEvent> DomainEvents => [.. _domainEvents];
-    public void ClearDomainEvents()
+    public List<INotification> Notifications => [.. _notifications];
+    public void ClearNotifications()
     {
-        _domainEvents.Clear();
+        _notifications.Clear();
     }
 
-    public void Raise(IDomainEvent domainEvent)
+    public void Raise(INotification notification)
     {
-        _domainEvents.Add(domainEvent);
+        _notifications.Add(notification);
     }
 }
 
@@ -73,7 +74,7 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<User>
         builder.Property(m => m.ModifiedBy)
             .HasMaxLength(36);
 
-        builder.Ignore(m => m.DomainEvents);
+        builder.Ignore(m => m.Notifications);
         
         builder.HasMany(m => m.UserRoles)
             .WithOne(ur => ur.User)

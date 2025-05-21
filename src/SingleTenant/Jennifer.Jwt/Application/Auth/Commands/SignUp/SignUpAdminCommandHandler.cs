@@ -1,20 +1,20 @@
-﻿using Jennifer.Infrastructure.Abstractions.Messaging;
-using Jennifer.Jwt.Data;
+﻿using Jennifer.Jwt.Data;
 using Jennifer.Jwt.Models;
 using Jennifer.SharedKernel;
+using Mediator;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Jennifer.Jwt.Application.Auth.Commands.SignUp;
 
 internal class SignUpAdminCommandHandler(JenniferDbContext context, IPasswordHasher<User> passwordHasher)
-    : ICommandHandler<SignUpAdminCommand, Guid>
+    : ICommandHandler<SignUpAdminCommand, Result<Guid>>
 {
-    public async Task<Result<Guid>> HandleAsync(SignUpAdminCommand command, CancellationToken cancellationToken)
+    public async ValueTask<Result<Guid>> Handle(SignUpAdminCommand command, CancellationToken cancellationToken)
     {
         if (await context.Users.AnyAsync(m => m.Email == command.Email, cancellationToken: cancellationToken))
         {
-            return Result.Failure<Guid>(UserErrors.EmailNotUnique);
+            return Result<Guid>.Failure("email already exists.");
         }
 
         var user = new User()
@@ -33,7 +33,7 @@ internal class SignUpAdminCommandHandler(JenniferDbContext context, IPasswordHas
         };
         user.PasswordHash = passwordHasher.HashPassword(user, command.Password);
         
-        user.Raise(new SignUpAdminDomainEvent(user.Id));
+        //user.Raise(new SignUpAdminDomainEvent(user.Id));
         
         context.Users.Add(user);
         

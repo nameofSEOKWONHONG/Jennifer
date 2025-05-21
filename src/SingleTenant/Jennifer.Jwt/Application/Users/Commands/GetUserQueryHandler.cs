@@ -1,19 +1,20 @@
 ﻿using eXtensionSharp;
-using Jennifer.Infrastructure.Abstractions.Messaging;
 using Jennifer.Jwt.Application.Auth.Contracts;
 using Jennifer.Jwt.Data;
 using Jennifer.Jwt.Session.Abstracts;
 using Jennifer.SharedKernel;
 using LinqKit;
+using Mediator;
 using Microsoft.EntityFrameworkCore;
 
 namespace Jennifer.Jwt.Application.Users.Commands;
 
 public class GetUserQueryHandler(ISessionContext context,
-    IUserQueryFilter queryFilter): IQueryHandler<GetUserQuery, UserDto>
+    IUserQueryFilter queryFilter): IQueryHandler<GetUserQuery, Result<UserDto>>
 {
-    public async Task<Result<UserDto>> HandleAsync(GetUserQuery query, CancellationToken cancellationToken) =>
-        await context.ApplicationDbContext
+    public async ValueTask<Result<UserDto>> Handle(GetUserQuery query, CancellationToken cancellationToken)
+    {
+        var result = await context.ApplicationDbContext
             .xAs<JenniferDbContext>()
             .Users
             .AsNoTracking()
@@ -21,4 +22,7 @@ public class GetUserQueryHandler(ISessionContext context,
             .Where(queryFilter.Where(query))
             .Select(queryFilter.Selector)
             .FirstOrDefaultAsync(cancellationToken);
+        
+        return Result<UserDto>.Success(result);
+    }
 }

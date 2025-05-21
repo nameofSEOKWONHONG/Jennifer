@@ -1,41 +1,40 @@
 ﻿using System.Security.Claims;
 using FluentValidation;
-using Jennifer.Infrastructure.Abstractions.Messaging;
 using Jennifer.Jwt.Application.Auth.Contracts;
 using Jennifer.Jwt.Application.Auth.Services.Abstracts;
 using Jennifer.Jwt.Models;
 using Jennifer.SharedKernel;
-using Microsoft.AspNetCore.Http;
+using Mediator;
 using Microsoft.AspNetCore.Identity;
 
 namespace Jennifer.Jwt.Application.Auth.Commands.RefreshToken;
 
-public sealed record RefreshTokenCommand(string Token):ICommand<TokenResponse>;
+public sealed record RefreshTokenCommand(string Token):ICommand<Result<TokenResponse>>;
 
 public class RefreshTokenCommandHandler(
     UserManager<User> userManager,
     RoleManager<Role> roleManager,
-    IJwtService jwtService):ICommandHandler<RefreshTokenCommand, TokenResponse>
+    IJwtService jwtService):ICommandHandler<RefreshTokenCommand, Result<TokenResponse>>
 {
-    public async Task<Result<TokenResponse>> HandleAsync(RefreshTokenCommand command, CancellationToken cancellationToken)
+    public async ValueTask<Result<TokenResponse>> Handle(RefreshTokenCommand command, CancellationToken cancellationToken)
     {
         var refreshTokenObj = jwtService.TokenStringToObject(command.Token);
         if(refreshTokenObj is null) 
-            return Result.Failure<TokenResponse>(Error.NotFound(string.Empty, "Not found"));
+            return Result<TokenResponse>.Failure("not valid token.");
         
         if(refreshTokenObj.Expiry < DateTime.UtcNow) 
-            return Result.Failure<TokenResponse>(Error.Failure(string.Empty, "Expired"));
+            return Result<TokenResponse>.Failure("expired");
         
         var user = await userManager.FindByIdAsync(refreshTokenObj.UserId);
         if(user is null) 
-            return Result.Failure<TokenResponse>(Error.NotFound(string.Empty, "Not found"));
+            return Result<TokenResponse>.Failure("not found user.");
         
         var token = await userManager.GetAuthenticationTokenAsync(user, loginProvider:"internal", tokenName:"refreshToken");
         if(token is null) 
-            return Result.Failure<TokenResponse>(Error.NotFound(string.Empty, "Not found"));
+            return Result<TokenResponse>.Failure("not found refreshToken.");
         
         if(refreshTokenObj.Token != token) 
-            return Result.Failure<TokenResponse>(Error.NotFound(string.Empty, "Not found"));
+            return Result<TokenResponse>.Failure("not valid token.");
         
         var userClaims = await userManager.GetClaimsAsync(user);
         var roles = await userManager.GetRolesAsync(user);
@@ -61,7 +60,8 @@ public class RefreshTokenCommandHandler(
         var result = await userManager.SetAuthenticationTokenAsync(user, loginProvider:"internal", tokenName:"refreshToken", tokenValue:newRefreshToken);
         if(!result.Succeeded) throw new ValidationException(result.Errors.Select(m => m.Description).First());
         
-        return new TokenResponse(jwtService.GenerateJwtToken(user, userClaims.ToList(), roleClaims), jwtService.ObjectToTokenString(newRefreshTokenObj));
+        var newToken = new TokenResponse(jwtService.GenerateJwtToken(user, userClaims.ToList(), roleClaims), jwtService.ObjectToTokenString(newRefreshTokenObj));
+        return Result<TokenResponse>.Success(newToken);
     }
 }
 

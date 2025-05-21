@@ -6,14 +6,13 @@ public class PagingRequest
     public int PageSize { get; set; } = 10;
 }
 
-public class PagingResult<T>
+public class PagingResult<T> : Result<T>
 {
     public int Total { get; set; }
-    public T[] Data { get; set; }
     public int PageNo { get; set; }
     public int PageSize { get; set; }
 
-    public static PagingResult<T> Create(int total, T[] data, int pageNo, int pageSize)
+    public static PagingResult<T> Success(int total, T data, int pageNo, int pageSize)
     {
         return new PagingResult<T>
         {

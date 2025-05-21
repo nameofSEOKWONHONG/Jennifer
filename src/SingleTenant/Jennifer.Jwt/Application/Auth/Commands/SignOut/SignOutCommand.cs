@@ -1,32 +1,33 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using eXtensionSharp;
-using Jennifer.Infrastructure.Abstractions.Messaging;
 using Jennifer.Jwt.Models;
 using Jennifer.SharedKernel;
+using Mediator;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 
 namespace Jennifer.Jwt.Application.Auth.Commands.SignOut;
 
-public sealed record SignOutCommand(bool dummy):ICommand<bool>;
+public sealed record SignOutCommand(bool dummy):ICommand<Result>;
 
 public class SignOutCommandHandler(
     UserManager<User> userManager,
     IHttpContextAccessor accessor    
-    ): ICommandHandler<SignOutCommand, bool>
+    ): ICommandHandler<SignOutCommand, Result>
 {
-    public async Task<Result<bool>> HandleAsync(SignOutCommand command, CancellationToken cancellationToken)
+    public async ValueTask<Result> Handle(SignOutCommand command, CancellationToken cancellationToken)
     {
         var sid = accessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (sid.xIsEmpty()) 
-            return Result.Failure<bool>(Error.NotFound(string.Empty, "Not found"));
+            return Result.Failure("not found sid");
         
         var user = await userManager.FindByIdAsync(sid);
         if(user is null) 
-            return Result.Failure<bool>(Error.NotFound(string.Empty, "Not found"));
+            return Result.Failure("not found user");
         
         var result = await userManager.RemoveAuthenticationTokenAsync(user, loginProvider:"internal", tokenName:"refreshToken");
-        return result.Succeeded;
+        if(!result.Succeeded) return Result.Failure("not found refreshToken");
+        
+        return Result.Success();
     }
 }

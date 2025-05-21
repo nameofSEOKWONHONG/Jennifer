@@ -1,18 +1,21 @@
 ﻿using System.IO.Compression;
 using System.Text;
 using eXtensionSharp;
+using FluentValidation;
 using Jennifer.External.OAuth;
 using Jennifer.Infrastructure;
 using Jennifer.Infrastructure.Data;
 using Jennifer.Infrastructure.Email;
 using Jennifer.Infrastructure.Options;
 using Jennifer.Jwt.Application.Auth;
+using Jennifer.Jwt.Application.Auth.Commands.SignUp;
 using Jennifer.Jwt.Application.Endpoints;
 using Jennifer.Jwt.Application.Users;
 using Jennifer.Jwt.Data;
 using Jennifer.Jwt.Hubs;
 using Jennifer.Jwt.Models;
 using Jennifer.Jwt.Session;
+using Mediator;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
@@ -180,6 +183,13 @@ public static class DependencyInjection
             });
         });
         #endif
+        
+        services.AddMediator(options =>
+        {
+            options.ServiceLifetime = ServiceLifetime.Scoped;
+        });
+        services.AddScoped(typeof(IPipelineBehavior<,>), typeof(Behaviors.ValidationBehavior<,>));
+        services.AddValidatorsFromAssemblyContaining<SignUpAdminCommandValidator>();
     }
 
     /// <summary>
