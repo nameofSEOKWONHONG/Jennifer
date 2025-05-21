@@ -20,6 +20,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MultiTenant", "MultiTenant"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jennifer.Infrastructure", "Jennifer.Infrastructure\Jennifer.Infrastructure.csproj", "{C67A8851-9297-4D8C-BF7C-D524C5AC5965}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jennifer.Mediator.Demo", "Jennifer.Mediator.Demo\Jennifer.Mediator.Demo.csproj", "{D3617ABA-E94B-43B6-94F9-39CA87AE547E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -54,6 +56,10 @@ Global
 		{C67A8851-9297-4D8C-BF7C-D524C5AC5965}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C67A8851-9297-4D8C-BF7C-D524C5AC5965}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C67A8851-9297-4D8C-BF7C-D524C5AC5965}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D3617ABA-E94B-43B6-94F9-39CA87AE547E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3617ABA-E94B-43B6-94F9-39CA87AE547E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D3617ABA-E94B-43B6-94F9-39CA87AE547E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D3617ABA-E94B-43B6-94F9-39CA87AE547E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{BCD80EA7-5A0C-432F-8458-D3177E62FFD7} = {D2AC356E-8786-44F6-ABB6-122EC1C8A00C}
@@ -63,5 +69,6 @@ Global
 		{D26E0BD8-CFF8-4EF9-8ADD-5E002C37D8F7} = {88E11552-DE71-41B4-A134-AF8D2BEDBCC1}
 		{99C9629A-5DE1-4056-9628-5B9F2D6F9A3C} = {3775E109-E4A0-4D95-AB9A-31DC58366E83}
 		{C67A8851-9297-4D8C-BF7C-D524C5AC5965} = {D2AC356E-8786-44F6-ABB6-122EC1C8A00C}
+		{D3617ABA-E94B-43B6-94F9-39CA87AE547E} = {88E11552-DE71-41B4-A134-AF8D2BEDBCC1}
 	EndGlobalSection
 EndGlobal

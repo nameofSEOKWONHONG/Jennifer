@@ -7,9 +7,9 @@ namespace Jennifer.Jwt.Session.Implements;
 
 public class UserContext : IUserContext
 {
+    private readonly IUserFetcher _userFetcher;
     private readonly IUserRoleFetcher _userRoleFetcher;
     public string UserId { get; }
-    public string UserName { get; private set; }
     public Guid UserGuid => Guid.Parse(UserId);
     public UserContext(IHttpContextAccessor httpContextAccessor,
         IUserRoleFetcher userRoleFetcher)
@@ -18,9 +18,10 @@ public class UserContext : IUserContext
         _userRoleFetcher = userRoleFetcher;
     }
     
-    public void SetContext(string userName) => UserName = userName;
-    
     public async Task<IEnumerable<UserRole>> GetUserRolesAsync() 
-        => await _userRoleFetcher.FetchAsync(UserGuid);
+        => await _userRoleFetcher.HandleAsync(UserGuid);
+
+    public async Task<User> GetUserAsync() 
+        => await _userFetcher.HandleAsync(UserGuid);
 }
 

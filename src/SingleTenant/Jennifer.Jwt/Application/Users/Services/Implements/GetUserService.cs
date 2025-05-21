@@ -12,14 +12,17 @@ namespace Jennifer.Jwt.Services.UserServices.Implements;
 
 public class GetUserService : SessionServiceBase<GetUserService, Guid, ApiResponse<UserDto>>, IGetUserService
 {
-    public GetUserService(ILogger<GetUserService> logger, ISessionContext sessionContext) : base(logger, sessionContext)
+    private readonly JenniferDbContext _dbContext;
+
+    public GetUserService(ILogger<GetUserService> logger, ISessionContext sessionContext,
+        JenniferDbContext dbContext) : base(logger, sessionContext)
     {
+        _dbContext = dbContext;
     }
 
     public async Task<ApiResponse<UserDto>> HandleAsync(Guid request, CancellationToken cancellationToken)
     {
-        var dbContext = this.AsDatabase<JenniferDbContext>();
-        var result = await dbContext.Users.AsNoTracking()
+        var result = await _dbContext.Users.AsNoTracking()
             .Where(m => m.Id == request)
             .Select(m => new UserDto()
             {

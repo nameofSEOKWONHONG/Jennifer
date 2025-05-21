@@ -6,5 +6,4 @@ public interface ISessionContext
 {
     IUserContext UserContext { get; }   
     bool IsAuthenticated { get; }
-    IApplicationDbContext ApplicationDbContext { get; }
 }

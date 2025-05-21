@@ -15,7 +15,7 @@ namespace Jennifer.Jwt.Session.Implements;
 /// </summary>
 public class UserRoleFetcher(IDbConnection connection) : IUserRoleFetcher
 {
-    public async Task<IEnumerable<UserRole>> FetchAsync(Guid id)
+    public async Task<IEnumerable<UserRole>> HandleAsync(Guid id)
     {
         // return await dbContext.xAs<JenniferDbContext>()
         //     .UserRoles

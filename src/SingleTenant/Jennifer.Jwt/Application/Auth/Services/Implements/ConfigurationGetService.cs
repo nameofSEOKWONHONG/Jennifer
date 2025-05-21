@@ -18,12 +18,16 @@ public interface IGetConfigurationService : IServiceBase<ENUM_CONFIGURATION_TYPE
 
 public class ConfigurationGetService: SessionServiceBase<ConfigurationGetService, ENUM_CONFIGURATION_TYPE, ConfigurationResponse>, IGetConfigurationService
 {
-    public ConfigurationGetService(ILogger<ConfigurationGetService> logger, ISessionContext sessionContext) : base(logger, sessionContext)
+    private readonly JenniferDbContext _dbContext;
+
+    public ConfigurationGetService(ILogger<ConfigurationGetService> logger, ISessionContext sessionContext,
+        JenniferDbContext dbContext) : base(logger, sessionContext)
     {
+        _dbContext = dbContext;
     }
 
     public async Task<IEnumerable<ConfigurationResponse>> HandleAsync(ENUM_CONFIGURATION_TYPE request, CancellationToken cancellationToken) =>
-        await this.AsDatabase<JenniferDbContext>().Configurations
+        await _dbContext.Configurations
             .AsNoTracking()
             .Where(m => m.Type == request)
             .Select(m => new ConfigurationResponse(m.Type, m.Value))

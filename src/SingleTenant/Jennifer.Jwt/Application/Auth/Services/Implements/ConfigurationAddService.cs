@@ -17,14 +17,17 @@ public interface IConfigurationAddService : IServiceBase<ConfigurationAddRequest
 
 public class ConfigurationAddService: SessionServiceBase<ConfigurationAddService, ConfigurationAddRequest, ServiceResult<Guid>>, IConfigurationAddService
 {
-    public ConfigurationAddService(ILogger<ConfigurationAddService> logger, ISessionContext sessionContext) : base(logger, sessionContext)
+    private readonly JenniferDbContext _dbContext;
+
+    public ConfigurationAddService(ILogger<ConfigurationAddService> logger, ISessionContext sessionContext,
+        JenniferDbContext dbContext) : base(logger, sessionContext)
     {
+        _dbContext = dbContext;
     }
 
     public async Task<ServiceResult<Guid>> HandleAsync(ConfigurationAddRequest request, CancellationToken cancellationToken)
     {
-        var dbContext = this.AsDatabase<JenniferDbContext>();
-        var exists = dbContext.Configurations
+        var exists = _dbContext.Configurations
             .FirstOrDefaultAsync(m => m.Id == request.Id && m.Type == request.Type, cancellationToken: cancellationToken);
         if (exists.xIsEmpty()) return ServiceResult<Guid>.Failure("Not found");
 
@@ -33,8 +36,8 @@ public class ConfigurationAddService: SessionServiceBase<ConfigurationAddService
             Type = request.Type,
             Value = request.Value
         }; 
-        await dbContext.Configurations.AddAsync(newItem, cancellationToken);
-        await dbContext.SaveChangesAsync(cancellationToken);
+        await _dbContext.Configurations.AddAsync(newItem, cancellationToken);
+        await _dbContext.SaveChangesAsync(cancellationToken);
 
         return ServiceResult<Guid>.Success(newItem.Id) ;
     }

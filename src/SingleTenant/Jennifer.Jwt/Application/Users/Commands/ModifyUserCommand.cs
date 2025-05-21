@@ -10,11 +10,10 @@ namespace Jennifer.Jwt.Application.Users.Commands;
 
 public sealed record ModifyUserCommand(UserDto userDto): ICommand<bool>;
 
-public class ModifyUserCommandHandler(ISessionContext context): ICommandHandler<ModifyUserCommand, bool>
+public class ModifyUserCommandHandler(ISessionContext context, JenniferDbContext dbContext): ICommandHandler<ModifyUserCommand, bool>
 {
     public async Task<Result<bool>> HandleAsync(ModifyUserCommand command, CancellationToken cancellationToken)
     {
-        var dbContext = context.xAs<JenniferDbContext>();
         var exists = await dbContext.Users.FirstOrDefaultAsync(x => x.Id == command.userDto.Id, cancellationToken: cancellationToken);
         if(exists.xIsEmpty()) return Result.Failure<bool>(Error.NotFound("", "Not Found User"));
         

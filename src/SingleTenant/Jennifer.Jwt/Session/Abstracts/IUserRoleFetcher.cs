@@ -2,5 +2,5 @@
 
 public interface ICachedFetcher<TOut, in TIn>
 {
-    Task<TOut> FetchAsync(TIn input);
+    Task<TOut> HandleAsync(TIn input);
 }

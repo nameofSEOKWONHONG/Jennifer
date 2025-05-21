@@ -21,11 +21,11 @@ public class CachedUserRoleFetcher : IUserRoleFetcher
         _inner = inner;
     }
 
-    public async Task<IEnumerable<UserRole>> FetchAsync(Guid input)
+    public async Task<IEnumerable<UserRole>> HandleAsync(Guid input)
     {
         if (_isCached) return _cached;
 
-        _cached = await _inner.FetchAsync(input);
+        _cached = await _inner.HandleAsync(input);
         _isCached = true;
         return _cached;
     }

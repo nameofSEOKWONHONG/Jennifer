@@ -10,10 +10,11 @@ using Microsoft.EntityFrameworkCore;
 namespace Jennifer.Jwt.Application.Users.Commands;
 
 public class GetUserQueryHandler(ISessionContext context,
+    JenniferDbContext dbContext,
     IUserQueryFilter queryFilter): IQueryHandler<GetUserQuery, UserDto>
 {
     public async Task<Result<UserDto>> HandleAsync(GetUserQuery query, CancellationToken cancellationToken) =>
-        await context.ApplicationDbContext
+        await dbContext
             .xAs<JenniferDbContext>()
             .Users
             .AsNoTracking()

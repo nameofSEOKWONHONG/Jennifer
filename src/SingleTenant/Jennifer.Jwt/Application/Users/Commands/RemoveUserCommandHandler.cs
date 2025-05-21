@@ -8,11 +8,11 @@ using Microsoft.EntityFrameworkCore;
 namespace Jennifer.Jwt.Application.Users.Commands;
 
 public class RemoveUserCommandHandler(ISessionContext context,
+    JenniferDbContext dbContext,
     IUserQueryFilter queryFilter): ICommandHandler<RemoveUserCommand>
 {
     public async Task<Result> HandleAsync(RemoveUserCommand command, CancellationToken cancellationToken)
     {
-        var dbContext = context.ApplicationDbContext.xAs<JenniferDbContext>();
         var user = await dbContext
             .Users
             .Where(queryFilter.Where(command))

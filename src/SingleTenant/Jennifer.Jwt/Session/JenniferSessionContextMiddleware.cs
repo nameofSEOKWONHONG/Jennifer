@@ -17,8 +17,7 @@ public class JenniferSessionContextMiddleware
     {
         if (context.User.Identity?.IsAuthenticated == true)
         {
-            var sessionInitializer = sessionContext.xAs<ISessionContextInitializer>();
-            await sessionInitializer.Initialize(applicationDbContext);
+            //...
         }
         await _next(context);
     }

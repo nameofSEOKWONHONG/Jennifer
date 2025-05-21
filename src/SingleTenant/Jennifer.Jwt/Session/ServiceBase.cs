@@ -21,6 +21,4 @@ public abstract class SessionServiceBase<T, TRequest, TResponse> : ServiceBase<T
     {
         _sessionContext = sessionContext;
     }
-
-    protected TDb AsDatabase<TDb>() => _sessionContext.ApplicationDbContext.xAs<TDb>();
 }
