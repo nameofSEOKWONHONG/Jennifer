@@ -1,12 +1,10 @@
 ﻿using System.Security.Claims;
 using eXtensionSharp;
 using Jennifer.External.OAuth.Abstracts;
-using Jennifer.Infrastructure.Abstractions;
 using Jennifer.Jwt.Application.Auth.Contracts;
 using Jennifer.Jwt.Application.Auth.Services.Abstracts;
 using Jennifer.Jwt.Models;
 using Jennifer.Jwt.Session;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;

@@ -1,10 +1,10 @@
-﻿using Jennifer.Infrastructure.Abstractions.Messaging;
-using Jennifer.Jwt.Models.Contracts;
-using Microsoft.AspNetCore.Http;
+﻿using Jennifer.Jwt.Models.Contracts;
+using Jennifer.SharedKernel;
+using Mediator;
 
 namespace Jennifer.Jwt.Application.Auth.Commands.SignUp;
 
-public sealed class SignUpCommand : ICommand<Guid>
+public sealed class SignUpCommand : ICommand<Result<Guid>>
 {
     /// <summary>
     /// Gets or sets the email address associated with the user or registration process.

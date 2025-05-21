@@ -11,6 +11,6 @@ public static class DependencyInjection
         services.AddScoped<IUserContext, UserContext>();
         services.AddScoped<ISessionContext, SessionContext>();
         services.AddScoped<IUserRoleFetcher, UserRoleFetcher>();
-        services.Decorate<IUserRoleFetcher, CachedUserRoleFetcher>();
+        //services.Decorate<IUserRoleFetcher, CachedUserRoleFetcher>();
     }
 }

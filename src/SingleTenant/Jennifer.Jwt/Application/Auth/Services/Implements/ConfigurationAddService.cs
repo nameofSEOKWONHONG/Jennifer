@@ -1,5 +1,4 @@
 ﻿using eXtensionSharp;
-using Jennifer.Infrastructure.Abstractions;
 using Jennifer.Jwt.Data;
 using Jennifer.Jwt.Models;
 using Jennifer.Jwt.Models.Contracts;

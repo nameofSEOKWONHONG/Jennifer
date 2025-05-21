@@ -5,13 +5,4 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>disable</Nullable>
     </PropertyGroup>
-
-    <ItemGroup>
-        <FrameworkReference Include="Microsoft.AspNetCore.App" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Content Remove="C:\Users\h2091\.nuget\packages\extensionsharp\1.0.2\contentFiles\any\net9.0\README.md" />
-    </ItemGroup>
-
 </Project>

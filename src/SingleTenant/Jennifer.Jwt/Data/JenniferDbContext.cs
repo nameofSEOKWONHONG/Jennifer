@@ -1,9 +1,9 @@
-﻿using Jennifer.Infrastructure.Abstractions.DomainEvents;
+﻿using eXtensionSharp;
 using Jennifer.Infrastructure.Data;
 using Jennifer.Jwt.Models;
-using Jennifer.Jwt.Session;
 using Jennifer.Jwt.Session.Abstracts;
 using Jennifer.SharedKernel;
+using Mediator;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SmartEnum.EFCore;
@@ -17,15 +17,15 @@ public class JenniferDbContext : IdentityDbContext<User, Role, Guid,
     RoleClaim,
     UserToken>, IApplicationDbContext
 {
-    private readonly IDomainEventsDispatcher _domainEventDispatcher;
     private readonly IUserContext _userContext;
+    private readonly IMediator _mediator;
 
     public JenniferDbContext(DbContextOptions<JenniferDbContext> options,
         IUserContext userContext,
-        IDomainEventsDispatcher domainEventDispatcher): base(options)
+        IMediator mediator): base(options)
     {
         _userContext = userContext;
-        _domainEventDispatcher = domainEventDispatcher;
+        _mediator = mediator;
     }
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
@@ -77,19 +77,22 @@ public class JenniferDbContext : IdentityDbContext<User, Role, Guid,
     
     private async Task PublishDomainEventsAsync()
     {
-        var domainEvents = ChangeTracker
+        var notifications = ChangeTracker
             .Entries<IEntity>()
             .Select(entry => entry.Entity)
             .SelectMany(entity =>
             {
-                List<IDomainEvent> domainEvents = entity.DomainEvents;
+                List<INotification> entityNotifications = entity.Notifications;
 
-                entity.ClearDomainEvents();
+                entity.ClearNotifications();
 
-                return domainEvents;
+                return entityNotifications;
             })
             .ToList();
 
-        await _domainEventDispatcher.DispatchAsync(domainEvents);
+        foreach (var notification in notifications)
+        {
+            await _mediator.Publish(notification);
+        }
     }
 }

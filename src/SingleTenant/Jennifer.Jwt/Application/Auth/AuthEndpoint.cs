@@ -1,5 +1,4 @@
-﻿using Jennifer.Infrastructure.Abstractions.Messaging;
-using Jennifer.Jwt.Application.Auth.Commands.CheckEmail;
+﻿using Jennifer.Jwt.Application.Auth.Commands.CheckEmail;
 using Jennifer.Jwt.Application.Auth.Commands.ExternalOAuth;
 using Jennifer.Jwt.Application.Auth.Commands.Password;
 using Jennifer.Jwt.Application.Auth.Commands.RefreshToken;
@@ -7,6 +6,7 @@ using Jennifer.Jwt.Application.Auth.Commands.SignIn;
 using Jennifer.Jwt.Application.Auth.Commands.SignOut;
 using Jennifer.Jwt.Application.Auth.Commands.SignUp;
 using Jennifer.Jwt.Application.Auth.Contracts;
+using Mediator;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -33,8 +33,8 @@ public static class AuthEndpoint
                 .WithTags("Auth");
         
         group.MapPost("/check", 
-                async (string email, IQueryHandler<CheckByEmailQuery, bool> handler, CancellationToken ct) =>
-                    await handler.HandleAsync(new CheckByEmailQuery(email), ct))
+                async (string email, ISender sender, CancellationToken ct) =>
+                    await sender.Send(new CheckByEmailRequest(email), ct))
             .WithName("CheckEmail");
 
         #region [sign up process]
@@ -51,14 +51,14 @@ public static class AuthEndpoint
 
         group.MapPost("/signup", 
                 async (RegisterRequest request,
-                        ICommandHandler<SignUpCommand, Guid> handler, CancellationToken ct) => 
-                    await handler.HandleAsync(
+                        ISender sender, CancellationToken ct) => 
+                    await sender.Send(
                         new SignUpCommand(request.Email, request.Password, request.UserName, request.PhoneNumber, request.Type), ct))
             .WithName("SignUp");
         
         group.MapPost("/signup/verify", 
-                async (SignUpVerifyRequest request, ICommandHandler<SignUpVerifyCommand, bool> handler, CancellationToken ct) => 
-                    await handler.HandleAsync(new SignUpVerifyCommand(request.UserId, request.Code), ct))
+                async (SignUpVerifyRequest request, ISender sender, CancellationToken ct) => 
+                    await sender.Send(new SignUpVerifyCommand(request.UserId, request.Code), ct))
             .WithName("SignUpVerify");
         
         // group.MapGet("/signup/verify/{id}/{code}", 
@@ -67,9 +67,9 @@ public static class AuthEndpoint
         //     .WithName("SignUpVerify");
 
         group.MapPost("/signup/retry",
-            async (SignUpRetryRequest request, ICommandHandler<SignUpRetryCommand, bool> handler,
+            async (SignUpRetryRequest request, ISender sender,
                     CancellationToken ct) =>
-                await handler.HandleAsync(new SignUpRetryCommand(request.Email), ct))
+                await sender.Send(new SignUpRetryCommand(request.Email), ct))
             .WithName("SignUpRetry");
 
         #endregion
@@ -77,11 +77,10 @@ public static class AuthEndpoint
         #region [admin sign up process]
 
         group.MapPost("/signup/admin",
-                async (RegisterAdminRequest request, ICommandHandler<SignUpAdminCommand, Guid> handler, CancellationToken ct) =>
+                async (RegisterAdminRequest request, ISender sender, CancellationToken ct) =>
                 {
                     var command = new SignUpAdminCommand(request.Email, request.Password, request.UserName, request.PhoneNumber);
-                    var result = await handler.HandleAsync(command, ct);
-                    return result.IsSuccess ? Results.Ok() : Results.Problem(result.Error.Description);
+                    return await sender.Send(command, ct);
                 })
             .WithName("SignUpAdmin");
         
@@ -90,8 +89,8 @@ public static class AuthEndpoint
         
         
         group.MapPost("/signin", 
-            async (SignInRequest request, ICommandHandler<SignInCommand, TokenResponse> handler, CancellationToken ct) => 
-                await handler.HandleAsync(new SignInCommand(request.Email, request.Password), ct))
+            async (SignInRequest request, ISender sender, CancellationToken ct) => 
+                await sender.Send(new SignInCommand(request.Email, request.Password), ct))
             .WithName("SignIn")
             .WithDescription(@"
 Sign in with email and password. 
@@ -101,20 +100,20 @@ The refresh token expires after 7 days.
 Use the refresh token to obtain a new JWT token. The refresh token expires after 7 days.");
         
         group.MapPost("/external/signin", 
-                async (ExternalSignInRequest request, ICommandHandler<ExternalOAuthCommand, TokenResponse> handler, CancellationToken ct) =>
-                    await handler.HandleAsync(new ExternalOAuthCommand(request.Provider, request.AccessToken), ct))
+                async (ExternalSignInRequest request, ISender sender, CancellationToken ct) =>
+                    await sender.Send(new ExternalOAuthCommand(request.Provider, request.AccessToken), ct))
             .WithName("ExternalSignIn");        
         
         group.MapPost("/signout",
-            async (ICommandHandler<SignOutCommand, bool> handler, CancellationToken ct) => 
-                await handler.HandleAsync(new SignOutCommand(true), ct))
+            async (ISender sender, CancellationToken ct) => 
+                await sender.Send(new SignOutCommand(true), ct))
             .WithName("SignOut")
             .RequireAuthorization();
 
         group.MapPost("/refreshtoken",
-                async (string refreshToken, ICommandHandler<RefreshTokenCommand, TokenResponse> handler,
+                async (string refreshToken, ISender sender,
                         CancellationToken ct) =>
-                    await handler.HandleAsync(new RefreshTokenCommand(refreshToken), ct))
+                    await sender.Send(new RefreshTokenCommand(refreshToken), ct))
             .WithName("RefreshToken");
         
         #region [none login state change password]
@@ -126,30 +125,30 @@ Use the refresh token to obtain a new JWT token. The refresh token expires after
          */
         
         group.MapPost("/password/forgot",
-                async (PasswordForgotRequest request, ICommandHandler<PasswordForgotCommand, IResult> handler, CancellationToken ct) =>
-                    await handler.HandleAsync(new PasswordForgotCommand(request.Email, request.UserName), ct))
+                async (PasswordForgotRequest request, ISender sender, CancellationToken ct) =>
+                    await sender.Send(new PasswordForgotCommand(request.Email, request.UserName), ct))
             .WithName("PasswordForgot")
             ;
         
         group.MapPost("/password/forgot/verify",
-                async (VerifyCodeRequest request, ICommandHandler<PasswordForgotVerifyCommand, IResult> handler,
+                async (VerifyCodeRequest request, ISender sender,
                         CancellationToken ct) =>
-                    await handler.HandleAsync(new PasswordForgotVerifyCommand(request.Email, request.Code), ct))
+                    await sender.Send(new PasswordForgotVerifyCommand(request.Email, request.Code), ct))
             .WithName("PasswordForgotVerify")
             ;
 
         group.MapPost("/password/forgot/change",
-                async (PasswordForgotChangeRequest request, ICommandHandler<PasswordForgotChangeCommand, IResult> handler,
+                async (PasswordForgotChangeRequest request, ISender sender,
                         CancellationToken ct) =>
-                    await handler.HandleAsync(new PasswordForgotChangeCommand(request.Email,  request.Code, request.NewPassword), ct))
+                    await sender.Send(new PasswordForgotChangeCommand(request.Email,  request.Code, request.NewPassword), ct))
             .WithName("PasswordForgotChange")
             ;
 
         #endregion
         
         group.MapPost("/password/change", 
-                async (PasswordChangeRequest request, ICommandHandler<PasswordChangeCommand, bool> handler, CancellationToken ct) => 
-                    await handler.HandleAsync(new PasswordChangeCommand(request.OldPassword, request.NewPassword), ct))
+                async (PasswordChangeRequest request, ISender sender, CancellationToken ct) => 
+                    await sender.Send(new PasswordChangeCommand(request.OldPassword, request.NewPassword), ct))
             .WithName("PasswordChange")
             .RequireAuthorization()
             ;

@@ -1,9 +1,9 @@
 ﻿using System.Security.Claims;
 using eXtensionSharp;
 using FluentValidation;
-using Jennifer.Infrastructure.Abstractions.Messaging;
 using Jennifer.Jwt.Models;
 using Jennifer.SharedKernel;
+using Mediator;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 
@@ -11,26 +11,26 @@ namespace Jennifer.Jwt.Application.Auth.Commands.Password;
 
 //로그인 된 상태에서 암호 변경을 의미.
 
-public sealed record PasswordChangeCommand(string OldPassword, string NewPassword):ICommand<bool>;
+public sealed record PasswordChangeCommand(string OldPassword, string NewPassword):ICommand<Result<bool>>;
 
 public class PasswordChangeCommandHandler(
     UserManager<User> userManager, 
     IHttpContextAccessor accessor     
-    ): ICommandHandler<PasswordChangeCommand, bool>
+    ): ICommandHandler<PasswordChangeCommand, Result<bool>>
 {
-    public async Task<Result<bool>> HandleAsync(PasswordChangeCommand command, CancellationToken cancellationToken)
+    public async ValueTask<Result<bool>> Handle(PasswordChangeCommand command, CancellationToken cancellationToken)
     {
         var userId = accessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
         
         var user = await userManager.FindByIdAsync(userId);
         if(user.xIsEmpty()) 
-            return Result.Failure<bool>(Error.NotFound(string.Empty, "Not found"));
+            return Result<bool>.Failure("Not found");
         
         var result = await userManager.ChangePasswordAsync(user, command.OldPassword, command.NewPassword);
         if (!result.Succeeded) 
-            return Result.Failure<bool>(Error.Problem(string.Empty, result.Errors.Select(m => m.Description).First()));
-        
-        return result.Succeeded;
+            return Result<bool>.Failure(result.Errors.Select(m => m.Description).First());
+
+        return Result<bool>.Success(true);
     }
 }
 

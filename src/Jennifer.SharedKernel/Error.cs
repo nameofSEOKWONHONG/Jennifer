@@ -1,46 +1,14 @@
 ﻿namespace Jennifer.SharedKernel;
 
-public record Error
+public class Error
 {
-    public static readonly Error None = new(string.Empty, string.Empty, ErrorType.Failure);
-    public static readonly Error NullValue = new(
-        "General.Null",
-        "Null value was provided",
-        ErrorType.Failure);
-
-    public Error(string code, string description, ErrorType type)
-    {
-        Code = code;
-        Description = description;
-        Type = type;
-    }
-
-    public string Code { get; }
-
-    public string Description { get; }
-
-    public ErrorType Type { get; }
-    
+    public string Code { get; set; }
+    public string Message { get; set; }
     public Error[] Errors { get; set; }
 
-    public static Error Failure(string code, string description) =>
-        new(code, description, ErrorType.Failure);
-
-    public static Error NotFound(string code, string description) =>
-        new(code, description, ErrorType.NotFound);
-
-    public static Error Problem(string code, string description) =>
-        new(code, description, ErrorType.Problem);
-
-    public static Error Conflict(string code, string description) =>
-        new(code, description, ErrorType.Conflict);
-}
-
-public enum ErrorType
-{
-    Failure = 0,
-    Validation = 1,
-    Problem = 2,
-    NotFound = 3,
-    Conflict = 4
+    public Error(string code, string message)
+    {
+        this.Code = code;
+        this.Message = message;   
+    }
 }

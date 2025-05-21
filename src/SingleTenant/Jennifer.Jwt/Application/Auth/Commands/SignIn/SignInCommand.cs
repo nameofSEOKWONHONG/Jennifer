@@ -1,32 +1,31 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
-using Jennifer.Infrastructure.Abstractions.Messaging;
 using Jennifer.Jwt.Application.Auth.Contracts;
 using Jennifer.Jwt.Application.Auth.Services.Abstracts;
 using Jennifer.Jwt.Models;
 using Jennifer.SharedKernel;
-using Microsoft.AspNetCore.Http;
+using Mediator;
 using Microsoft.AspNetCore.Identity;
 
 namespace Jennifer.Jwt.Application.Auth.Commands.SignIn;
 
-public sealed record SignInCommand(string Email, string Password):ICommand<TokenResponse>;
+public sealed record SignInCommand(string Email, string Password):ICommand<Result<TokenResponse>>;
 
 public class SignInCommandHandler(        
     UserManager<User> userManager,
     RoleManager<Role> roleManager,
-    IJwtService jwtService): ICommandHandler<SignInCommand, TokenResponse>
+    IJwtService jwtService): ICommandHandler<SignInCommand, Result<TokenResponse>>
 {
-    public async Task<Result<TokenResponse>> HandleAsync(SignInCommand command, CancellationToken cancellationToken)
+    public async ValueTask<Result<TokenResponse>> Handle(SignInCommand command, CancellationToken cancellationToken)
     {
         var user = await userManager.FindByEmailAsync(command.Email);
-        if(user is null) return Result.Failure<TokenResponse>(Error.NotFound("", "Not found"));
+        if(user is null) return Result<TokenResponse>.Failure("not found user");
 
         var locked = await userManager.IsLockedOutAsync(user);
-        if(locked) return Result.Failure<TokenResponse>(Error.Failure("", "Locked"));
+        if(locked) return Result<TokenResponse>.Failure("locked");
         
         if(!await userManager.CheckPasswordAsync(user, command.Password))
-            return Result.Failure<TokenResponse>(Error.Failure("", "Password is wrong"));
+            return Result<TokenResponse>.Failure("wrong password");
 
         var userClaims = await userManager.GetClaimsAsync(user);
         var roles = await userManager.GetRolesAsync(user);
@@ -53,6 +52,7 @@ public class SignInCommandHandler(
         if(!result.Succeeded) throw new ValidationException(result.Errors.Select(m => m.Description).First());
         
         var encodedRefreshToken = jwtService.ObjectToTokenString(refreshTokenObj);
-        return new TokenResponse(jwtService.GenerateJwtToken(user, userClaims.ToList(), roleClaims), encodedRefreshToken);
+        var token = new TokenResponse(jwtService.GenerateJwtToken(user, userClaims.ToList(), roleClaims), encodedRefreshToken);
+        return Result<TokenResponse>.Success(token);
     }
 }

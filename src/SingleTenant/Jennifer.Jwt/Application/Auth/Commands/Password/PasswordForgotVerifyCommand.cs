@@ -1,24 +1,23 @@
 ﻿using FluentValidation;
-using Jennifer.Infrastructure.Abstractions.Messaging;
 using Jennifer.Jwt.Application.Auth.Contracts;
 using Jennifer.Jwt.Application.Auth.Services.Abstracts;
 using Jennifer.Jwt.Models.Contracts;
 using Jennifer.SharedKernel;
-using Microsoft.AspNetCore.Http;
+using Mediator;
 
 namespace Jennifer.Jwt.Application.Auth.Commands.Password;
 
-public sealed record PasswordForgotVerifyCommand(string Email, string Code) : ICommand<IResult>;
+public sealed record PasswordForgotVerifyCommand(string Email, string Code) : ICommand<Result>;
 
 public class PasswordForgotVerifyCommandHandler(
     IVerifyCodeConfirmService verifyCodeConfirmService   
-    ):ICommandHandler<PasswordForgotVerifyCommand, IResult>
+    ):ICommandHandler<PasswordForgotVerifyCommand, Result>
 {
-    public async Task<Result<IResult>> HandleAsync(PasswordForgotVerifyCommand command, CancellationToken cancellationToken)
+    public async ValueTask<Result> Handle(PasswordForgotVerifyCommand command, CancellationToken cancellationToken)
     {
         var result = await verifyCodeConfirmService.HandleAsync(new VerifyCodeRequest(command.Email, command.Code, ENUM_EMAIL_VERIFICATION_TYPE.PASSWORD_FORGOT), cancellationToken);
-        if(result.Status != ENUM_VERITY_RESULT_STATUS.EMAIL_CONFIRM) return TypedResults.BadRequest(result.Message);
-        return TypedResults.Ok();
+        if(result.Status != ENUM_VERITY_RESULT_STATUS.EMAIL_CONFIRM) return Result.Failure(result.Message);
+        return Result.Success();
     }
 }
 

@@ -1,3 +1,3 @@
-﻿namespace Jennifer.SharedKernel;
-
-public interface IDomainEvent;
+﻿// namespace Jennifer.SharedKernel;
+//
+// public interface IDomainEvent;
