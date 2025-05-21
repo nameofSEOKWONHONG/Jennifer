@@ -1,6 +1,9 @@
 ﻿using Asp.Versioning;
+using FluentValidation;
 using Jennifer.Jwt.Application.Auth.Contracts;
 using Jennifer.Jwt.Application.Users.Commands;
+using Jennifer.Jwt.Behaviors;
+using Jennifer.SharedKernel;
 using Mediator;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -25,8 +28,8 @@ public static class UserEndpoint
             .RequireAuthorization()
             ;
 
-        group.MapGet("/", 
-            async ([AsParameters]GetsUserRequest request, ISender sender, CancellationToken ct) => 
+        group.MapGet("/",
+            async ([AsParameters] GetsUserRequest request, ISender sender, CancellationToken ct) =>
                 await sender.Send(new GetsUserQuery(request.Email,  request.UserName, request.PageNo, request.PageSize), ct))
             .MapToApiVersion(1)
             .WithName("GetUsersV1");

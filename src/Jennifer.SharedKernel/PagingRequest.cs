@@ -16,6 +16,8 @@ public class PagingResult<T> : Result<T>
     {
         return new PagingResult<T>
         {
+            IsSuccess = true,
+            Message = string.Empty,
             Total = total,
             Data = data,
             PageNo = pageNo,

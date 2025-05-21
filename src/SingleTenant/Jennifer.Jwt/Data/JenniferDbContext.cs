@@ -1,5 +1,4 @@
-﻿using eXtensionSharp;
-using Jennifer.Infrastructure.Data;
+﻿using Jennifer.Infrastructure.Data;
 using Jennifer.Jwt.Models;
 using Jennifer.Jwt.Session.Abstracts;
 using Jennifer.SharedKernel;

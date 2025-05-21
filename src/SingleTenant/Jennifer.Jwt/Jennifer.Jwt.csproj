@@ -37,10 +37,6 @@
     </ItemGroup>
     
     <ItemGroup>
-      <Folder Include="Application\Users\Contracts\" />
-    </ItemGroup>
-    
-    <ItemGroup>
       <ProjectReference Include="..\..\Jennifer.External.OAuth\Jennifer.External.OAuth.csproj" />
       <ProjectReference Include="..\..\Jennifer.Infrastructure\Jennifer.Infrastructure.csproj" />
       <ProjectReference Include="..\..\Jennifer.SharedKernel\Jennifer.SharedKernel.csproj" />
