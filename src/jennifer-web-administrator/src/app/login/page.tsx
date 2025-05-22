@@ -6,6 +6,20 @@ import { signIn } from '@/app/lib/api/authApi'
 import { SignInModel } from '@/app/lib/models/siginModel'
 import { useAuthStore } from '../stores/authStore'
 
+import {
+  Box,
+  Button,
+  Checkbox,
+  CircularProgress,
+  FormControlLabel,
+  TextField,
+  Typography,
+  Alert,
+  Stack
+} from '@mui/material'
+
+
+
 export default function LoginPage() {
   const [model, setModel] = useState<SignInModel>({
     email: '',
@@ -44,41 +58,57 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-8">
-      <h1 className="text-3xl font-bold mb-6">로그인</h1>
+    <Box
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      justifyContent="center"
+      minHeight="100vh"
+      px={2}
+    >
+      <Typography variant="h4" gutterBottom>로그인</Typography>
 
-      <div className="w-full max-w-sm space-y-4">
-        <input
-          type="email"
-          placeholder="이메일"
-          value={model.email}
-          onChange={(e) => handleChange('email', e.target.value)}
-          className="w-full p-3 border border-gray-300 rounded"
-        />
-        <input
-          type="password"
-          placeholder="비밀번호"
-          value={model.password}
-          onChange={(e) => handleChange('password', e.target.value)}
-          className="w-full p-3 border border-gray-300 rounded"
-        />
-        <label className="flex items-center space-x-2 text-sm">
-          <input
-            type="checkbox"
-            checked={model.rememberMe}
-            onChange={(e) => handleChange('rememberMe', e.target.checked)}
+      <Box width="100%" maxWidth="400px">
+        <Stack spacing={2}>
+          <TextField
+            label="이메일"
+            type="email"
+            value={model.email}
+            onChange={(e) => handleChange('email', e.target.value)}
+            fullWidth
           />
-          <span>로그인 상태 유지</span>
-        </label>
-        <button
-          onClick={handleLogin}
-          disabled={loading}
-          className="w-full bg-blue-600 text-white py-3 rounded hover:bg-blue-700 disabled:bg-gray-400"
-        >
-          {loading ? '로그인 중...' : '로그인'}
-        </button>
-        {message && <p className="text-center mt-4 text-sm text-red-600">{message}</p>}
-      </div>
-    </main>
+          <TextField
+            label="비밀번호"
+            type="password"
+            value={model.password}
+            onChange={(e) => handleChange('password', e.target.value)}
+            fullWidth
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={model.rememberMe}
+                onChange={(e) => handleChange('rememberMe', e.target.checked)}
+              />
+            }
+            label="로그인 상태 유지"
+          />
+          <Button
+            variant="contained"
+            color="primary"
+            fullWidth
+            onClick={handleLogin}
+            disabled={loading}
+          >
+            {loading ? <CircularProgress size={24} /> : '로그인'}
+          </Button>
+          {message && (
+            <Alert severity={message.includes('성공') ? 'success' : 'error'}>
+              {message}
+            </Alert>
+          )}
+        </Stack>
+      </Box>
+    </Box>
   )
 }

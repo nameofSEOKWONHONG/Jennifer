@@ -5,6 +5,7 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <UserSecretsId>5e5193ff-2269-4745-82c7-36eb1690abb2</UserSecretsId>        
     </PropertyGroup>
 
     <ItemGroup>
@@ -14,9 +15,10 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>                
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="8.1.1" />                
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Jennifer.Jwt\Jennifer.Jwt.csproj" />
+      <ProjectReference Include="..\Jennifer.Account\Jennifer.Account.csproj" />
     </ItemGroup>
 </Project>

@@ -4,7 +4,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jennifer.Api", "SingleTenan
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jennifer.Tenant", "MultiTenant\Jennifer.Tenant\Jennifer.Tenant.csproj", "{99C9629A-5DE1-4056-9628-5B9F2D6F9A3C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jennifer.Jwt", "SingleTenant\Jennifer.Jwt\Jennifer.Jwt.csproj", "{5123C87D-4B7E-498A-A714-2D50C03D643F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jennifer.Account", "SingleTenant\Jennifer.Account\Jennifer.Account.csproj", "{5123C87D-4B7E-498A-A714-2D50C03D643F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jennifer.SharedKernel", "Jennifer.SharedKernel\Jennifer.SharedKernel.csproj", "{DCF2128E-6E49-4ED1-B042-0271961F2765}"
 EndProject
