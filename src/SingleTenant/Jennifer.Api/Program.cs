@@ -1,15 +1,12 @@
 using eXtensionSharp;
 using Jennifer.Api;
 using Jennifer.Infrastructure.Options;
-using Jennifer.Jwt;
-using Jennifer.SharedKernel;
+using Jennifer.Account;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
 using Scalar.AspNetCore;
 using Serilog;
 using JwtOptions = Jennifer.Infrastructure.Options.JwtOptions;
-
-DotNetEnv.Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,18 +24,19 @@ builder.Host.UseSerilog((context, services, config) =>
         .ReadFrom.Configuration(context.Configuration);
 });
 
-var cryptoOptions = new CryptoOptions(Environment.GetEnvironmentVariable("AES_KEY"),
-    Environment.GetEnvironmentVariable("AES_IV"));
-var jwtOptions = new JwtOptions(Environment.GetEnvironmentVariable("JWT_KEY"),
-    Environment.GetEnvironmentVariable("JWT_ISSUER"),
-    Environment.GetEnvironmentVariable("JWT_AUDIANCE"),
-    Environment.GetEnvironmentVariable("JWT_EXPIRYMINUTES").xValue<int>(),
-    Environment.GetEnvironmentVariable("JWT_REFRESHEXPIRYMINUTES").xValue<int>());
+var cryptoOptions = new CryptoOptions(
+    builder.Configuration["AES_KEY"],
+    builder.Configuration["AES_IV"]);
+var jwtOptions = new JwtOptions(builder.Configuration["JWT_KEY"],
+    builder.Configuration["JWT_ISSUER"],
+    builder.Configuration["JWT_AUDIANCE"],
+    builder.Configuration["JWT_EXPIRYMINUTES"].xValue<int>(),
+    builder.Configuration["JWT_REFRESHEXPIRYMINUTES"].xValue<int>());
 var smtpOptions = new EmailSmtpOptions(
-    Environment.GetEnvironmentVariable("SMTP_HOST"),
-    Environment.GetEnvironmentVariable("SMTP_PORT").xValue<int>(),
-    Environment.GetEnvironmentVariable("SMTP_USERNAME"),
-    Environment.GetEnvironmentVariable("SMTP_PASSWORD")
+    builder.Configuration["SMTP_HOST"],
+    builder.Configuration["SMTP_PORT"].xValue<int>(),
+    builder.Configuration["SMTP_USERNAME"],
+    builder.Configuration["SMTP_PASSWORD"]
 );
 
 var options = new JenniferOptions("account", 
@@ -49,30 +47,32 @@ var options = new JenniferOptions("account",
 
 // Add jennifer account manager
 builder.Services.AddJennifer(options,
-    (provider, optionsBuilder) =>
-    {
-        optionsBuilder.UseSqlServer(Environment.GetEnvironmentVariable("SQLSERVER_CONNECTION"));
-        if (builder.Environment.IsDevelopment())
+        (provider, optionsBuilder) =>
         {
-            optionsBuilder.EnableSensitiveDataLogging()
-                .EnableThreadSafetyChecks()
-                .EnableDetailedErrors();
-        }
-    }, null);
-// Add jennifer hybrid cache
-builder.Services.WithJenniferHybridCache(null, null);
+            var configuration = provider.GetRequiredService<IConfiguration>();
+            optionsBuilder.UseSqlServer(configuration["SQLSERVER_CONNECTION"]);
+            if (builder.Environment.IsDevelopment())
+            {
+                optionsBuilder.EnableSensitiveDataLogging()
+                    .EnableThreadSafetyChecks()
+                    .EnableDetailedErrors();
+            }
+        }, null)
+    // Add jennifer hybrid cache
+    .WithJenniferHybridCache(null, null)
+    // Add jennifer signalr hub
+    // options =>
+    // {
+    //     options.Configuration = 
+    //         builder.Configuration.GetConnectionString("RedisConnectionString");
+    // }
+    .WithJenniferAuthHub(null)
+    // Add jennifer email
+    .WithJenniferMailService();
 
-// Add jennifer signalr hub
-builder.Services.WithJenniferAuthHub(null);
 
-// Add jennifer email
-builder.Services.WithJenniferMailService();
 
-// options =>
-// {
-//     options.Configuration = 
-//         builder.Configuration.GetConnectionString("RedisConnectionString");
-// }
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
@@ -90,6 +90,8 @@ if (app.Environment.IsDevelopment())
             };        
     });
 }
+
+app.UseSwagger();
 
 app.UseHttpsRedirection();
 

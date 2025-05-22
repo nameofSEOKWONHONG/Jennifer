@@ -1,0 +1,9 @@
+﻿using Jennifer.Account.Application.Auth.Contracts;
+using Jennifer.SharedKernel;
+using Microsoft.AspNetCore.Http;
+
+namespace Jennifer.Account.Application.Auth.Services.Abstracts;
+
+public interface IExternalOAuthService: IServiceBase<ExternalSignInRequest, TokenResponse>
+{
+}
