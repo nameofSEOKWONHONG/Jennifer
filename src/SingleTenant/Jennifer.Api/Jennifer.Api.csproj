@@ -21,4 +21,8 @@
     <ItemGroup>
       <ProjectReference Include="..\Jennifer.Account\Jennifer.Account.csproj" />
     </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Logs\" />
+    </ItemGroup>
 </Project>
