@@ -1,10 +1,11 @@
-﻿using Mediator;
+﻿using Jennifer.Account.Behaviors;
+using Mediator;
 
 namespace Jennifer.Account.Models;
 
 public interface IEntity
 {
-    List<INotification> Notifications { get; }
-    void ClearNotifications();
-    void Raise(INotification notification);
+    List<IDomainEvent> DomainEvents { get; }
+    void Clear();
+    void Raise(IDomainEvent domainEvent);
 }

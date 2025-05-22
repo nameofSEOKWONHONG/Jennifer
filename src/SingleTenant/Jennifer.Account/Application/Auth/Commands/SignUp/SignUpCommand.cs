@@ -1,10 +1,11 @@
-﻿using Jennifer.Account.Models.Contracts;
+﻿using Jennifer.Account.Behaviors;
+using Jennifer.Account.Models.Contracts;
 using Jennifer.SharedKernel;
 using Mediator;
 
 namespace Jennifer.Account.Application.Auth.Commands.SignUp;
 
-public sealed class SignUpCommand : ICommand<Result<Guid>>
+public sealed class SignUpCommand : ITransactionCommand<Result<Guid>>
 {
     /// <summary>
     /// Gets or sets the email address associated with the user or registration process.

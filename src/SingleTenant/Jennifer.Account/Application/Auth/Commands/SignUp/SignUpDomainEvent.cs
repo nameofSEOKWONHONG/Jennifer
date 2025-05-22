@@ -1,5 +1,6 @@
 ﻿using Jennifer.Account.Application.Auth.Contracts;
 using Jennifer.Account.Application.Auth.Services.Abstracts;
+using Jennifer.Account.Behaviors;
 using Jennifer.Account.Models;
 using Jennifer.Account.Models.Contracts;
 using Mediator;
@@ -7,12 +8,12 @@ using Microsoft.Extensions.Logging;
 
 namespace Jennifer.Account.Application.Auth.Commands.SignUp;
 
-public sealed record SignUpNotification(User User): INotification;
+public sealed record SignUpDomainEvent(User User): IDomainEvent;
 
-public class SignUpNotificationHandler(ILogger<SignUpNotificationHandler> logger,
-    IVerifyCodeSendEmailService sendVerifyCodeService): INotificationHandler<SignUpNotification>
+public class SignUpDomainEventHandler(ILogger<SignUpDomainEventHandler> logger,
+    IVerifyCodeSendEmailService sendVerifyCodeService): INotificationHandler<SignUpDomainEvent>
 {
-    public async ValueTask Handle(SignUpNotification domainEvent, CancellationToken cancellationToken)
+    public async ValueTask Handle(SignUpDomainEvent domainEvent, CancellationToken cancellationToken)
     {
         logger.LogDebug("Domain Event:{UserId}", domainEvent.User.Id);
         

@@ -1,19 +1,20 @@
-﻿using Mediator;
+﻿using Jennifer.Account.Behaviors;
+using Mediator;
 
 namespace Jennifer.Account.Models;
 
 public abstract class Entity : IEntity
 {
-    private readonly List<INotification> _domainEvents = [];
+    private readonly List<IDomainEvent> _domainEvents = [];
 
-    public List<INotification> Notifications => [.. _domainEvents];
+    public List<IDomainEvent> DomainEvents => [.. _domainEvents];
 
-    public void ClearNotifications()
+    public void Clear()
     {
         _domainEvents.Clear();
     }
 
-    public void Raise(INotification domainEvent)
+    public void Raise(IDomainEvent domainEvent)
     {
         _domainEvents.Add(domainEvent);
     }

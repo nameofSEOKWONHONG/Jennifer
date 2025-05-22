@@ -1,4 +1,5 @@
-﻿using Jennifer.Account.Data;
+﻿using Jennifer.Account.Behaviors;
+using Jennifer.Account.Data;
 using Jennifer.Account.Models;
 using Jennifer.Account.Models.Contracts;
 using Jennifer.SharedKernel;
@@ -9,7 +10,8 @@ namespace Jennifer.Account.Application.Auth.Commands.SignUp;
 
 public class SignUpCommandHandler(
     JenniferDbContext dbContext,
-    IPasswordHasher<User> passwordHasher) : ICommandHandler<SignUpCommand, Result<Guid>>
+    IPasswordHasher<User> passwordHasher,
+    IDomainEventPublisher domainEventPublisher) : ICommandHandler<SignUpCommand, Result<Guid>>
 {
     public async ValueTask<Result<Guid>> Handle(SignUpCommand command, CancellationToken cancellationToken)
     {
@@ -38,7 +40,7 @@ public class SignUpCommandHandler(
         user.PasswordHash = passwordHasher.HashPassword(user, command.Password);
         await dbContext.Users.AddAsync(user, cancellationToken);
         
-        user.Raise(new SignUpNotification(user));
+        domainEventPublisher.Enqueue(new SignUpDomainEvent(user));
         
         await dbContext.SaveChangesAsync(cancellationToken);
 

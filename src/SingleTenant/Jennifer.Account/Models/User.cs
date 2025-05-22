@@ -1,6 +1,7 @@
 ﻿using System.Linq.Expressions;
 using Jennifer.Infrastructure.Options;
 using Ardalis.SmartEnum.EFCore;
+using Jennifer.Account.Behaviors;
 using Jennifer.Account.Models.Contracts;
 using Jennifer.Infrastructure.Converters;
 using Jennifer.SharedKernel;
@@ -11,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Jennifer.Account.Models;
 
-public class User : IdentityUser<Guid>, IAuditable, IEntity
+public class User : IdentityUser<Guid>, IAuditable
 {
     public ENUM_USER_TYPE Type { get; set; }
     public bool IsDelete { get; set; }
@@ -23,19 +24,6 @@ public class User : IdentityUser<Guid>, IAuditable, IEntity
     public virtual ICollection<UserClaim> Claims { get; set; }
     public virtual ICollection<UserLogin> Logins { get; set; }
     public virtual ICollection<UserToken> Tokens { get; set; }
-    
-    private readonly List<INotification> _notifications = [];
-
-    public List<INotification> Notifications => [.. _notifications];
-    public void ClearNotifications()
-    {
-        _notifications.Clear();
-    }
-
-    public void Raise(INotification notification)
-    {
-        _notifications.Add(notification);
-    }
 }
 
 public class UserEntityConfiguration : IEntityTypeConfiguration<User>
@@ -73,8 +61,6 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<User>
             .HasColumnType("datetimeoffset");
         builder.Property(m => m.ModifiedBy)
             .HasMaxLength(36);
-
-        builder.Ignore(m => m.Notifications);
         
         builder.HasMany(m => m.UserRoles)
             .WithOne(ur => ur.User)

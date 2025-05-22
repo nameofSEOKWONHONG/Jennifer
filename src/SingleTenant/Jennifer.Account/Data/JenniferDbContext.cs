@@ -1,4 +1,5 @@
-﻿using Jennifer.Account.Models;
+﻿using Jennifer.Account.Behaviors;
+using Jennifer.Account.Models;
 using Jennifer.Account.Session.Abstracts;
 using Jennifer.Infrastructure.Data;
 using Jennifer.SharedKernel;
@@ -23,11 +24,9 @@ public class JenniferDbContext : IdentityDbContext<User, Role, Guid,
     public DbSet<Configuration> Configurations { get; set; }
 
     public JenniferDbContext(DbContextOptions<JenniferDbContext> options,
-        IUserContext userContext,
-        IMediator mediator): base(options)
+        IUserContext userContext): base(options)
     {
         _userContext = userContext;
-        _mediator = mediator;
     }
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
@@ -68,30 +67,6 @@ public class JenniferDbContext : IdentityDbContext<User, Role, Guid,
         }
         
         var result = await base.SaveChangesAsync(cancellationToken);
-
-        await PublishDomainEventsAsync();
-
         return result;
-    }
-    
-    private async Task PublishDomainEventsAsync()
-    {
-        var notifications = ChangeTracker
-            .Entries<IEntity>()
-            .Select(entry => entry.Entity)
-            .SelectMany(entity =>
-            {
-                List<INotification> entityNotifications = entity.Notifications;
-
-                entity.ClearNotifications();
-
-                return entityNotifications;
-            })
-            .ToList();
-
-        foreach (var notification in notifications)
-        {
-            await _mediator.Publish(notification);
-        }
     }
 }

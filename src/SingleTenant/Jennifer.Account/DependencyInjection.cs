@@ -14,6 +14,7 @@ using Jennifer.Infrastructure.Email;
 using Jennifer.Infrastructure.Options;
 using Jennifer.Account.Application.Auth;
 using Jennifer.Account.Application.Users;
+using Jennifer.Account.Behaviors;
 using Mediator;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -61,8 +62,9 @@ public static class DependencyInjection
         Action<IdentityOptions> identityOptions)
     {
         JenniferOptionSingleton.Attach(jenniferOptions);
-        
-        services.AddDbContext<JenniferDbContext>(dbContextOptions);
+
+        services.AddDbContext<JenniferDbContext>(dbContextOptions)
+            .AddScoped<IApplicationDbContext, JenniferDbContext>();
         services.AddScoped<IJenniferSqlConnection, JenniferSqlConnection>();
         
         if (identityOptions.xIsEmpty())
@@ -188,7 +190,9 @@ public static class DependencyInjection
             options.ServiceLifetime = ServiceLifetime.Scoped;
         });
         services.AddScoped(typeof(IPipelineBehavior<,>), typeof(Behaviors.ValidationBehavior<,>));
+        services.AddScoped(typeof(IPipelineBehavior<,>), typeof(Behaviors.TransactionBehavior<,>));
         services.AddValidatorsFromAssemblyContaining<SignUpAdminCommandValidator>();
+        services.AddScoped<IDomainEventPublisher, DomainEventPublisher>();
 
         return services;
     }
