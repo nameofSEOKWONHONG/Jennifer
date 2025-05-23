@@ -1,24 +1,14 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jennifer.Api", "SingleTenant\Jennifer.Api\Jennifer.Api.csproj", "{D26E0BD8-CFF8-4EF9-8ADD-5E002C37D8F7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jennifer.Api", "Jennifer.Api\Jennifer.Api.csproj", "{D26E0BD8-CFF8-4EF9-8ADD-5E002C37D8F7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jennifer.Tenant", "MultiTenant\Jennifer.Tenant\Jennifer.Tenant.csproj", "{99C9629A-5DE1-4056-9628-5B9F2D6F9A3C}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jennifer.Account", "SingleTenant\Jennifer.Account\Jennifer.Account.csproj", "{5123C87D-4B7E-498A-A714-2D50C03D643F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jennifer.Account", "Jennifer.Account\Jennifer.Account.csproj", "{5123C87D-4B7E-498A-A714-2D50C03D643F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jennifer.SharedKernel", "Jennifer.SharedKernel\Jennifer.SharedKernel.csproj", "{DCF2128E-6E49-4ED1-B042-0271961F2765}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jennifer.Tenant.Api", "MultiTenant\Jennifer.Tenant.Api\Jennifer.Tenant.Api.csproj", "{A3037848-D895-491E-9BFF-E14437D350A1}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jennifer.External.OAuth", "Jennifer.External.OAuth\Jennifer.External.OAuth.csproj", "{BCD80EA7-5A0C-432F-8458-D3177E62FFD7}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Jennifer", "Jennifer", "{D2AC356E-8786-44F6-ABB6-122EC1C8A00C}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MultiTenant", "MultiTenant", "{3775E109-E4A0-4D95-AB9A-31DC58366E83}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jennifer.Infrastructure", "Jennifer.Infrastructure\Jennifer.Infrastructure.csproj", "{C67A8851-9297-4D8C-BF7C-D524C5AC5965}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SingleTenant", "SingleTenant", "{EF7A14B8-87FF-4681-90A4-BE537996A42E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,10 +20,6 @@ Global
 		{D26E0BD8-CFF8-4EF9-8ADD-5E002C37D8F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D26E0BD8-CFF8-4EF9-8ADD-5E002C37D8F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D26E0BD8-CFF8-4EF9-8ADD-5E002C37D8F7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{99C9629A-5DE1-4056-9628-5B9F2D6F9A3C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{99C9629A-5DE1-4056-9628-5B9F2D6F9A3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{99C9629A-5DE1-4056-9628-5B9F2D6F9A3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{99C9629A-5DE1-4056-9628-5B9F2D6F9A3C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5123C87D-4B7E-498A-A714-2D50C03D643F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5123C87D-4B7E-498A-A714-2D50C03D643F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5123C87D-4B7E-498A-A714-2D50C03D643F}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -42,10 +28,6 @@ Global
 		{DCF2128E-6E49-4ED1-B042-0271961F2765}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DCF2128E-6E49-4ED1-B042-0271961F2765}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DCF2128E-6E49-4ED1-B042-0271961F2765}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A3037848-D895-491E-9BFF-E14437D350A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A3037848-D895-491E-9BFF-E14437D350A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A3037848-D895-491E-9BFF-E14437D350A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A3037848-D895-491E-9BFF-E14437D350A1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BCD80EA7-5A0C-432F-8458-D3177E62FFD7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BCD80EA7-5A0C-432F-8458-D3177E62FFD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BCD80EA7-5A0C-432F-8458-D3177E62FFD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -56,12 +38,5 @@ Global
 		{C67A8851-9297-4D8C-BF7C-D524C5AC5965}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{BCD80EA7-5A0C-432F-8458-D3177E62FFD7} = {D2AC356E-8786-44F6-ABB6-122EC1C8A00C}
-		{DCF2128E-6E49-4ED1-B042-0271961F2765} = {D2AC356E-8786-44F6-ABB6-122EC1C8A00C}
-		{A3037848-D895-491E-9BFF-E14437D350A1} = {3775E109-E4A0-4D95-AB9A-31DC58366E83}
-		{99C9629A-5DE1-4056-9628-5B9F2D6F9A3C} = {3775E109-E4A0-4D95-AB9A-31DC58366E83}
-		{C67A8851-9297-4D8C-BF7C-D524C5AC5965} = {D2AC356E-8786-44F6-ABB6-122EC1C8A00C}
-		{D26E0BD8-CFF8-4EF9-8ADD-5E002C37D8F7} = {EF7A14B8-87FF-4681-90A4-BE537996A42E}
-		{5123C87D-4B7E-498A-A714-2D50C03D643F} = {EF7A14B8-87FF-4681-90A4-BE537996A42E}
 	EndGlobalSection
 EndGlobal
