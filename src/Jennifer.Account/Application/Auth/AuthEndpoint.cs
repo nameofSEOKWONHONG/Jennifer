@@ -103,7 +103,7 @@ Use the refresh token to obtain a new JWT token.
 The refresh token expires after 7 days. 
 Use the refresh token to obtain a new JWT token. The refresh token expires after 7 days.");
         
-        group.MapPost("/external/signin", 
+        group.MapPost("/signin/external", 
                 async (ExternalSignInRequest request, ISender sender, CancellationToken ct) =>
                     await sender.Send(new ExternalOAuthCommand(request.Provider, request.AccessToken), ct))
             .WithName("ExternalSignIn");        

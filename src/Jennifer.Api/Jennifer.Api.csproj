@@ -6,6 +6,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <UserSecretsId>5e5193ff-2269-4745-82c7-36eb1690abb2</UserSecretsId>        
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>        
     </PropertyGroup>
 
     <ItemGroup>
@@ -24,5 +25,11 @@
 
     <ItemGroup>
       <Folder Include="Logs\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="..\.dockerignore">
+        <Link>.dockerignore</Link>
+      </Content>
     </ItemGroup>
 </Project>

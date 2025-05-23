@@ -46,26 +46,53 @@ var options = new JenniferOptions("account",
     jwtOptions,
     smtpOptions);
 
+
+
 // Add jennifer account manager
 builder.Services.AddJennifer(options,
         (provider, optionsBuilder) =>
         {
-            var configuration = provider.GetRequiredService<IConfiguration>();
-            optionsBuilder.UseSqlServer(configuration["SQLSERVER_CONNECTION"]);
+            optionsBuilder.UseSqlServer(builder.Configuration["SQLSERVER_CONNECTION"]);
             if (builder.Environment.IsDevelopment())
             {
                 optionsBuilder.EnableSensitiveDataLogging()
                     .EnableThreadSafetyChecks()
                     .EnableDetailedErrors();
             }
-        }, null)
-    .WithJenniferAccountCache(cacheOptions =>
-    {
-        cacheOptions.Configuration = builder.Configuration[$"REDIS_AUTH:{nameof(cacheOptions.Configuration)}"];
-        cacheOptions.ConfigurationOptions = new ConfigurationOptions()
+        }, identityOptions =>
         {
+            identityOptions.Password.RequiredLength = 8;
+            identityOptions.Password.RequireNonAlphanumeric = true;
+            identityOptions.SignIn.RequireConfirmedAccount = false;
+            identityOptions.SignIn.RequireConfirmedEmail = false;
+            identityOptions.SignIn.RequireConfirmedPhoneNumber = false;
+            identityOptions.Tokens.AuthenticatorTokenProvider = null!; // optional     
+            identityOptions.User.RequireUniqueEmail = true;
+            identityOptions.User.AllowedUserNameCharacters = null;
+        })
+    // Add jennifer cache
+    .WithJenniferCache(builder.Configuration["REDIS_AUTH:Configuration"],
+        cacheOptions =>
+        {
+            cacheOptions.Configuration = builder.Configuration[$"REDIS_AUTH:{nameof(cacheOptions.Configuration)}"];
+            cacheOptions.ConfigurationOptions = new ConfigurationOptions()
+            {
+                AbortOnConnectFail = builder.Configuration[$"REDIS_AUTH:{nameof(ConfigurationOptions.AbortOnConnectFail)}"].xValue<bool>(),
+                EndPoints = { builder.Configuration[$"REDIS_AUTH:{nameof(cacheOptions.Configuration)}"] },
+                DefaultDatabase = builder.Configuration[$"REDIS_AUTH:{nameof(ConfigurationOptions.DefaultDatabase)}"].xValue<int>(),
+                ConnectTimeout = builder.Configuration[$"REDIS_AUTH:{nameof(ConfigurationOptions.ConnectTimeout)}"].xValue<int>(),
+                SyncTimeout = builder.Configuration[$"REDIS_AUTH:{nameof(ConfigurationOptions.SyncTimeout)}"].xValue<int>(),
+                KeepAlive = builder.Configuration[$"REDIS_AUTH:{nameof(ConfigurationOptions.KeepAlive)}"].xValue<int>(),
+                //Password = builder.Configuration[$"REDIS_AUTH:{nameof(ConfigurationOptions.Password)}"]
+            };
+        })
+    // Add jennifer signalr
+    .WithJenniferSignalr(backplaneOptions =>
+    {
+        backplaneOptions.Configuration = new ConfigurationOptions()
+        {
+            EndPoints = { builder.Configuration[$"REDIS_AUTH:Configuration"] },
             AbortOnConnectFail = builder.Configuration[$"REDIS_AUTH:{nameof(ConfigurationOptions.AbortOnConnectFail)}"].xValue<bool>(),
-            EndPoints = { builder.Configuration[$"REDIS_AUTH:{nameof(cacheOptions.Configuration)}"] },
             DefaultDatabase = builder.Configuration[$"REDIS_AUTH:{nameof(ConfigurationOptions.DefaultDatabase)}"].xValue<int>(),
             ConnectTimeout = builder.Configuration[$"REDIS_AUTH:{nameof(ConfigurationOptions.ConnectTimeout)}"].xValue<int>(),
             SyncTimeout = builder.Configuration[$"REDIS_AUTH:{nameof(ConfigurationOptions.SyncTimeout)}"].xValue<int>(),
@@ -73,18 +100,8 @@ builder.Services.AddJennifer(options,
             //Password = builder.Configuration[$"REDIS_AUTH:{nameof(ConfigurationOptions.Password)}"]
         };
     })
-    // Add jennifer hybrid cache
-    .WithJenniferHybridCache(null, null)
-    // Add jennifer signalr hub
-    // options =>
-    // {
-    //     options.Configuration = 
-    //         builder.Configuration.GetConnectionString("RedisConnectionString");
-    // }
-    .WithJenniferAuthHub(null)
     // Add jennifer email
     .WithJenniferMailService();
-
 
 
 builder.Services.AddSwaggerGen();

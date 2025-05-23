@@ -7,6 +7,7 @@ public class Result
     public bool IsSuccess { get; set; }
     public string Message { get; set; }
     public Error Error { get; set; }
+    
     public static Result Success() => new() { IsSuccess = true };
     public static Result Failure(string message) => new() { IsSuccess = false, Message = message };
     public static Result Failure(Error error) => new() { IsSuccess = false, Error = error};

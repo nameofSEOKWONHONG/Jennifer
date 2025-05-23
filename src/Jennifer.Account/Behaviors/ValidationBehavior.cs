@@ -31,7 +31,12 @@ public sealed class ValidationBehavior<TMessage, TResponse> : IPipelineBehavior<
                 .ToList();
 
             if (failures.Count != 0)
-                return (TResponse)Result.Failure(new ValidationError(failures.Select(x => new Error(x.PropertyName, x.ErrorMessage)).ToArray()));
+                return new TResponse
+                {
+                    IsSuccess = false, Message = "Invalid Validation",
+                    Error = new ValidationError(failures.Select(x => new Error(x.PropertyName, x.ErrorMessage))
+                        .ToArray())
+                };
         }
 
         return await next(message, cancellationToken);

@@ -1,6 +1,5 @@
 ﻿using System.IO.Compression;
 using System.Text;
-using eXtensionSharp;
 using FluentValidation;
 using Jennifer.Account.Application.Auth.Commands.SignUp;
 using Jennifer.Account.Data;
@@ -15,6 +14,7 @@ using Jennifer.Infrastructure.Options;
 using Jennifer.Account.Application.Auth;
 using Jennifer.Account.Application.Users;
 using Jennifer.Account.Behaviors;
+using Jennifer.Account.Services;
 using Mediator;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -24,10 +24,11 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.SignalR.StackExchangeRedis;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Caching.StackExchangeRedis;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using StackExchange.Redis;
+using Role = Jennifer.Account.Models.Role;
 
 namespace Jennifer.Account;
 
@@ -63,39 +64,18 @@ public static class DependencyInjection
     {
         JenniferOptionSingleton.Attach(jenniferOptions);
 
+        ArgumentNullException.ThrowIfNull(dbContextSetup);
+        ArgumentNullException.ThrowIfNull(identitySetup);
+        
         services.AddDbContext<JenniferDbContext>(dbContextSetup)
             .AddScoped<IApplicationDbContext, JenniferDbContext>();
         services.AddScoped<IJenniferSqlConnection, JenniferSqlConnection>();
         
-        if (identitySetup.xIsEmpty())
-        {
-            identitySetup = (options) =>
-            {
-                options.Password.RequiredLength = 8;
-                options.Password.RequireNonAlphanumeric = true;
-                options.SignIn.RequireConfirmedAccount = false;
-                options.SignIn.RequireConfirmedEmail = false;
-                options.SignIn.RequireConfirmedPhoneNumber = false;
-                options.Tokens.AuthenticatorTokenProvider = null!; // optional     
-                options.User.RequireUniqueEmail = true;
-                options.User.AllowedUserNameCharacters = null;
-            };
-        }
-        
         services.AddIdentity<User, Role>(identitySetup)
             .AddEntityFrameworkStores<JenniferDbContext>()
             .AddDefaultTokenProviders();
-        
         services.AddTransient<IUserValidator<User>, UserNameValidator<User>>();
-
-
-        /* [as cookie]
-         *         builder.Services.AddAuthentication(options =>
-            {
-                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-            })
-            .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
-         */
+        
         services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -158,10 +138,16 @@ public static class DependencyInjection
         services.Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);
         services.Configure<BrotliCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);
         services.AddApiVersioning();
+
+        #region [register feature's]
+
         services.AddAuthService();
         services.AddUserService();
         services.AddSessionService();
-        services.AddExternalOAuthHandler();
+        services.AddExternalOAuthHandler();        
+
+        #endregion
+
 
         #if DEBUG
         services.AddCors(options =>
@@ -184,85 +170,108 @@ public static class DependencyInjection
             });
         });
         #endif
-        
+
+        #region [setting mediator]
+
         services.AddMediator(options =>
         {
             options.ServiceLifetime = ServiceLifetime.Scoped;
         });
+        //Registered behaviors are executed in order (e.g., IpBlockBehavior, ValidationBehavior, TransactionBehavior)
+        services.AddScoped(typeof(IPipelineBehavior<,>), typeof(Behaviors.IpBlockBehavior<,>));
         services.AddScoped(typeof(IPipelineBehavior<,>), typeof(Behaviors.ValidationBehavior<,>));
         services.AddScoped(typeof(IPipelineBehavior<,>), typeof(Behaviors.TransactionBehavior<,>));
         services.AddValidatorsFromAssemblyContaining<SignUpAdminCommandValidator>();
         services.AddScoped<IDomainEventPublisher, DomainEventPublisher>();
+        services.AddSingleton<IpBlockService>();
 
+        #endregion
+        
         return services;
     }
 
-    public static IServiceCollection WithJenniferAccountCache(this IServiceCollection services, Action<RedisCacheOptions> setup)
+    public static IServiceCollection WithJenniferCache(this IServiceCollection services, string redisConnectionString, Action<RedisCacheOptions> setup)
     {
+        ArgumentNullException.ThrowIfNull(redisConnectionString);
         ArgumentNullException.ThrowIfNull(setup);
         
-        services.AddStackExchangeRedisCache(setup);
-
+        services.AddSingleton<IConnectionMultiplexer>(sp =>
+            ConnectionMultiplexer.Connect(redisConnectionString));
+        
+        try
+        {
+            services.AddStackExchangeRedisCache(setup);
+        }
+        catch
+        {
+            services.AddDistributedMemoryCache();
+        }
+        services.AddMemoryCache();
+        
         return services;
     }
 
-    /// <summary>
-    /// Adds Jennifer.Account's hybrid caching services to the specified dependency injection container.
-    /// </summary>
-    /// <param name="services">The service collection to which the hybrid caching services will be added.</param>
-    /// <param name="cacheOptions">A delegate to configure hybrid cache options. If null, the following default settings will be applied:
-    /// - MaximumPayloadBytes: 1MB (1024 * 1024)
-    /// - MaximumKeyLength: 1024
-    /// - DefaultEntryOptions:
-    /// - Expiration: 30 minutes
-    /// - LocalCacheExpiration: 5 minutes</param>
-    /// <param name="redisOptions">An optional delegate to configure Redis cache options. If provided, Redis will be configured as part of the hybrid caching mechanism.</param>
-    public static IServiceCollection WithJenniferHybridCache(this IServiceCollection services,
-        Action<HybridCacheOptions> cacheOptions,
-        Action<RedisCacheOptions> redisOptions)
-    {
-        if (cacheOptions.xIsEmpty())
-        {
-            cacheOptions = (options) =>
-            {
-                options.MaximumPayloadBytes = 1024 * 1024;
-                options.MaximumKeyLength = 1024;
-                options.DefaultEntryOptions = new HybridCacheEntryOptions
-                {
-                    Expiration = TimeSpan.FromMinutes(30),
-                    LocalCacheExpiration = TimeSpan.FromMinutes(5)
-                };
-            };
-        }
-        services.AddHybridCache(cacheOptions);
-        
-        if (redisOptions.xIsEmpty())
-        {
-            redisOptions = (options) =>
-            {
-                options.Configuration = "localhost";
-                options.InstanceName = "Jennifer";
-                
-
-            };
-        }
-        
-        services.AddStackExchangeRedisCache(redisOptions);
-
-        return services;
-    }
+    // /// <summary>
+    // /// Adds Jennifer.Account's hybrid caching services to the specified dependency injection container.
+    // /// </summary>
+    // /// <param name="services">The service collection to which the hybrid caching services will be added.</param>
+    // /// <param name="cacheOptions">A delegate to configure hybrid cache options. If null, the following default settings will be applied:
+    // /// - MaximumPayloadBytes: 1MB (1024 * 1024)
+    // /// - MaximumKeyLength: 1024
+    // /// - DefaultEntryOptions:
+    // /// - Expiration: 30 minutes
+    // /// - LocalCacheExpiration: 5 minutes</param>
+    // /// <param name="redisOptions">An optional delegate to configure Redis cache options. If provided, Redis will be configured as part of the hybrid caching mechanism.</param>
+    // public static IServiceCollection WithJenniferHybridCache(this IServiceCollection services,
+    //     Action<HybridCacheOptions> cacheOptions,
+    //     Action<RedisCacheOptions> redisOptions)
+    // {
+    //     if (cacheOptions.xIsEmpty())
+    //     {
+    //         cacheOptions = (options) =>
+    //         {
+    //             options.MaximumPayloadBytes = 1024 * 1024;
+    //             options.MaximumKeyLength = 1024;
+    //             options.DefaultEntryOptions = new HybridCacheEntryOptions
+    //             {
+    //                 Expiration = TimeSpan.FromMinutes(30),
+    //                 LocalCacheExpiration = TimeSpan.FromMinutes(5)
+    //             };
+    //         };
+    //     }
+    //     services.AddHybridCache(cacheOptions);
+    //     
+    //     if (redisOptions.xIsEmpty())
+    //     {
+    //         redisOptions = (options) =>
+    //         {
+    //             options.Configuration = "localhost";
+    //             options.InstanceName = "Jennifer";
+    //             
+    //
+    //         };
+    //     }
+    //     
+    //     services.AddStackExchangeRedisCache(redisOptions);
+    //
+    //     return services;
+    // }
 
     /// <summary>
     /// Adds the Jennifer.Account Auth Hub services to the dependency injection container.
     /// </summary>
     /// <param name="services">The service collection to which the SignalR and related Jennifer.Account.Hub services will be added.</param>
-    /// <param name="redisOptions">An optional delegate to configure Redis options for SignalR. If null, the default SignalR setup will be used without Redis integration.</param>
-    public static IServiceCollection WithJenniferAuthHub(this IServiceCollection services, Action<RedisOptions> redisOptions)
+    /// <param name="backplaneOptions">An optional delegate to configure Redis options for SignalR. If null, the default SignalR setup will be used without Redis integration.</param>
+    public static IServiceCollection WithJenniferSignalr(this IServiceCollection services, Action<RedisOptions> backplaneOptions)
     {
-        if(redisOptions.xIsEmpty())
+        try
+        {
+            services.AddSignalR().AddStackExchangeRedis(backplaneOptions);
+        }
+        catch (Exception ex)
+        {
             services.AddSignalR();
-        else
-            services.AddSignalR().AddStackExchangeRedis(redisOptions);
+        }
         
         services.AddSingleton<IUserIdProvider, SubUserIdProvider>();
 
@@ -314,5 +323,9 @@ public static class DependencyInjection
         app.UseMiddleware<JenniferSessionContextMiddleware>(); // 반드시 인증 이후에 실행
 
         app.MapHub<JenniferHub>("/jenniferHub");
+        
+        using var scope = app.Services.CreateScope();
+        var service = scope.ServiceProvider.GetRequiredService<IpBlockService>();
+        service.SubscribeToUpdates();
     }
 }
