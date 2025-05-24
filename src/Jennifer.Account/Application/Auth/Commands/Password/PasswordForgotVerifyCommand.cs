@@ -2,6 +2,7 @@
 using Jennifer.Account.Application.Auth.Contracts;
 using Jennifer.Account.Application.Auth.Services.Abstracts;
 using Jennifer.Account.Models.Contracts;
+using Jennifer.Infrastructure.Abstractions.ServiceCore;
 using Jennifer.SharedKernel;
 using Mediator;
 
@@ -10,12 +11,19 @@ namespace Jennifer.Account.Application.Auth.Commands.Password;
 public sealed record PasswordForgotVerifyCommand(string Email, string Code) : ICommand<Result>;
 
 internal sealed class PasswordForgotVerifyCommandHandler(
+    IServiceExecutionBuilderFactory factory,
     IVerifyCodeConfirmService verifyCodeConfirmService   
     ):ICommandHandler<PasswordForgotVerifyCommand, Result>
 {
     public async ValueTask<Result> Handle(PasswordForgotVerifyCommand command, CancellationToken cancellationToken)
     {
-        var result = await verifyCodeConfirmService.HandleAsync(new VerifyCodeRequest(command.Email, command.Code, ENUM_EMAIL_VERIFICATION_TYPE.PASSWORD_FORGOT), cancellationToken);
+        VerifyCodeResponse result = null;
+        var builder = factory.Create();
+        await builder.Register<IVerifyCodeConfirmService, VerifyCodeRequest, VerifyCodeResponse>()
+            .Request(new VerifyCodeRequest(command.Email, command.Code, ENUM_EMAIL_VERIFICATION_TYPE.PASSWORD_FORGOT))
+            .Handle(r => result = r)
+            .ExecuteAsync(cancellationToken);
+        
         if(result.Status != ENUM_VERITY_RESULT_STATUS.EMAIL_CONFIRM) return Result.Failure(result.Message);
         return Result.Success();
     }

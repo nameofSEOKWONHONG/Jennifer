@@ -5,6 +5,7 @@ using Jennifer.Account.Application.Auth.Services.Abstracts;
 using Jennifer.Account.Models;
 using Jennifer.Account.Session;
 using Jennifer.External.OAuth.Abstracts;
+using Jennifer.Infrastructure.Abstractions.ServiceCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -14,7 +15,7 @@ namespace Jennifer.Account.Application.Auth.Services.Implements;
 /// <summary>
 /// Represents a service that handles external sign-in operations using third-party providers.
 /// </summary>
-internal sealed class ExternalOAuthService: ServiceBase<ExternalOAuthService, ExternalSignInRequest, TokenResponse>, IExternalOAuthService
+internal sealed class ExternalOAuthService: ServiceBase<ExternalSignInRequest, TokenResponse>, IExternalOAuthService
 {
     private readonly UserManager<User> _userManager;
     private readonly RoleManager<Role> _roleManager;
@@ -34,7 +35,6 @@ internal sealed class ExternalOAuthService: ServiceBase<ExternalOAuthService, Ex
         RoleManager<Role> roleManager,
         IOptions<JwtService> options,
         IExternalOAuthHandlerFactory externalOAuthHandlerFactory)
-        : base(logger)
     {
         _userManager = userManager;
         _roleManager = roleManager;
@@ -49,7 +49,7 @@ internal sealed class ExternalOAuthService: ServiceBase<ExternalOAuthService, Ex
     /// <param name="request">The external sign-in request containing the provider and provider token.</param>
     /// <param name="cancellationToken">Cancellation token for asynchronous operation handling.</param>
     /// <returns>A result containing authentication tokens or null if the process fails.</returns>
-    public async Task<TokenResponse> HandleAsync(ExternalSignInRequest request, CancellationToken cancellationToken)
+    protected override async Task<TokenResponse> HandleAsync(ExternalSignInRequest request, CancellationToken cancellationToken)
     {
         // 1. 외부 서비스에 access_token을 전달하여 사용자 정보 확인
         var instance = _externalOAuthHandlerFactory.Resolve(request.Provider);

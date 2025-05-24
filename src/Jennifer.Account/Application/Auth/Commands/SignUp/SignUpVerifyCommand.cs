@@ -4,6 +4,7 @@ using Jennifer.Account.Application.Auth.Contracts;
 using Jennifer.Account.Application.Auth.Services.Abstracts;
 using Jennifer.Account.Data;
 using Jennifer.Account.Models.Contracts;
+using Jennifer.Infrastructure.Abstractions.ServiceCore;
 using Jennifer.SharedKernel;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
@@ -14,16 +15,21 @@ public sealed record SignUpVerifyRequest(Guid UserId, string Code);
 
 public sealed record SignUpVerifyCommand(Guid UserId, string Code):ICommand<Result>;
 
-internal sealed class SignUpVerifyCommandHandler(JenniferDbContext dbContext,
-    IVerifyCodeConfirmService verifyCodeConfirmService): ICommandHandler<SignUpVerifyCommand, Result>
+internal sealed class SignUpVerifyCommandHandler(
+    JenniferDbContext dbContext,
+    IServiceExecutionBuilderFactory factory): ICommandHandler<SignUpVerifyCommand, Result>
 {
     public async ValueTask<Result> Handle(SignUpVerifyCommand command, CancellationToken cancellationToken)
     {
-        var user = await dbContext.Users.FirstOrDefaultAsync(m => m.Id == command.UserId, cancellationToken: cancellationToken);
-        if (user.xIsEmpty())
-            return Result.Failure("Not Found User");
-        
-        var verified = await verifyCodeConfirmService.HandleAsync(new VerifyCodeRequest(user.Email, command.Code, ENUM_EMAIL_VERIFICATION_TYPE.SIGN_UP_BEFORE), cancellationToken);
+        var user = await dbContext.Users.FirstAsync(m => m.Id == command.UserId, cancellationToken: cancellationToken);
+
+        VerifyCodeResponse verified = null;
+        var builder = factory.Create();
+        await builder.Register<IVerifyCodeConfirmService, VerifyCodeRequest, VerifyCodeResponse>()
+            .Request(new VerifyCodeRequest(user.Email, command.Code, ENUM_EMAIL_VERIFICATION_TYPE.SIGN_UP_BEFORE))
+            .Handle(r => verified = r)
+            .ExecuteAsync(cancellationToken);
+                
         if(verified.Status != ENUM_VERITY_RESULT_STATUS.EMAIL_CONFIRM) 
             return Result.Failure(verified.Message);
 

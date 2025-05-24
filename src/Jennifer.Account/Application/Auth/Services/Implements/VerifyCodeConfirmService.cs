@@ -3,24 +3,18 @@ using Jennifer.Account.Application.Auth.Contracts;
 using Jennifer.Account.Application.Auth.Services.Abstracts;
 using Jennifer.Account.Data;
 using Jennifer.Account.Session;
+using Jennifer.Infrastructure.Abstractions.ServiceCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Jennifer.Account.Application.Auth.Services.Implements;
 
-internal sealed class VerifyCodeConfirmService: ServiceBase<VerifyCodeConfirmService, VerifyCodeRequest, VerifyCodeResponse>, IVerifyCodeConfirmService
+internal sealed class VerifyCodeConfirmService(ILogger<VerifyCodeConfirmService> logger, JenniferDbContext dbContext): 
+    ServiceBase<VerifyCodeRequest, VerifyCodeResponse>, IVerifyCodeConfirmService
 {
-    private readonly JenniferDbContext _dbContext;
-
-    public VerifyCodeConfirmService(ILogger<VerifyCodeConfirmService> logger,
-        JenniferDbContext dbContext) : base(logger)
+    protected override async Task<VerifyCodeResponse> HandleAsync(VerifyCodeRequest request, CancellationToken cancellationToken)
     {
-        _dbContext = dbContext;
-    }
-
-    public async Task<VerifyCodeResponse> HandleAsync(VerifyCodeRequest request, CancellationToken cancellationToken)
-    {
-        var verified = await _dbContext.EmailVerificationCodes
+        var verified = await dbContext.EmailVerificationCodes
             .Where(m => m.Email == request.Email
                         && m.Type == request.Type
                         && !m.IsUsed 
@@ -33,12 +27,12 @@ internal sealed class VerifyCodeConfirmService: ServiceBase<VerifyCodeConfirmSer
         if (verified.Code != request.Code)
         {
             verified.FailedCount++;
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            await dbContext.SaveChangesAsync(cancellationToken);
             return new VerifyCodeResponse(ENUM_VERITY_RESULT_STATUS.WRONG_CODE, "잘못된 인증 코드입니다.");
         }
         
         verified.IsUsed = true;
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken);
 
         return new VerifyCodeResponse(ENUM_VERITY_RESULT_STATUS.EMAIL_CONFIRM, string.Empty);
     }

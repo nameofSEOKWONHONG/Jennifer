@@ -36,8 +36,4 @@
     <ItemGroup>
       <Content Remove="C:\Users\h2091\.nuget\packages\extensionsharp\1.0.2\contentFiles\any\net9.0\README.md" />
     </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Shared\" />
-    </ItemGroup>
 </Project>

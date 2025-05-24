@@ -1,4 +1,5 @@
 ﻿using Jennifer.Account.Application.Auth.Contracts;
+using Jennifer.Infrastructure.Abstractions.ServiceCore;
 using Jennifer.SharedKernel;
 using Microsoft.AspNetCore.Http;
 

@@ -4,27 +4,19 @@ using Jennifer.Account.Application.Auth.Services.Abstracts;
 using Jennifer.Account.Data;
 using Jennifer.Account.Models;
 using Jennifer.Account.Session;
+using Jennifer.Infrastructure.Abstractions.ServiceCore;
 using Jennifer.Infrastructure.Email;
 using Jennifer.SharedKernel;
 using Microsoft.Extensions.Logging;
 
 namespace Jennifer.Account.Application.Auth.Services.Implements;
 
-internal sealed class VerifyCodeSendEmailService : ServiceBase<VerifyCodeSendEmailService, VerifyCodeSendEmailRequest, Result>, 
+internal sealed class VerifyCodeSendEmailService(ILogger<VerifyCodeSendEmailService> logger,
+    JenniferDbContext dbContext,
+    IEmailQueue emailQueue) : ServiceBase<VerifyCodeSendEmailRequest, Result>, 
     IVerifyCodeSendEmailService {
-    private readonly JenniferDbContext _applicationDbContext;
-    private readonly IEmailQueue _emailQueue;
-
-    public VerifyCodeSendEmailService(
-        ILogger<VerifyCodeSendEmailService> logger,
-        JenniferDbContext applicationDbContext,
-        IEmailQueue emailQueue) : base(logger)
-    {
-        _applicationDbContext = applicationDbContext;
-        _emailQueue = emailQueue;
-    }
-
-    public async Task<Result> HandleAsync(VerifyCodeSendEmailRequest request, CancellationToken cancellationToken)
+    
+    protected override async Task<Result> HandleAsync(VerifyCodeSendEmailRequest request, CancellationToken cancellationToken)
     {
         var code = new Random().Next(100000, 999999).ToString();
         var emailSubject = "Jennifer 이메일 인증 코드 안내";
@@ -45,7 +37,7 @@ Jennifer 서비스 이용을 위한 이메일 인증 코드를 안내해 드립�
 감사합니다.
 Jennifer";
 
-        await _applicationDbContext.EmailVerificationCodes.AddAsync(new EmailVerificationCode()
+        await dbContext.EmailVerificationCodes.AddAsync(new EmailVerificationCode()
         {
             Email = request.Email,
             Type = request.Type,
@@ -55,7 +47,7 @@ Jennifer";
             CreatedAt = DateTimeOffset.UtcNow,
             IsUsed = false
         }, cancellationToken);
-        await _applicationDbContext.SaveChangesAsync(cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken);
 
         var emailBody = string.Format(emailFormat, request.UserName.xValue<string>(request.Email), code);
         var mail = new EmailMessage.Builder()
@@ -65,7 +57,7 @@ Jennifer";
             .IsHtml(false)
             .Build();
         
-        await _emailQueue.EnqueueAsync(mail, cancellationToken);
+        await emailQueue.EnqueueAsync(mail, cancellationToken);
 
         return Result.Success();
     }
