@@ -1,14 +1,12 @@
 ﻿using eXtensionSharp;
-using Jennifer.Account.Data;
 using Jennifer.Infrastructure.Data;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace Jennifer.Account.Behaviors;
+namespace Jennifer.Infrastructure.Abstractions.Behaviors;
 
-public sealed class TransactionBehavior<TRequest, TResponse>(IApplicationDbContext dbContext, ILogger<TransactionBehavior<TRequest, TResponse>> logger,
-    IDomainEventPublisher domainEventPublisher) : IPipelineBehavior<TRequest, TResponse>
+public sealed class TransactionBehavior<TRequest, TResponse>(IApplicationDbContext dbContext, ILogger<TransactionBehavior<TRequest, TResponse>> logger) : IPipelineBehavior<TRequest, TResponse>
     where TRequest : ICommand<TResponse>
 {
     public async ValueTask<TResponse> Handle(TRequest message, MessageHandlerDelegate<TRequest, TResponse> next, CancellationToken cancellationToken)
@@ -28,9 +26,6 @@ public sealed class TransactionBehavior<TRequest, TResponse>(IApplicationDbConte
 
             logger.LogDebug("Committed Transaction for {Command}", typeof(TRequest).Name);
             
-            // Commit 후에만 Notification 발행
-            await domainEventPublisher.PublishEnqueuedAsync(cancellationToken);
-
             return response;
         }
         catch (Exception ex)

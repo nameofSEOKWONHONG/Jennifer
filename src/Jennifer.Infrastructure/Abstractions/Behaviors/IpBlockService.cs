@@ -1,9 +1,20 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using StackExchange.Redis;
 
-namespace Jennifer.Account.Services;
+namespace Jennifer.Infrastructure.Abstractions.Behaviors;
 
-public class IpBlockService
+public interface IIpBlockService
+{
+    Task BlockIpAsync(string ip);
+
+    Task UnblockIpAsync(string ip);
+
+    Task<bool> IsBlockedAsync(string ip);
+
+    void SubscribeToUpdates();
+}
+
+public class IpBlockService: IIpBlockService
 {
     private readonly IMemoryCache _cache;
     private readonly IDatabase _redis;

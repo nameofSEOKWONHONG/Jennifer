@@ -14,7 +14,8 @@ using Jennifer.Infrastructure.Options;
 using Jennifer.Account.Application.Auth;
 using Jennifer.Account.Application.Users;
 using Jennifer.Account.Behaviors;
-using Jennifer.Account.Services;
+using Jennifer.Infrastructure.Abstractions;
+using Jennifer.Infrastructure.Abstractions.Behaviors;
 using Mediator;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -177,15 +178,18 @@ public static class DependencyInjection
         {
             options.ServiceLifetime = ServiceLifetime.Scoped;
         });
-        //Registered behaviors are executed in order (e.g., IpBlockBehavior, ValidationBehavior, TransactionBehavior)
-        services.AddScoped(typeof(IPipelineBehavior<,>), typeof(Behaviors.IpBlockBehavior<,>));
-        services.AddScoped(typeof(IPipelineBehavior<,>), typeof(Behaviors.ValidationBehavior<,>));
-        services.AddScoped(typeof(IPipelineBehavior<,>), typeof(Behaviors.TransactionBehavior<,>));
+        //Registered behaviors are executed in order (e.g., IpBlockBehavior, DomainEventBehavior, ValidationBehavior, TransactionBehavior)
+        services.AddScoped(typeof(IPipelineBehavior<,>), typeof(IpBlockBehavior<,>));
+        services.AddScoped(typeof(IPipelineBehavior<,>), typeof(DomainEventBehavior<,>));
+        services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+        services.AddScoped(typeof(IPipelineBehavior<,>), typeof(TransactionBehavior<,>));
         services.AddValidatorsFromAssemblyContaining<SignUpAdminCommandValidator>();
         services.AddScoped<IDomainEventPublisher, DomainEventPublisher>();
-        services.AddSingleton<IpBlockService>();
+        services.AddSingleton<IIpBlockService, IpBlockService>();
 
         #endregion
+
+        services.AddScoped<ISlimSender, SlimSender>();
         
         return services;
     }
@@ -325,7 +329,7 @@ public static class DependencyInjection
         app.MapHub<JenniferHub>("/jenniferHub");
         
         using var scope = app.Services.CreateScope();
-        var service = scope.ServiceProvider.GetRequiredService<IpBlockService>();
+        var service = scope.ServiceProvider.GetRequiredService<IIpBlockService>();
         service.SubscribeToUpdates();
     }
 }

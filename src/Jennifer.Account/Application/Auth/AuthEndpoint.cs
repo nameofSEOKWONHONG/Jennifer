@@ -150,9 +150,11 @@ Use the refresh token to obtain a new JWT token. The refresh token expires after
 
         #endregion
         
-        group.MapPost("/password/change", 
-                async (PasswordChangeRequest request, ISender sender, CancellationToken ct) => 
-                    await sender.Send(new PasswordChangeCommand(request.OldPassword, request.NewPassword), ct))
+        group.MapPost("/password/change",
+            async (PasswordChangeRequest request, ISender sender, CancellationToken ct) =>
+            {
+                var result = await sender.Send(new PasswordChangeCommand(request.OldPassword, request.NewPassword), ct);
+            })
             .WithName("PasswordChange")
             .RequireAuthorization()
             ;

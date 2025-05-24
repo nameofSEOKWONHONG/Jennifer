@@ -1,6 +1,6 @@
 ﻿using Mediator;
 
-namespace Jennifer.Account.Behaviors;
+namespace Jennifer.Infrastructure.Abstractions.Behaviors;
 
 public interface ITransactionCommand : ICommand
 {

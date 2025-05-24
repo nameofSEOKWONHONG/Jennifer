@@ -60,3 +60,21 @@ builder.Services.WithJenniferEmail();
 여기서 말하는 구조 변경이란 아래와 같습니다.  
 `User 테이블의 확장 또는 정규화`  
 User Entity에 필드를 추가할 수도 있고, 또는 User Entity에 하위 Entity로써 추가적 필드를 구성하는 경우가 이에 해당 할 것 입니다.
+
+## 현재 구조
+```
+[공통 실행 순위]
+IpBlockBehavior
+ValidationBehavior
+
+[ITransactionalCommand 실행 순위]
+ - [공통]
+ - TransactionBehavior
+ 
+[ICommand 실행 순위]
+ - [공통]
+ 
+[IQuery 샐행 순위]
+ - [공통]
+
+```

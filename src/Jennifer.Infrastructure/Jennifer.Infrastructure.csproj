@@ -10,6 +10,8 @@
         <FrameworkReference Include="Microsoft.AspNetCore.App" />
         <PackageReference Include="Confluent.Kafka" Version="2.10.0" />
         <PackageReference Include="eXtensionSharp" Version="1.0.2" />
+        <PackageReference Include="eXtensionSharp.AspNet" Version="0.0.3" />
+        <PackageReference Include="Mediator.Abstractions" Version="3.0.0-preview.65" />
         <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.6" />
         <PackageReference Include="RabbitMQ.Client" Version="7.1.2" />
         <PackageReference Include="MailKit" Version="4.12.0" />

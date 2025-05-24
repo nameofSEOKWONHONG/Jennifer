@@ -2,6 +2,7 @@
 using Jennifer.Account.Data;
 using Jennifer.Account.Models;
 using Jennifer.Account.Models.Contracts;
+using Jennifer.Infrastructure.Abstractions.Behaviors;
 using Jennifer.SharedKernel;
 using Mediator;
 using Microsoft.AspNetCore.Identity;
@@ -21,26 +22,14 @@ internal sealed class SignUpCommandHandler(
             return Result<Guid>.Failure("email already exists.");
         }
         
-        var user = new User
-        {
-            Email = command.Email,
-            NormalizedEmail = command.Email.ToUpper(),
-            UserName = command.UserName,
-            NormalizedUserName = command.UserName.ToUpper(),
-            EmailConfirmed = false,
-            PhoneNumber = command.PhoneNumber,
-            PhoneNumberConfirmed = true,
-            TwoFactorEnabled = false,
-            LockoutEnabled = false,
-            AccessFailedCount = 0,
-            SecurityStamp = Guid.NewGuid().ToString(),
-            ConcurrencyStamp = Guid.NewGuid().ToString(),
-            Type = ENUM_USER_TYPE.CUSTOMER,
-        };
+        var user = User.Create(command.Email, command.UserName, command.PhoneNumber, ENUM_USER_TYPE.CUSTOMER);
         user.PasswordHash = passwordHasher.HashPassword(user, command.Password);
         await dbContext.Users.AddAsync(user, cancellationToken);
-        
-        domainEventPublisher.Enqueue(new SignUpDomainEvent(user));
+
+        foreach (var userDomainEvent in user.DomainEvents)
+        {
+            domainEventPublisher.Enqueue(userDomainEvent);
+        }
         
         await dbContext.SaveChangesAsync(cancellationToken);
 

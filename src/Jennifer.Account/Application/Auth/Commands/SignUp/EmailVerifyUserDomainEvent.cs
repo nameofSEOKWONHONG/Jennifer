@@ -3,17 +3,18 @@ using Jennifer.Account.Application.Auth.Services.Abstracts;
 using Jennifer.Account.Behaviors;
 using Jennifer.Account.Models;
 using Jennifer.Account.Models.Contracts;
+using Jennifer.Infrastructure.Abstractions.Behaviors;
 using Mediator;
 using Microsoft.Extensions.Logging;
 
 namespace Jennifer.Account.Application.Auth.Commands.SignUp;
 
-public sealed record SignUpDomainEvent(User User): IDomainEvent;
+public sealed record EmailVerifyUserDomainEvent(User User): IDomainEvent;
 
-internal sealed class SignUpDomainEventHandler(ILogger<SignUpDomainEventHandler> logger,
-    IVerifyCodeSendEmailService sendVerifyCodeService): INotificationHandler<SignUpDomainEvent>
+internal sealed class EmailVerifyUserDomainEventHandler(ILogger<EmailVerifyUserDomainEventHandler> logger,
+    IVerifyCodeSendEmailService sendVerifyCodeService): INotificationHandler<EmailVerifyUserDomainEvent>
 {
-    public async ValueTask Handle(SignUpDomainEvent domainEvent, CancellationToken cancellationToken)
+    public async ValueTask Handle(EmailVerifyUserDomainEvent domainEvent, CancellationToken cancellationToken)
     {
         logger.LogDebug("Domain Event:{UserId}", domainEvent.User.Id);
         

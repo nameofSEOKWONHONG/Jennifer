@@ -1,5 +1,6 @@
 ﻿using Jennifer.Account.Behaviors;
 using Jennifer.Account.Models.Contracts;
+using Jennifer.Infrastructure.Abstractions.Behaviors;
 using Jennifer.SharedKernel;
 using Mediator;
 

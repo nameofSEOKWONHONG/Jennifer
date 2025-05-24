@@ -1,6 +1,6 @@
 ﻿using Mediator;
 
-namespace Jennifer.Account.Behaviors;
+namespace Jennifer.Infrastructure.Abstractions.Behaviors;
 
 public class DomainEventPublisher : IDomainEventPublisher
 {
@@ -16,6 +16,8 @@ public class DomainEventPublisher : IDomainEventPublisher
     {
         _events.Add(domainEvent);
     }
+    
+    public bool IsEmpty() => _events.Count == 0;
 
     public async Task PublishEnqueuedAsync(CancellationToken cancellationToken = default)
     {

@@ -1,13 +1,12 @@
 ﻿using eXtensionSharp;
+using eXtensionSharp.AspNet;
 using Jennifer.SharedKernel;
 using Mediator;
 using Microsoft.AspNetCore.Http;
-using eXtensionSharp.AspNet;
-using Jennifer.Account.Services;
 
-namespace Jennifer.Account.Behaviors;
+namespace Jennifer.Infrastructure.Abstractions.Behaviors;
 
-public class IpBlockBehavior<TMessage, TResponse>(IHttpContextAccessor accessor, IpBlockService service) : IPipelineBehavior<TMessage, TResponse>
+public class IpBlockBehavior<TMessage, TResponse>(IHttpContextAccessor accessor, IIpBlockService service) : IPipelineBehavior<TMessage, TResponse>
     where TMessage : IMessage
     where TResponse : Result, new()
 {

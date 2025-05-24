@@ -2,7 +2,7 @@
 using Jennifer.SharedKernel;
 using Mediator;
 
-namespace Jennifer.Account.Behaviors;
+namespace Jennifer.Infrastructure.Abstractions.Behaviors;
 
 public sealed class ValidationBehavior<TMessage, TResponse> : IPipelineBehavior<TMessage, TResponse>
     where TMessage : IMessage

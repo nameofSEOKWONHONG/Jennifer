@@ -1,4 +1,5 @@
 ﻿using Jennifer.Account.Behaviors;
+using Jennifer.Infrastructure.Abstractions.Behaviors;
 using Mediator;
 
 namespace Jennifer.Account.Models;
