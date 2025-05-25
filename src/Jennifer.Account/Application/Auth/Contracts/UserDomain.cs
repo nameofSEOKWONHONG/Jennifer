@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Jennifer.Account.Models;
 using Jennifer.SharedKernel;
 
 namespace Jennifer.Account.Application.Auth.Contracts;
@@ -15,6 +16,7 @@ public class UserDto
     public string UserName { get; set; }
     public string PhoneNumber { get; set; }
     public bool IsDelete { get; set; }
+    public IEnumerable<string> RoleNames { get; set; }
 }
 
 public class UserDtoValidator : AbstractValidator<UserDto>

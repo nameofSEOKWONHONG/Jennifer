@@ -52,7 +52,7 @@ services:
       POSTGRES_DB: jenniferdb
       POSTGRES_HOST_AUTH_METHOD: trust
     ports:
-      - "5432:5432"
+      - "15432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
@@ -84,7 +84,7 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT_INTERNAL
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     ports:
-      - "9092:9092"
+      - "10092:9092"
     networks:
       - kafkanet
 

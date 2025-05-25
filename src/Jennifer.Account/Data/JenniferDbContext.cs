@@ -10,7 +10,7 @@ using SmartEnum.EFCore;
 
 namespace Jennifer.Account.Data;
 
-internal class JenniferDbContext : IdentityDbContext<User, Role, Guid, 
+public class JenniferDbContext : IdentityDbContext<User, Role, Guid, 
     UserClaim, 
     UserRole, 
     UserLogin, 

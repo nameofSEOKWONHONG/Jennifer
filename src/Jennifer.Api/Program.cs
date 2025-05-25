@@ -1,4 +1,5 @@
 using eXtensionSharp;
+using eXtensionSharp.Mongo;
 using Jennifer.Api;
 using Jennifer.Infrastructure.Options;
 using Jennifer.Account;
@@ -105,6 +106,7 @@ builder.Services.AddJennifer(options,
 
 
 builder.Services.AddSwaggerGen();
+builder.Services.AddJMongoDb(builder.Configuration["MONGODB_CONNECTION"]);
 
 var app = builder.Build();
 
@@ -128,5 +130,7 @@ app.UseSwagger();
 app.UseHttpsRedirection();
 
 app.UseJennifer();
+
+app.UseJMongoDbAsync();
 
 app.Run();

@@ -9,7 +9,7 @@ public sealed class UserContext(IHttpContextAccessor httpContextAccessor,
     IUserFetcher userFetcher) : IUserContext
 {
     public string UserId => httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-    public async Task<User> GetUser()
+    public async Task<User> GetUserAsync()
         => await userFetcher.FetchAsync(Guid.Parse(UserId));
 }
 

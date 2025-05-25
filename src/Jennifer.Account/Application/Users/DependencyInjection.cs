@@ -9,8 +9,6 @@ internal static class DependencyInjection
     internal static void AddUserService(this IServiceCollection services)
     {
         services.AddScoped<IUserQueryFilter, UserQueryFilter>();
-        services.AddScoped<IRegisterUserService, RegisterUserService>();
-        services.AddScoped<INodifyService, NodifyService>();
         services.AddScoped<IServiceExecutionBuilderFactory, ServiceExecutionBuilderFactory>();
         // services.AddScoped<IGetUserService, GetUserService>();
         // services.AddScoped<IUserService, UserService>();

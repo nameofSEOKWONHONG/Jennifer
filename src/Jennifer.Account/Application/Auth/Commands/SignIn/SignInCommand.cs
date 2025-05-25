@@ -18,8 +18,7 @@ public sealed record SignInCommand(string Email, string Password):ICommand<Resul
 internal sealed class SignInCommandHandler(        
     UserManager<User> userManager,
     RoleManager<Role> roleManager,
-    IJwtService jwtService,
-    IDistributedCache cache): ICommandHandler<SignInCommand, Result<TokenResponse>>
+    IJwtService jwtService): ICommandHandler<SignInCommand, Result<TokenResponse>>
 {
     public async ValueTask<Result<TokenResponse>> Handle(SignInCommand command, CancellationToken cancellationToken)
     {
@@ -55,13 +54,6 @@ internal sealed class SignInCommandHandler(
         
         var result = await userManager.SetAuthenticationTokenAsync(user, loginProvider:"internal", tokenName:"refreshToken", tokenValue:refreshToken);
         if(!result.Succeeded) throw new ValidationException(result.Errors.Select(m => m.Description).First());
-
-        var exists = await cache.GetAsync(user.Id.ToString(), cancellationToken);
-        if (exists.xIsNotEmpty()) await cache.RemoveAsync(user.Id.ToString(), cancellationToken);
-        await cache.SetStringAsync(user.Id.ToString(), user.xSerialize(), new DistributedCacheEntryOptions()
-        {
-            SlidingExpiration = TimeSpan.FromMinutes(JenniferOptionSingleton.Instance.Options.Jwt.ExpireMinutes)
-        }, token: cancellationToken);    
         
         var encodedRefreshToken = jwtService.ObjectToTokenString(refreshTokenObj);
         var token = new TokenResponse(jwtService.GenerateJwtToken(user, userClaims.ToList(), roleClaims), encodedRefreshToken);

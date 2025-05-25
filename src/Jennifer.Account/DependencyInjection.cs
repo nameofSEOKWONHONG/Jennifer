@@ -67,10 +67,9 @@ public static class DependencyInjection
 
         ArgumentNullException.ThrowIfNull(dbContextSetup);
         ArgumentNullException.ThrowIfNull(identitySetup);
-        
-        services.AddDbContext<JenniferDbContext>(dbContextSetup)
-            .AddScoped<IApplicationDbContext, JenniferDbContext>();
-        services.AddScoped<IJenniferSqlConnection, JenniferSqlConnection>();
+
+        services.AddDbContext<JenniferDbContext>(dbContextSetup);
+        services.AddDbContext<JenniferReadOnlyDbContext>(dbContextSetup);
         
         services.AddIdentity<User, Role>(identitySetup)
             .AddEntityFrameworkStores<JenniferDbContext>()

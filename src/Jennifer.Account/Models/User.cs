@@ -2,6 +2,7 @@
 using Ardalis.SmartEnum.EFCore;
 using Jennifer.Account.Application.Auth.Commands.SignUp;
 using Jennifer.Account.Models.Contracts;
+using Jennifer.Account.Session.Abstracts;
 using Jennifer.Infrastructure.Abstractions.Behaviors;
 using Jennifer.Infrastructure.Converters;
 using Jennifer.SharedKernel;
@@ -13,9 +14,6 @@ namespace Jennifer.Account.Models;
 
 public class User : IdentityUser<Guid>, IAuditable
 {
-    private readonly List<IDomainEvent> _domainEvents = new();
-    public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
-    
     public ENUM_USER_TYPE Type { get; set; }
     public bool IsDelete { get; set; }
     public DateTimeOffset CreatedOn { get; set; } = DateTimeOffset.UtcNow;
@@ -27,7 +25,7 @@ public class User : IdentityUser<Guid>, IAuditable
     public virtual ICollection<UserLogin> Logins { get; set; }
     public virtual ICollection<UserToken> Tokens { get; set; }
 
-    public static User Create(string email, string username, string phoneNumber, ENUM_USER_TYPE type)
+    public static User Create(ISessionContext session, string email, string username, string phoneNumber, ENUM_USER_TYPE type)
     {
         var user = new User()
         {
@@ -47,7 +45,7 @@ public class User : IdentityUser<Guid>, IAuditable
             IsDelete = false,
             CreatedBy = "SYSTEM"
         };
-        user._domainEvents.Add(new EmailVerifyUserDomainEvent(user));
+        session.DomainEventPublisher.Enqueue(new EmailVerifyUserDomainEvent(user));
         // 추가적으로 여기서 어떤 타입에 따라 증명을 변경할지도 확인 할 수 있으며
         // 이메일 이외에 다른 행위도 추가할 수 있음.
         return user;
@@ -89,8 +87,6 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<User>
             .HasColumnType("datetimeoffset");
         builder.Property(m => m.ModifiedBy)
             .HasMaxLength(36);
-        
-        builder.Ignore(m => m.DomainEvents);
         
         builder.HasMany(m => m.UserRoles)
             .WithOne(ur => ur.User)

@@ -18,6 +18,8 @@ internal sealed class GetUserQueryHandler(ISessionContext context,
     {
         var result = await dbContext
             .Users
+            .Include(m => m.UserRoles)
+            .ThenInclude(m => m.Role)
             .AsNoTracking()
             .AsExpandable()
             .Where(queryFilter.Where(query))

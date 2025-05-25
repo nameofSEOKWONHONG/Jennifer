@@ -40,7 +40,8 @@ internal sealed class UserQueryFilter : IUserQueryFilter
         Email = user.Email,
         PhoneNumber = user.PhoneNumber,
         UserName = user.UserName,
-        IsDelete = user.IsDelete
+        IsDelete = user.IsDelete,
+        RoleNames = user.UserRoles.Select(x => x.Role.Name).ToArray()
     };
     
     

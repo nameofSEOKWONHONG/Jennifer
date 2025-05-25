@@ -29,7 +29,7 @@ internal static class UserEndpoint
         var group = endpoint.MapGroup("/api/v{version:apiVersion}/user")
             .WithTags("User")
             .WithApiVersionSet(apiVersionSet)
-            //.RequireAuthorization()
+            .RequireAuthorization()
             ;
 
         group.MapGet("/",
@@ -65,60 +65,5 @@ internal static class UserEndpoint
             async (Guid id, ISender sender, CancellationToken ct) =>
                 await sender.Send(new RemoveUserCommand(id), ct))
             .WithName("RemoveUser");
-        
-        //TODO : TEST CODE
-        group.MapPost("/user/test", async (UserRequest request, IServiceExecutionBuilderFactory factory) =>
-        {
-            var builder = factory.Create();
-            Result<Guid> result = null;
-            Result<Guid> result2 = null;
-            await builder.Register<IRegisterUserService, UserRequest, Result<Guid>>()
-                .Where(() => request.Email.Contains("@"))
-                .Request(request)
-                .Handle(r => result = r)
-                .Register<INodifyService, UserRequest2, Result<Guid>>()
-                .Where(() => result.IsSuccess)
-                .Request(new UserRequest2(request.Email, request.UserName, request.Password))
-                .Handle(r => result2 = r)
-                .ExecuteAsync();
-            return result2;
-        });
     }
 }
-
-
-#region [TEST CODE]
-
-public sealed record UserRequest(string Email, string UserName, string Password);
-
-public class UserRequestValidator : AbstractValidator<UserRequest>
-{
-    public UserRequestValidator()
-    {
-        RuleFor(m => m.Email).NotEmpty();
-    }
-}
-
-public interface IRegisterUserService : Infrastructure.Abstractions.ServiceCore.IServiceBase<UserRequest, Result<Guid>>;
-
-internal class RegisterUserService(JenniferDbContext dbContext) : ServiceBase<UserRequest, Result<Guid>>, IRegisterUserService
-{
-    protected override async Task<Result<Guid>> HandleAsync(UserRequest request, CancellationToken cancellationToken)
-    {
-        var exists = await dbContext.Users.Where(m => m.Email == request.Email)
-            .FirstOrDefaultAsync(cancellationToken);
-        return Result<Guid>.Success(exists.Id);
-    }
-}
-
-public sealed record UserRequest2(string Email, string UserName, string Password);
-public interface INodifyService: Infrastructure.Abstractions.ServiceCore.IServiceBase<UserRequest2, Result<Guid>>;
-public class NodifyService : ServiceBase<UserRequest2, Result<Guid>>, INodifyService
-{
-    protected override Task<Result<Guid>> HandleAsync(UserRequest2 request, CancellationToken cancellationToken)
-    {
-        return Task.FromResult(Result<Guid>.Success(Guid.NewGuid()));
-    }
-}
-
-#endregion

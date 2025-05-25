@@ -5,5 +5,5 @@ namespace Jennifer.Account.Session.Abstracts;
 public interface IUserContext
 {
     string UserId { get; }
-    Task<User> GetUser();
+    Task<User> GetUserAsync();
 }

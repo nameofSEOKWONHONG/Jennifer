@@ -1,4 +1,5 @@
-﻿using Jennifer.Account.Models.Contracts;
+﻿using Ardalis.SmartEnum.EFCore;
+using Jennifer.Account.Models.Contracts;
 using Jennifer.Infrastructure.Converters;
 using Jennifer.Infrastructure.Options;
 using Jennifer.SharedKernel;
@@ -29,6 +30,7 @@ public class ConfigurationEntityConfiguration: IEntityTypeConfiguration<Configur
             .HasValueGenerator<GuidV7ValueGenerator>();
         builder.Property(m => m.Type)
             .HasMaxLength(256)
+            .HasConversion(new SmartEnumConverter<ENUM_CONFIGURATION_TYPE, string>())
             .IsRequired();
         builder.Property(m => m.Value)
             .IsRequired();

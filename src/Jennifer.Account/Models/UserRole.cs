@@ -7,8 +7,8 @@ namespace Jennifer.Account.Models;
 
 public class UserRole : IdentityUserRole<Guid>
 {
-    public required User User { get; set; }
-    public required Role Role { get; set; }
+    public User User { get; set; }
+    public Role Role { get; set; }
 }
 
 public class UserRoleEntityConfiguration : IEntityTypeConfiguration<UserRole>
