@@ -14,7 +14,12 @@ internal sealed class GetsRoleQueryHandler(JenniferDbContext dbContext) : IQuery
             .Where(m => m.NormalizedName == query.RoleName.ToUpper());
         var total = queryable.Count();
         var result = await queryable
-            .Select(m => new RoleDto(m.Id, m.Name, m.NormalizedName))
+            .Select(m => new RoleDto
+            {
+                Id = m.Id, 
+                Name = m.Name, 
+                NormalizedName = m.NormalizedName
+            })
             .Skip((query.PageNo - 1) * query.PageSize)
             .Take(query.PageSize)       
             .ToArrayAsync(cancellationToken);

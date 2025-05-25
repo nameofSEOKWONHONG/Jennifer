@@ -21,7 +21,7 @@ public class User : IdentityUser<Guid>, IAuditable
     public DateTimeOffset? ModifiedOn { get; set; }
     public string ModifiedBy { get; set; }
     public virtual ICollection<UserRole> UserRoles { get; set; }
-    public virtual ICollection<UserClaim> Claims { get; set; }
+    public virtual ICollection<UserClaim> UserClaims { get; set; }
     public virtual ICollection<UserLogin> Logins { get; set; }
     public virtual ICollection<UserToken> Tokens { get; set; }
 
@@ -93,7 +93,7 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<User>
             .HasForeignKey(ur => ur.UserId)
             .OnDelete(DeleteBehavior.Cascade);
         
-        builder.HasMany(m => m.Claims)
+        builder.HasMany(m => m.UserClaims)
             .WithOne(uc => uc.User)
             .HasForeignKey(uc => uc.UserId)
             .OnDelete(DeleteBehavior.Cascade);

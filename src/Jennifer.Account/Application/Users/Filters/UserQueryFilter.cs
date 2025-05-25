@@ -41,7 +41,12 @@ internal sealed class UserQueryFilter : IUserQueryFilter
         PhoneNumber = user.PhoneNumber,
         UserName = user.UserName,
         IsDelete = user.IsDelete,
-        RoleNames = user.UserRoles.Select(x => x.Role.Name).ToArray()
+        RoleNames = user.UserRoles.Select(x => x.Role.Name).ToArray(),
+        UserClaims = user.UserClaims.Select(x => new UserClaimDto()
+        {
+            ClaimType = x.ClaimType,
+            ClaimValue = x.ClaimValue,
+        }).ToArray()
     };
     
     

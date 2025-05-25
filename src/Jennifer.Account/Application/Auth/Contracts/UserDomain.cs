@@ -17,6 +17,13 @@ public class UserDto
     public string PhoneNumber { get; set; }
     public bool IsDelete { get; set; }
     public IEnumerable<string> RoleNames { get; set; }
+    public IEnumerable<UserClaimDto> UserClaims { get; set; }   
+}
+
+public class UserClaimDto
+{
+    public string ClaimType { get; set; }
+    public string ClaimValue { get; set; }   
 }
 
 public class UserDtoValidator : AbstractValidator<UserDto>

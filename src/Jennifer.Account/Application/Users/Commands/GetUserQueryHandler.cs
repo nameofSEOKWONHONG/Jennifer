@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Jennifer.Account.Application.Users.Commands;
 
-internal sealed class GetUserQueryHandler(ISessionContext context,
+internal sealed class GetUserQueryHandler(
     IUserQueryFilter queryFilter,
     JenniferDbContext dbContext): IQueryHandler<GetUserQuery, Result<UserDto>>
 {
@@ -18,8 +18,7 @@ internal sealed class GetUserQueryHandler(ISessionContext context,
     {
         var result = await dbContext
             .Users
-            .Include(m => m.UserRoles)
-            .ThenInclude(m => m.Role)
+            .Include(m => m.UserClaims)
             .AsNoTracking()
             .AsExpandable()
             .Where(queryFilter.Where(query))

@@ -47,7 +47,6 @@
 
     <ItemGroup>
       <Folder Include="Application\Roles\Filters\" />
-      <Folder Include="Application\Users\Services\" />
     </ItemGroup>
     
 </Project>

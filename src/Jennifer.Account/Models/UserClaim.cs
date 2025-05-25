@@ -21,7 +21,7 @@ public class UserClaimEntityConfiguration : IEntityTypeConfiguration<UserClaim>
             .ValueGeneratedOnAdd();
 
         builder.HasOne(m => m.User)
-            .WithMany(u => u.Claims)
+            .WithMany(u => u.UserClaims)
             .HasForeignKey(uc => uc.UserId)
             .OnDelete(DeleteBehavior.Cascade);
     }
