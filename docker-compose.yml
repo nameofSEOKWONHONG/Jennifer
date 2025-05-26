@@ -6,7 +6,7 @@ services:
     image: redis:7
     container_name: redis-auth
     ports:
-      - "6380:6379"
+      - "10680:6379"
     command: redis-server --appendonly yes
     networks:
       - redisnet
@@ -16,7 +16,7 @@ services:
     image: redis:7
     container_name: redis-cache
     ports:
-      - "6381:6379"
+      - "10681:6379"
     command: redis-server
     networks:
       - redisnet
@@ -26,7 +26,7 @@ services:
     image: redis:7
     container_name: redis-pubsub
     ports:
-      - "6382:6379"
+      - "10682:6379"
     command: redis-server
     networks:
       - redisnet
@@ -36,7 +36,7 @@ services:
     image: mongo:6.0
     container_name: mongodb
     ports:
-      - "27017:27017"
+      - "10717:27017"
     volumes:
       - mongo_data:/data/db
     networks:
@@ -52,7 +52,7 @@ services:
       POSTGRES_DB: jenniferdb
       POSTGRES_HOST_AUTH_METHOD: trust
     ports:
-      - "15432:5432"
+      - "10532:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
@@ -66,7 +66,7 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
     ports:
-      - "2181:2181"
+      - "10181:2181"
     networks:
       - kafkanet
 
@@ -79,7 +79,7 @@ services:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://kafka:29092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:10092,PLAINTEXT_INTERNAL://kafka:29092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT_INTERNAL
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
@@ -96,14 +96,42 @@ services:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
     ports:
-      - "5672:5672"
-      - "15672:15672"
+      - "10572:5672"
+      - "11572:15672"
     networks:
       - rabbitnet
+
+  # Ollama (LLM inference with GPU)
+  # ollama:
+    # image: ollama/ollama
+    # container_name: ollama
+    # ports:
+      # - "11434:11434"
+    # volumes:
+      # - ollama_data:/root/.ollama
+    # networks:
+      # - ollamanet
+
+  # # Ollama WebUI
+  # ollama-webui:
+    # image: ghcr.io/open-webui/open-webui:main
+    # container_name: ollama-webui
+    # depends_on:
+      # - ollama
+    # environment:
+      # - OLLAMA_BASE_URL=http://ollama:11434
+    # ports:
+      # - "13000:8080"
+    # volumes:
+      # - ollama_webui_data:/app/backend/data
+    # networks:
+      # - ollamanet
 
 volumes:
   mongo_data:
   postgres_data:
+  ollama_data:
+  ollama_webui_data:
 
 networks:
   redisnet:
@@ -111,3 +139,4 @@ networks:
   rabbitnet:
   mongonet:
   pgnet:
+  ollamanet:
