@@ -17,14 +17,14 @@ internal sealed class PasswordForgotVerifyCommandHandler(
 {
     public async ValueTask<Result> Handle(PasswordForgotVerifyCommand command, CancellationToken cancellationToken)
     {
-        VerifyCodeResponse result = null;
+        Result result = null;
         var builder = factory.Create();
-        await builder.Register<IVerifyCodeConfirmService, VerifyCodeRequest, VerifyCodeResponse>()
+        await builder.Register<IVerifyCodeConfirmService, VerifyCodeRequest, Result>()
             .Request(new VerifyCodeRequest(command.Email, command.Code, ENUM_EMAIL_VERIFICATION_TYPE.PASSWORD_FORGOT))
             .Handle(r => result = r)
             .ExecuteAsync(cancellationToken);
         
-        if(result.Status != ENUM_VERITY_RESULT_STATUS.EMAIL_CONFIRM) return Result.Failure(result.Message);
+        if(!result.IsSuccess) return Result.Failure(result.Message);
         return Result.Success();
     }
 }

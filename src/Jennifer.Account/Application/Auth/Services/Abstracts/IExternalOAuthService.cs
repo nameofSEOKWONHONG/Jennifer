@@ -5,6 +5,6 @@ using Microsoft.AspNetCore.Http;
 
 namespace Jennifer.Account.Application.Auth.Services.Abstracts;
 
-internal interface IExternalOAuthService: IServiceBase<ExternalSignInRequest, TokenResponse>
+internal interface IExternalOAuthService: IServiceBase<ExternalSignInRequest, Result<TokenResponse>>
 {
 }

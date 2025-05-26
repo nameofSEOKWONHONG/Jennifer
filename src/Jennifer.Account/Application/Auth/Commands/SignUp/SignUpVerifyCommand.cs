@@ -23,14 +23,14 @@ internal sealed class SignUpVerifyCommandHandler(
     {
         var user = await dbContext.Users.FirstAsync(m => m.Id == command.UserId, cancellationToken: cancellationToken);
 
-        VerifyCodeResponse verified = null;
+        Result verified = null;
         var builder = factory.Create();
-        await builder.Register<IVerifyCodeConfirmService, VerifyCodeRequest, VerifyCodeResponse>()
+        await builder.Register<IVerifyCodeConfirmService, VerifyCodeRequest, Result>()
             .Request(new VerifyCodeRequest(user.Email, command.Code, ENUM_EMAIL_VERIFICATION_TYPE.SIGN_UP_BEFORE))
             .Handle(r => verified = r)
             .ExecuteAsync(cancellationToken);
                 
-        if(verified.Status != ENUM_VERITY_RESULT_STATUS.EMAIL_CONFIRM) 
+        if(!verified.IsSuccess) 
             return Result.Failure(verified.Message);
 
         user.EmailConfirmed = true;

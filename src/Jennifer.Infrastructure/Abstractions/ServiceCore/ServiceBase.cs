@@ -1,8 +1,10 @@
 ﻿using FluentValidation;
+using Jennifer.SharedKernel;
 
 namespace Jennifer.Infrastructure.Abstractions.ServiceCore;
 
 public abstract class ServiceBase<TRequest, TResult> : IServiceBase<TRequest, TResult>
+where TResult : IResult
 {
     private readonly IValidator<TRequest> _validator;
 

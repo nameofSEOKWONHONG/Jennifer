@@ -1,6 +1,8 @@
-﻿namespace Jennifer.Infrastructure.Abstractions.ServiceCore;
+﻿using Jennifer.SharedKernel;
 
-public interface IServiceBase<TRequest, TResult>
+namespace Jennifer.Infrastructure.Abstractions.ServiceCore;
+
+public interface IServiceBase<TRequest, TResult> where TResult : IResult
 {
     Task<TResult> ExecuteAsync(TRequest request, CancellationToken cancellationToken = default);
 }

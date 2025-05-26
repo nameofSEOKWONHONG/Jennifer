@@ -1,9 +1,12 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using eXtensionSharp;
+using Jennifer.SharedKernel;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Jennifer.Infrastructure.Abstractions.ServiceCore;
 
 public class ExecutionUnit<TService, TRequest, TResult> : IExecutionUnit, IServiceRegistration<TService, TRequest, TResult>
     where TService : class, IServiceBase<TRequest, TResult>
+    where TResult : IResult, new()
 {
     private readonly IServiceProvider _provider;
     private readonly ServiceExecutionBuilder _builder;
@@ -17,7 +20,7 @@ public class ExecutionUnit<TService, TRequest, TResult> : IExecutionUnit, IServi
         _builder = builder;
     }
 
-    public IServiceRegistration<TService, TRequest, TResult> Where(Func<bool> predicate)
+    public IServiceRegistration<TService, TRequest, TResult> When(Func<bool> predicate)
     {
         _condition = predicate ?? (() => true);
         return this;
@@ -53,7 +56,14 @@ public class ExecutionUnit<TService, TRequest, TResult> : IExecutionUnit, IServi
 
     public void ApplyResult(object result)
     {
-        if (_resultHandler != null && result is TResult typed)
-            _resultHandler(typed);
+        if (_resultHandler.xIsEmpty())
+        {
+            result = new TResult() { IsSuccess = false, Message = "Result handler is not set."};
+        }
+        else if (result.xIsEmpty())
+        {
+            result = new TResult() { IsSuccess = false, Message = "Previous when is not passed or current when is not passed."};
+        }
+        _resultHandler((TResult)result);
     }
 }

@@ -20,13 +20,13 @@ internal sealed class PasswordForgotChangeCommandHandler(UserManager<User> userM
     public async ValueTask<Result> Handle(PasswordForgotChangeCommand command, CancellationToken cancellationToken)
     {
         var builder = factory.Create();
-        VerifyCodeResponse verified = null;
-        await builder.Register<IVerifyCodeConfirmService, VerifyCodeRequest, VerifyCodeResponse>()
+        Result verified = null;
+        await builder.Register<IVerifyCodeConfirmService, VerifyCodeRequest, Result>()
             .Request(new VerifyCodeRequest(command.Email, command.Code, ENUM_EMAIL_VERIFICATION_TYPE.PASSWORD_FORGOT))
             .Handle(r => verified = r)
             .ExecuteAsync(cancellationToken);
         
-        if(verified.Status != ENUM_VERITY_RESULT_STATUS.EMAIL_CONFIRM)
+        if(!verified.IsSuccess)
             return Result.Failure(verified.Message);
         
         var user = await userManager.FindByEmailAsync(command.Email);

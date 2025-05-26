@@ -1,0 +1,81 @@
+﻿using Asp.Versioning;
+using eXtensionSharp;
+using FluentValidation;
+using Jennifer.Account.Data;
+using Jennifer.Infrastructure.Abstractions.ServiceCore;
+using Jennifer.SharedKernel;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.EntityFrameworkCore;
+
+namespace Jennifer.Account.Application.Tests;
+
+internal static class TestEndpoint
+{
+    internal static void MapTestEndpoint(this IEndpointRouteBuilder endpoint)
+    {
+        var apiVersionSet = endpoint.NewApiVersionSet()
+            .HasApiVersion(new ApiVersion(1))
+            .ReportApiVersions()
+            .Build();
+        
+        var group = endpoint.MapGroup("/api/v{version:apiVersion}/test")
+                .WithTags("Test")
+                .WithApiVersionSet(apiVersionSet)
+            ;
+        
+        //TODO : TEST CODE
+        group.MapPost("/", async (UserRequest request, IServiceExecutionBuilderFactory factory) =>
+        {
+            var builder = factory.Create();
+            Result<Guid> result = null;
+            Result<Guid> result2 = null;
+            await builder.Register<IRegisterUserService, UserRequest, Result<Guid>>()
+                .When(() => request.Email.Contains("@"))
+                .Request(request)
+                .Handle(r => result = r)
+                .Register<INodifyService, UserRequest2, Result<Guid>>()
+                .When(() => result.IsSuccess)
+                .Request(new UserRequest2(request.Email, request.UserName, request.Password))
+                .Handle(r => result2 = r)
+                .ExecuteAsync();
+
+            return result2;
+        })
+        .MapToApiVersion(1)
+        .WithName("TestPost");
+    }
+}
+
+public sealed record UserRequest(string Email, string UserName, string Password);
+
+public class UserRequestValidator : AbstractValidator<UserRequest>
+{
+    public UserRequestValidator()
+    {
+        RuleFor(m => m.Email).NotEmpty();
+    }
+}
+
+public interface IRegisterUserService : Infrastructure.Abstractions.ServiceCore.IServiceBase<UserRequest, Result<Guid>>;
+
+internal class RegisterUserService(JenniferDbContext dbContext) : ServiceBase<UserRequest, Result<Guid>>, IRegisterUserService
+{
+    protected override async Task<Result<Guid>> HandleAsync(UserRequest request, CancellationToken cancellationToken)
+    {
+        var exists = await dbContext.Users.Where(m => m.Email == request.Email)
+            .FirstOrDefaultAsync(cancellationToken);
+        return Result<Guid>.Success(exists.Id);
+    }
+}
+
+public sealed record UserRequest2(string Email, string UserName, string Password);
+public interface INodifyService: Infrastructure.Abstractions.ServiceCore.IServiceBase<UserRequest2, Result<Guid>>;
+public class NodifyService : ServiceBase<UserRequest2, Result<Guid>>, INodifyService
+{
+    protected override Task<Result<Guid>> HandleAsync(UserRequest2 request, CancellationToken cancellationToken)
+    {
+        return Task.FromResult(Result<Guid>.Success(Guid.NewGuid()));
+    }
+}

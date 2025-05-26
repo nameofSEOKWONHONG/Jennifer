@@ -11,6 +11,8 @@ using Jennifer.External.OAuth;
 using Jennifer.Infrastructure;
 using Jennifer.Infrastructure.Email;
 using Jennifer.Account.Application.Auth;
+using Jennifer.Account.Application.Roles;
+using Jennifer.Account.Application.Tests;
 using Jennifer.Account.Application.Users;
 using Jennifer.External.OAuth.Contracts;
 using Jennifer.Infrastructure.Abstractions;
@@ -143,6 +145,8 @@ public static class DependencyInjection
 
         services.AddAuthService();
         services.AddUserService();
+        services.AddRoleService();
+        services.AddTestService();
         services.AddSessionService();
         services.AddExternalOAuthHandler();
         services.AddJMongoDb(JenniferOptionSingleton.Instance.Options.MongodbConnectionString, config =>
@@ -334,6 +338,7 @@ public static class DependencyInjection
         // app.MapUserRoleEndpoint();
         // app.MapUserClaimEndpoint();
         // app.MapRoleEndpoint();
+        app.MapTestEndpoint();
     }
 
     /// <summary>

@@ -14,8 +14,6 @@ internal static class UserEndpoint
     {
         var apiVersionSet = endpoint.NewApiVersionSet()
             .HasApiVersion(new ApiVersion(1))
-            .HasApiVersion(new ApiVersion(2))
-            .HasDeprecatedApiVersion(new ApiVersion(1))
             .ReportApiVersions()
             .Build();
         
@@ -46,14 +44,15 @@ internal static class UserEndpoint
         group.MapDelete("/{id}", 
             async (Guid id, ISender sender, CancellationToken ct) =>
                 await sender.Send(new RemoveUserCommand(id), ct))
+            .MapToApiVersion(1)           
             .WithName("RemoveUser");
 
-        group.MapPost("/{id}/role/{roleId}", async (Guid id, Guid roleId, ISender sender, CancellationToken ct) =>
+        group.MapPost("/detail/{id}/role/{roleId}", async (Guid id, Guid roleId, ISender sender, CancellationToken ct) =>
                 await sender.Send(new AddOrUpdateUserRoleCommand(id, roleId), ct))
             .MapToApiVersion(1)
             .WithName("AddOrUpdateUserRole");
         
-        group.MapPost("/{id}/claim", async (Guid id, CreateUserClaimRequest[] request, ISender sender, CancellationToken ct) =>
+        group.MapPost("/detail/{id}/claim", async (Guid id, CreateUserClaimRequest[] request, ISender sender, CancellationToken ct) =>
             await sender.Send(new CreateUserClaimCommand(id, request), ct))
             .MapToApiVersion(1)
             .WithName("AddRoleClaim");

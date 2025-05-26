@@ -1,8 +1,13 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿namespace Jennifer.SharedKernel;
 
-namespace Jennifer.SharedKernel;
+public interface IResult
+{
+    bool IsSuccess { get; set; }
+    string Message { get; set; }
+    Error Error { get; set; }
+}
 
-public class Result
+public class Result : IResult
 {
     public bool IsSuccess { get; set; }
     public string Message { get; set; }
@@ -12,7 +17,7 @@ public class Result
     public static Result Failure(string message) => new() { IsSuccess = false, Message = message };
     public static Result Failure(Error error) => new() { IsSuccess = false, Error = error};
 }
-public class Result<T>: Result
+public class Result<T>: Result, IResult
 {
     public T Data { get; set; }
     
