@@ -9,7 +9,7 @@ namespace Jennifer.External.OAuth;
 
 public static class DependencyInjection
 {
-    public static void AddExternalOAuthHandler(this IServiceCollection services, string mongoConnectionString)
+    public static void AddExternalOAuthHandler(this IServiceCollection services)
     {
         services.AddHttpContextAccessor();
         
@@ -39,15 +39,5 @@ public static class DependencyInjection
         services.AddTransient<IExternalOAuthHandler, KakaoOAuthHandler>();
         services.AddTransient<IExternalOAuthHandler, AppleOAuthHandler>();
         services.AddSingleton<IExternalOAuthHandlerFactory, ExternalOAuthHandlerFactory>();
-
-        services.AddJMongoDb(mongoConnectionString, options =>
-        {
-            options.AddInitializer<ExternalOAuthDocumentConfiguration>();
-        });
-    }
-    
-    public static void UseExternalOAuthHandler(this IApplicationBuilder app)
-    {
-        app.UseJMongoDbAsync();
     }
 }

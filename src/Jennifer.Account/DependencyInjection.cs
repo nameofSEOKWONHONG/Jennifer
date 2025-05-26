@@ -1,5 +1,6 @@
 ﻿using System.IO.Compression;
 using System.Text;
+using eXtensionSharp.Mongo;
 using FluentValidation;
 using Jennifer.Account.Application.Auth.Commands.SignUp;
 using Jennifer.Account.Data;
@@ -11,6 +12,7 @@ using Jennifer.Infrastructure;
 using Jennifer.Infrastructure.Email;
 using Jennifer.Account.Application.Auth;
 using Jennifer.Account.Application.Users;
+using Jennifer.External.OAuth.Contracts;
 using Jennifer.Infrastructure.Abstractions;
 using Jennifer.Infrastructure.Abstractions.Behaviors;
 using Jennifer.Infrastructure.Middlewares;
@@ -142,7 +144,12 @@ public static class DependencyInjection
         services.AddAuthService();
         services.AddUserService();
         services.AddSessionService();
-        services.AddExternalOAuthHandler(JenniferOptionSingleton.Instance.Options.MongodbConnectionString);        
+        services.AddExternalOAuthHandler();
+        services.AddJMongoDb(JenniferOptionSingleton.Instance.Options.MongodbConnectionString, config =>
+        {
+            config.AddInitializer<ExternalOAuthDocumentConfiguration>();
+            config.AddInitializer<EmailSendResultDocumentConfiguration>();
+        });
 
         #endregion
 
@@ -293,6 +300,18 @@ public static class DependencyInjection
         return services;
     }
 
+    public static IServiceCollection WithJenniferMongodb(this IServiceCollection services,
+        string mongodbConnectionString)
+    {
+        services.AddJMongoDb(mongodbConnectionString, options =>
+        {
+            options.AddInitializer<ExternalOAuthDocumentConfiguration>();
+            options.AddInitializer<EmailSendResultDocumentConfiguration>();
+        });
+
+        return services;
+    }
+
     /// <summary>
     /// Adds the Jennifer.Mail services to the dependency injection container.
     /// </summary>
@@ -301,7 +320,7 @@ public static class DependencyInjection
     public static void WithJenniferMailService(this IServiceCollection services)
     {
         services.AddSingleton<IEmailQueue, EmailQueue>();
-        services.AddHostedService<EmailSenderService>();
+        services.AddHostedService<EmailSendService>();
     }
 
     /// <summary>
@@ -344,6 +363,6 @@ public static class DependencyInjection
         var service = scope.ServiceProvider.GetRequiredService<IIpBlockService>();
         service.SubscribeToUpdates();
 
-        app.UseExternalOAuthHandler();
+        app.UseJMongoDbAsync();
     }
 }
