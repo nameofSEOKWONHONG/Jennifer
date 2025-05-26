@@ -1,6 +1,4 @@
-﻿using Jennifer.Account.Behaviors;
-using Jennifer.Infrastructure.Abstractions.Behaviors;
-using Mediator;
+﻿using Jennifer.Infrastructure.Abstractions.Behaviors;
 
 namespace Jennifer.Account.Models;
 

@@ -1,17 +1,15 @@
 ﻿using System.Security.Claims;
 using eXtensionSharp;
-using Jennifer.Account.Data;
-using Jennifer.Account.Session.Abstracts;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Distributed;
 
-namespace Jennifer.Account.Session;
+namespace Jennifer.Infrastructure.Middlewares;
 
-internal class JenniferSessionContextMiddleware
+public class SessionContextMiddleware
 {
     private readonly RequestDelegate _next;
 
-    public JenniferSessionContextMiddleware(RequestDelegate next) => _next = next;
+    public SessionContextMiddleware(RequestDelegate next) => _next = next;
 
     public async Task InvokeAsync(HttpContext context,
         IDistributedCache cache)

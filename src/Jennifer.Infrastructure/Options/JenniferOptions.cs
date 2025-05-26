@@ -62,6 +62,7 @@ public class JenniferOptions
 {
     public string Schema { get;  }
     public string ConnectionString { get;  }
+    public string MongodbConnectionString { get;  }
     public JwtOptions Jwt { get;  }
     public CryptoOptions Crypto { get;  }
     
@@ -69,6 +70,7 @@ public class JenniferOptions
 
     public JenniferOptions(string schema, 
         string connectionString, 
+        string mongodbConnectionString,
         CryptoOptions cryptoOptions, 
         JwtOptions jwtOptions,
         EmailSmtpOptions emailSmtpOptions)
@@ -79,6 +81,7 @@ public class JenniferOptions
         
         this.Schema = schema;
         this.ConnectionString = connectionString;
+        this.MongodbConnectionString = mongodbConnectionString;
         this.Jwt = jwtOptions;
         this.Crypto = cryptoOptions;
         this.EmailSmtp = emailSmtpOptions;

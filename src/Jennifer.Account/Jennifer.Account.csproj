@@ -44,9 +44,5 @@
       <ProjectReference Include="..\Jennifer.Infrastructure\Jennifer.Infrastructure.csproj" />
       <ProjectReference Include="..\Jennifer.SharedKernel\Jennifer.SharedKernel.csproj" />
     </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Application\Roles\Filters\" />
-    </ItemGroup>
     
 </Project>

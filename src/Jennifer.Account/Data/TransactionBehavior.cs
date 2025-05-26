@@ -1,12 +1,11 @@
-﻿using eXtensionSharp;
-using Jennifer.Infrastructure.Data;
+﻿using Jennifer.Infrastructure.Abstractions.Behaviors;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace Jennifer.Infrastructure.Abstractions.Behaviors;
+namespace Jennifer.Account.Data;
 
-public sealed class TransactionBehavior<TRequest, TResponse>(IApplicationDbContext dbContext, ILogger<TransactionBehavior<TRequest, TResponse>> logger) : IPipelineBehavior<TRequest, TResponse>
+public sealed class TransactionBehavior<TRequest, TResponse>(JenniferDbContext dbContext, ILogger<TransactionBehavior<TRequest, TResponse>> logger) : IPipelineBehavior<TRequest, TResponse>
     where TRequest : ICommand<TResponse>
 {
     public async ValueTask<TResponse> Handle(TRequest message, MessageHandlerDelegate<TRequest, TResponse> next, CancellationToken cancellationToken)
@@ -17,7 +16,7 @@ public sealed class TransactionBehavior<TRequest, TResponse>(IApplicationDbConte
 
         logger.LogDebug("Begin Transaction for {Command}", typeof(TRequest).Name);
 
-        await using var transaction = await dbContext.xAs<DbContext>().Database.BeginTransactionAsync(cancellationToken);
+        await using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
         try
         {
             var response = await next(message, cancellationToken);

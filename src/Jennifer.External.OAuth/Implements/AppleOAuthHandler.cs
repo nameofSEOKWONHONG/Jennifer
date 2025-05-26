@@ -1,20 +1,24 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using eXtensionSharp;
+using eXtensionSharp.Mongo;
 using Jennifer.External.OAuth.Abstracts;
 using Jennifer.External.OAuth.Contracts;
 using Microsoft.IdentityModel.Tokens;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+using MongoDB.Driver;
 
 namespace Jennifer.External.OAuth.Implements;
 
 public class AppleOAuthHandler : ExternalOAuthHandler
 {
-    public AppleOAuthHandler(IHttpClientFactory httpClientFactory) : base(httpClientFactory, "apple")
+    public AppleOAuthHandler(IHttpClientFactory httpClientFactory, IJMongoFactory factory) : base(httpClientFactory, factory, "apple")
     {
     }
 
     public override async Task<IExternalOAuthResult> Verify(string providerToken, CancellationToken ct)
     {
-        var client = _httpClientFactory.CreateClient(this.Provider);
+        var client = httpClientFactory.CreateClient(this.Provider);
         var json = await client.GetStringAsync("/auth/keys", ct);
 
         var jwks = new JsonWebKeySet(json);
@@ -34,6 +38,13 @@ public class AppleOAuthHandler : ExternalOAuthHandler
         var email = principal.Claims.FirstOrDefault(c => c.Type == "email")?.Value;
 
         if (providerId.xIsEmpty()) return ExternalOAuthResult.Fail("providerId is empty");
+
+        var collection = this.mongoFactory.Create<ExternalOAuthDocument>().GetCollection();
+        await collection.InsertOneAsync(new ExternalOAuthDocument()
+        {
+            Result = principal.xSerialize(),
+            CreatedAt = DateTimeOffset.UtcNow,
+        }, cancellationToken: ct);
 
         return ExternalOAuthResult.Success(providerId, email, string.Empty);
     }

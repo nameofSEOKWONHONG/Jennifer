@@ -1,8 +1,6 @@
-﻿using Jennifer.Account.Behaviors;
-using Jennifer.Account.Models.Contracts;
+﻿using Jennifer.Account.Models.Contracts;
 using Jennifer.Infrastructure.Abstractions.Behaviors;
 using Jennifer.SharedKernel;
-using Mediator;
 
 namespace Jennifer.Account.Application.Auth.Commands.SignUp;
 

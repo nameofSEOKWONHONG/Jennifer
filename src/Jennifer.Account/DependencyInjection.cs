@@ -8,14 +8,14 @@ using Jennifer.Account.Models;
 using Jennifer.Account.Session;
 using Jennifer.External.OAuth;
 using Jennifer.Infrastructure;
-using Jennifer.Infrastructure.Data;
 using Jennifer.Infrastructure.Email;
-using Jennifer.Infrastructure.Options;
 using Jennifer.Account.Application.Auth;
 using Jennifer.Account.Application.Users;
-using Jennifer.Account.Behaviors;
 using Jennifer.Infrastructure.Abstractions;
 using Jennifer.Infrastructure.Abstractions.Behaviors;
+using Jennifer.Infrastructure.Middlewares;
+using Jennifer.Infrastructure.Options;
+using Jennifer.SharedKernel;
 using Mediator;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -23,9 +23,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.AspNetCore.SignalR.StackExchangeRedis;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.StackExchangeRedis;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using StackExchange.Redis;
@@ -144,7 +142,7 @@ public static class DependencyInjection
         services.AddAuthService();
         services.AddUserService();
         services.AddSessionService();
-        services.AddExternalOAuthHandler();        
+        services.AddExternalOAuthHandler(JenniferOptionSingleton.Instance.Options.MongodbConnectionString);        
 
         #endregion
 
@@ -193,22 +191,26 @@ public static class DependencyInjection
         return services;
     }
 
-    public static IServiceCollection WithJenniferCache(this IServiceCollection services, string redisConnectionString, Action<RedisCacheOptions> setup)
+    public static IServiceCollection WithJenniferCache(this IServiceCollection services, string redisConnectionString)
     {
         ArgumentNullException.ThrowIfNull(redisConnectionString);
-        ArgumentNullException.ThrowIfNull(setup);
-        
-        services.AddSingleton<IConnectionMultiplexer>(sp =>
-            ConnectionMultiplexer.Connect(redisConnectionString));
         
         try
         {
-            services.AddStackExchangeRedisCache(setup);
+            IConnectionMultiplexer connectionMultiplexer =
+                ConnectionMultiplexer.Connect(redisConnectionString);
+
+            services.AddSingleton(connectionMultiplexer);
+            
+            services.AddStackExchangeRedisCache(options => 
+                options.ConnectionMultiplexerFactory = () =>
+                    Task.FromResult(connectionMultiplexer));
         }
         catch
         {
             services.AddDistributedMemoryCache();
         }
+
         services.AddMemoryCache();
         
         return services;
@@ -265,18 +267,28 @@ public static class DependencyInjection
     /// </summary>
     /// <param name="services">The service collection to which the SignalR and related Jennifer.Account.Hub services will be added.</param>
     /// <param name="backplaneOptions">An optional delegate to configure Redis options for SignalR. If null, the default SignalR setup will be used without Redis integration.</param>
-    public static IServiceCollection WithJenniferSignalr(this IServiceCollection services, Action<RedisOptions> backplaneOptions)
+    public static IServiceCollection WithJenniferSignalr(this IServiceCollection services, string backplaneConnectionString)
     {
+        ArgumentNullException.ThrowIfNull(backplaneConnectionString);
+        
+        services.AddSingleton<IUserIdProvider, SubUserIdProvider>();
+        
         try
         {
-            services.AddSignalR().AddStackExchangeRedis(backplaneOptions);
+            IConnectionMultiplexer connectionMultiplexer =
+                ConnectionMultiplexer.Connect(backplaneConnectionString);
+            
+            services.AddSignalR().AddStackExchangeRedis(o =>
+            {
+                o.ConnectionFactory = writer => Task.FromResult(connectionMultiplexer);
+            });
         }
-        catch (Exception ex)
+        catch
         {
             services.AddSignalR();
         }
         
-        services.AddSingleton<IUserIdProvider, SubUserIdProvider>();
+        
 
         return services;
     }
@@ -322,13 +334,16 @@ public static class DependencyInjection
 
         app.UseAuthentication();
         app.UseAuthorization();
-        
-        app.UseMiddleware<JenniferSessionContextMiddleware>(); // 반드시 인증 이후에 실행
+
+        app.UseMiddleware<ProblemDetailsMiddleware>();
+        app.UseMiddleware<SessionContextMiddleware>();
 
         app.MapHub<JenniferHub>("/jenniferHub");
         
         using var scope = app.Services.CreateScope();
         var service = scope.ServiceProvider.GetRequiredService<IIpBlockService>();
         service.SubscribeToUpdates();
+
+        app.UseExternalOAuthHandler();
     }
 }

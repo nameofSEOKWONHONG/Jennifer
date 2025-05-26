@@ -1,6 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 using Jennifer.Infrastructure.Options;
+using Jennifer.SharedKernel;
 
 namespace Jennifer.Infrastructure.Extenstions;
 

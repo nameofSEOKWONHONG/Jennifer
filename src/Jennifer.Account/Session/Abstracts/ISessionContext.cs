@@ -1,5 +1,4 @@
 ﻿using Jennifer.Infrastructure.Abstractions.Behaviors;
-using Jennifer.Infrastructure.Data;
 
 namespace Jennifer.Account.Session.Abstracts;
 

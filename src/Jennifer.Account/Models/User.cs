@@ -1,10 +1,9 @@
-﻿using Jennifer.Infrastructure.Options;
-using Ardalis.SmartEnum.EFCore;
+﻿using Ardalis.SmartEnum.EFCore;
 using Jennifer.Account.Application.Auth.Commands.SignUp;
 using Jennifer.Account.Models.Contracts;
 using Jennifer.Account.Session.Abstracts;
-using Jennifer.Infrastructure.Abstractions.Behaviors;
 using Jennifer.Infrastructure.Converters;
+using Jennifer.Infrastructure.Options;
 using Jennifer.SharedKernel;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

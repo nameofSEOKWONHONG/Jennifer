@@ -1,12 +1,15 @@
-﻿using Jennifer.External.OAuth.Abstracts;
+﻿using eXtensionSharp.Mongo;
+using Jennifer.External.OAuth.Abstracts;
+using Jennifer.External.OAuth.Contracts;
 using Jennifer.External.OAuth.Implements;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Jennifer.External.OAuth;
 
 public static class DependencyInjection
 {
-    public static void AddExternalOAuthHandler(this IServiceCollection services)
+    public static void AddExternalOAuthHandler(this IServiceCollection services, string mongoConnectionString)
     {
         services.AddHttpContextAccessor();
         
@@ -36,5 +39,15 @@ public static class DependencyInjection
         services.AddTransient<IExternalOAuthHandler, KakaoOAuthHandler>();
         services.AddTransient<IExternalOAuthHandler, AppleOAuthHandler>();
         services.AddSingleton<IExternalOAuthHandlerFactory, ExternalOAuthHandlerFactory>();
+
+        services.AddJMongoDb(mongoConnectionString, options =>
+        {
+            options.AddInitializer<ExternalOAuthDocumentConfiguration>();
+        });
+    }
+    
+    public static void UseExternalOAuthHandler(this IApplicationBuilder app)
+    {
+        app.UseJMongoDbAsync();
     }
 }

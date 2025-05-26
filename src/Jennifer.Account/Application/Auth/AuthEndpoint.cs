@@ -38,6 +38,13 @@ public static class AuthEndpoint
                 async (CheckByEmailRequest request, ISender sender, CancellationToken ct) =>
                     await sender.Send(new CheckByEmailQuery(request.Email), ct))
             .WithName("CheckEmail")
+            .Produces<bool>(StatusCodes.Status200OK)
+            .ProducesValidationProblem()
+            .WithDescription(@"
+            Validates if the provided email address is available for registration.
+            Returns true if the email can be used for a new account, false if it's already registered.
+            The endpoint helps prevent duplicate registrations and ensures email uniqueness in the system.
+")
             ;
 
         #region [sign up process]
@@ -58,6 +65,12 @@ public static class AuthEndpoint
                     await sender.Send(
                         new SignUpCommand(request.Email, request.Password, request.UserName, request.PhoneNumber, request.Type), ct))
             .Produces<TokenResponse>(StatusCodes.Status200OK)
+            .ProducesValidationProblem()
+            .WithDescription(@"
+            Creates a new user account with the provided information.
+            Returns a token response containing JWT and refresh tokens upon successful registration.
+            Email verification will be sent to complete the registration process.
+")
             .WithName("SignUp");
         
         group.MapPost("/signup/verify", 
@@ -100,8 +113,7 @@ public static class AuthEndpoint
 Sign in with email and password. 
 Returns a JWT token and refresh token. 
 Use the refresh token to obtain a new JWT token. 
-The refresh token expires after 7 days. 
-Use the refresh token to obtain a new JWT token. The refresh token expires after 7 days.");
+The refresh token expires after 7 days.");
         
         group.MapPost("/signin/external", 
                 async (ExternalSignInRequest request, ISender sender, CancellationToken ct) =>
@@ -112,13 +124,17 @@ Use the refresh token to obtain a new JWT token. The refresh token expires after
             async (ISender sender, CancellationToken ct) => 
                 await sender.Send(new SignOutCommand(true), ct))
             .WithName("SignOut")
+            .Produces(StatusCodes.Status200OK)
+            .WithDescription("Signs out the currently authenticated user and invalidates their tokens.")
             .RequireAuthorization();
 
         group.MapPost("/refreshtoken",
                 async (string refreshToken, ISender sender,
                         CancellationToken ct) =>
                     await sender.Send(new RefreshTokenCommand(refreshToken), ct))
-            .WithName("RefreshToken");
+            .WithName("RefreshToken")
+            .Produces<TokenResponse>(StatusCodes.Status200OK)
+            .WithDescription("Generates a new JWT token using a valid refresh token.");
         
         #region [none login state change password]
         

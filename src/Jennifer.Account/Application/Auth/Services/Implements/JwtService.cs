@@ -6,8 +6,9 @@ using System.Text.Json;
 using Jennifer.Account.Application.Auth.Services.Abstracts;
 using Jennifer.Account.Models;
 using Jennifer.Infrastructure.Extenstions;
-using Microsoft.IdentityModel.Tokens;
 using Jennifer.Infrastructure.Options;
+using Jennifer.SharedKernel;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Jennifer.Account.Application.Auth.Services.Implements;
 

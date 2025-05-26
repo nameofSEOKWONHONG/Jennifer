@@ -1,14 +1,16 @@
 ﻿using System.Net.Http.Json;
+using eXtensionSharp;
+using eXtensionSharp.Mongo;
 using Jennifer.External.OAuth.Abstracts;
 using Jennifer.External.OAuth.Contracts;
 
 namespace Jennifer.External.OAuth.Implements;
 
-public class KakaoOAuthHandler(IHttpClientFactory httpClientFactory) : ExternalOAuthHandler(httpClientFactory, "kakao")
+public class KakaoOAuthHandler(IHttpClientFactory httpClientFactory, IJMongoFactory factory) : ExternalOAuthHandler(httpClientFactory, factory, "kakao")
 {
     public override async Task<IExternalOAuthResult> Verify(string providerToken, CancellationToken ct)
     {
-        var client = _httpClientFactory.CreateClient(this.Provider);
+        var client = httpClientFactory.CreateClient(this.Provider);
         client.DefaultRequestHeaders.Clear();
         client.DefaultRequestHeaders.Add("Authorization", $"bearer {providerToken}");
         var authResponse = await client.GetAsync("/v1/user/access_token_info", ct);
@@ -22,6 +24,13 @@ public class KakaoOAuthHandler(IHttpClientFactory httpClientFactory) : ExternalO
 
         var result = await info.Content.ReadFromJsonAsync<KakaoUserResult>(cancellationToken: ct);
         if (result is null) return ExternalOAuthResult.Fail("fail to get kakao user");
+        
+        var collection = this.mongoFactory.Create<ExternalOAuthDocument>().GetCollection();
+        await collection.InsertOneAsync(new ExternalOAuthDocument()
+        {
+            Result = result.xSerialize(),
+            CreatedAt = DateTimeOffset.UtcNow,
+        }, cancellationToken: ct);  
         
         return ExternalOAuthResult.Success(result.Id.ToString(), result.KakaoAccount.Email ?? "", result.KakaoAccount.Profile?.Nickname ?? "");
     }

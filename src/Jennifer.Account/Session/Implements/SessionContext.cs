@@ -1,9 +1,5 @@
-﻿using eXtensionSharp;
-using Jennifer.Account.Data;
-using Jennifer.Account.Session.Abstracts;
+﻿using Jennifer.Account.Session.Abstracts;
 using Jennifer.Infrastructure.Abstractions.Behaviors;
-using Jennifer.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
 
 namespace Jennifer.Account.Session.Implements;
 

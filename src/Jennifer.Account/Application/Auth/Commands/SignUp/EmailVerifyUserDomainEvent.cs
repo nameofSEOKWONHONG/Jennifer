@@ -1,6 +1,5 @@
 ﻿using Jennifer.Account.Application.Auth.Contracts;
 using Jennifer.Account.Application.Auth.Services.Abstracts;
-using Jennifer.Account.Behaviors;
 using Jennifer.Account.Models;
 using Jennifer.Account.Models.Contracts;
 using Jennifer.Infrastructure.Abstractions.Behaviors;

@@ -1,5 +1,6 @@
 ﻿using eXtensionSharp;
 using Jennifer.Infrastructure.Options;
+using Jennifer.SharedKernel;
 using Microsoft.AspNetCore.StaticFiles;
 
 namespace Jennifer.Infrastructure.Email;

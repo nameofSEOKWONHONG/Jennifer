@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Jennifer.Infrastructure.Options;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Jennifer.Infrastructure.Options;
 
 namespace Jennifer.Account.Models;
 public class RoleClaim: IdentityRoleClaim<Guid>

@@ -1,9 +1,7 @@
-﻿using Jennifer.Account.Behaviors;
-using Jennifer.Account.Data;
+﻿using Jennifer.Account.Data;
 using Jennifer.Account.Models;
 using Jennifer.Account.Models.Contracts;
 using Jennifer.Account.Session.Abstracts;
-using Jennifer.Infrastructure.Abstractions.Behaviors;
 using Jennifer.SharedKernel;
 using Mediator;
 using Microsoft.AspNetCore.Identity;
@@ -13,8 +11,7 @@ namespace Jennifer.Account.Application.Auth.Commands.SignUp;
 internal sealed class SignUpCommandHandler(
     ISessionContext context,
     JenniferDbContext dbContext,
-    IPasswordHasher<User> passwordHasher,
-    IDomainEventPublisher domainEventPublisher) : ICommandHandler<SignUpCommand, Result<Guid>>
+    IPasswordHasher<User> passwordHasher) : ICommandHandler<SignUpCommand, Result<Guid>>
 {
     public async ValueTask<Result<Guid>> Handle(SignUpCommand command, CancellationToken cancellationToken)
     {

@@ -1,7 +1,5 @@
-﻿using Jennifer.Account.Behaviors;
-using Jennifer.Account.Models;
+﻿using Jennifer.Account.Models;
 using Jennifer.Account.Session.Abstracts;
-using Jennifer.Infrastructure.Data;
 using Jennifer.SharedKernel;
 using Mediator;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -15,7 +13,7 @@ public class JenniferDbContext : IdentityDbContext<User, Role, Guid,
     UserRole, 
     UserLogin, 
     RoleClaim,
-    UserToken>, IApplicationDbContext
+    UserToken>
 {
     private readonly IUserContext _userContext;
     private readonly IMediator _mediator;

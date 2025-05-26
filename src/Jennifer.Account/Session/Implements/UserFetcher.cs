@@ -2,6 +2,8 @@
 using Jennifer.Account.Data;
 using Jennifer.Account.Models;
 using Jennifer.Account.Session.Abstracts;
+using Jennifer.Infrastructure.Options;
+using Jennifer.SharedKernel;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 
@@ -18,9 +20,12 @@ public sealed class UserFetcher(IDistributedCache cache, JenniferReadOnlyDbConte
         if (cacheValue.xIsEmpty())
         {
             var exists = await dbContext.Users.FirstOrDefaultAsync(m => m.Id == id);
-            if(exists.xIsEmpty()) throw new Exception("User not found.");
+            if(exists.xIsEmpty()) throw new KeyNotFoundException("User not found.");
 
-            await cache.SetStringAsync(id.ToString(), exists.xSerialize());
+            await cache.SetStringAsync(id.ToString(), exists.xSerialize(), new DistributedCacheEntryOptions()
+            {
+                SlidingExpiration = TimeSpan.FromMinutes(JenniferOptionSingleton.Instance.Options.Jwt.ExpireMinutes)
+            });
             
             _cached = exists;
         }

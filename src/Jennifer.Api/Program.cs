@@ -1,8 +1,9 @@
 using eXtensionSharp;
 using eXtensionSharp.Mongo;
 using Jennifer.Api;
-using Jennifer.Infrastructure.Options;
 using Jennifer.Account;
+using Jennifer.Infrastructure.Options;
+using Jennifer.SharedKernel;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
 using Scalar.AspNetCore;
@@ -43,6 +44,7 @@ var smtpOptions = new EmailSmtpOptions(
 
 var options = new JenniferOptions("account", 
     builder.Configuration["SQLSERVER_CONNECTION"], 
+    builder.Configuration["MONGODB_CONNECTION"], 
     cryptoOptions, 
     jwtOptions,
     smtpOptions);
@@ -72,41 +74,14 @@ builder.Services.AddJennifer(options,
             identityOptions.User.AllowedUserNameCharacters = null;
         })
     // Add jennifer cache
-    .WithJenniferCache(builder.Configuration["REDIS_AUTH:Configuration"],
-        cacheOptions =>
-        {
-            cacheOptions.Configuration = builder.Configuration[$"REDIS_AUTH:{nameof(cacheOptions.Configuration)}"];
-            cacheOptions.ConfigurationOptions = new ConfigurationOptions()
-            {
-                AbortOnConnectFail = builder.Configuration[$"REDIS_AUTH:{nameof(ConfigurationOptions.AbortOnConnectFail)}"].xValue<bool>(),
-                EndPoints = { builder.Configuration[$"REDIS_AUTH:{nameof(cacheOptions.Configuration)}"] },
-                DefaultDatabase = builder.Configuration[$"REDIS_AUTH:{nameof(ConfigurationOptions.DefaultDatabase)}"].xValue<int>(),
-                ConnectTimeout = builder.Configuration[$"REDIS_AUTH:{nameof(ConfigurationOptions.ConnectTimeout)}"].xValue<int>(),
-                SyncTimeout = builder.Configuration[$"REDIS_AUTH:{nameof(ConfigurationOptions.SyncTimeout)}"].xValue<int>(),
-                KeepAlive = builder.Configuration[$"REDIS_AUTH:{nameof(ConfigurationOptions.KeepAlive)}"].xValue<int>(),
-                //Password = builder.Configuration[$"REDIS_AUTH:{nameof(ConfigurationOptions.Password)}"]
-            };
-        })
+    .WithJenniferCache(builder.Configuration["REDIS_AUTH_CONNECTION"])
     // Add jennifer signalr
-    .WithJenniferSignalr(backplaneOptions =>
-    {
-        backplaneOptions.Configuration = new ConfigurationOptions()
-        {
-            EndPoints = { builder.Configuration[$"REDIS_AUTH:Configuration"] },
-            AbortOnConnectFail = builder.Configuration[$"REDIS_AUTH:{nameof(ConfigurationOptions.AbortOnConnectFail)}"].xValue<bool>(),
-            DefaultDatabase = builder.Configuration[$"REDIS_AUTH:{nameof(ConfigurationOptions.DefaultDatabase)}"].xValue<int>(),
-            ConnectTimeout = builder.Configuration[$"REDIS_AUTH:{nameof(ConfigurationOptions.ConnectTimeout)}"].xValue<int>(),
-            SyncTimeout = builder.Configuration[$"REDIS_AUTH:{nameof(ConfigurationOptions.SyncTimeout)}"].xValue<int>(),
-            KeepAlive = builder.Configuration[$"REDIS_AUTH:{nameof(ConfigurationOptions.KeepAlive)}"].xValue<int>(),
-            //Password = builder.Configuration[$"REDIS_AUTH:{nameof(ConfigurationOptions.Password)}"]
-        };
-    })
+    .WithJenniferSignalr(builder.Configuration["REDIS_HUB_BACKPLANE"])
     // Add jennifer email
     .WithJenniferMailService();
 
 
 builder.Services.AddSwaggerGen();
-builder.Services.AddJMongoDb(builder.Configuration["MONGODB_CONNECTION"]);
 
 var app = builder.Build();
 
@@ -130,7 +105,5 @@ app.UseSwagger();
 app.UseHttpsRedirection();
 
 app.UseJennifer();
-
-app.UseJMongoDbAsync();
 
 app.Run();

@@ -1,5 +1,4 @@
 ﻿using Jennifer.Account.Models;
-using Jennifer.Infrastructure.Data;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,7 +9,7 @@ public class JenniferReadOnlyDbContext: IdentityDbContext<User, Role, Guid,
     UserRole, 
     UserLogin, 
     RoleClaim,
-    UserToken>, IApplicationDbContext
+    UserToken>
 {       
     public DbSet<EmailVerificationCode> EmailVerificationCodes { get; set; }
     public DbSet<Configuration> Configurations { get; set; }
