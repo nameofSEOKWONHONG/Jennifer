@@ -1,35 +1,25 @@
-﻿using eXtensionSharp;
-using Jennifer.Account.Data;
+﻿using Jennifer.Account.Data;
 using Jennifer.Account.Models;
 using Jennifer.Account.Session.Abstracts;
-using Jennifer.Infrastructure.Options;
-using Jennifer.SharedKernel;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Caching.Hybrid;
 
 namespace Jennifer.Account.Session.Implements;
 
-public sealed class UserFetcher(IDistributedCache cache, JenniferReadOnlyDbContext dbContext) : IUserFetcher
+public sealed class UserFetcher(HybridCache cache, JenniferReadOnlyDbContext dbContext) : IUserFetcher
 {
     private User _cached;
     public async Task<User> FetchAsync(Guid id)
     {
-        if (_cached.xIsNotEmpty()) return _cached;
-        
-        var cacheValue = await cache.GetStringAsync(id.ToString());
-        if (cacheValue.xIsEmpty())
-        {
-            var exists = await dbContext.Users.FirstOrDefaultAsync(m => m.Id == id);
-            if(exists.xIsEmpty()) throw new KeyNotFoundException("User not found.");
+        if (_cached is not null) return _cached;
 
-            await cache.SetStringAsync(id.ToString(), exists.xSerialize(), new DistributedCacheEntryOptions()
-            {
-                SlidingExpiration = TimeSpan.FromMinutes(JenniferOptionSingleton.Instance.Options.Jwt.ExpireMinutes)
-            });
-            
-            _cached = exists;
-        }
+        const string userCacheKeyFormat = "user-{0}";
+        string userCacheKey = string.Format(userCacheKeyFormat, id);
 
+        async ValueTask<User> FetchUserFromDatabase(CancellationToken token) =>
+            await dbContext.Users.FirstOrDefaultAsync(u => u.Id == id, cancellationToken: token);
+
+        _cached = await cache.GetOrCreateAsync(userCacheKey, FetchUserFromDatabase);
         return _cached;
     }
 }

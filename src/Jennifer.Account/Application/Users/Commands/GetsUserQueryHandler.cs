@@ -22,7 +22,7 @@ internal sealed class GetsUserQueryHandler(
         var queryable = dbContext
             .Users
             .AsNoTracking()
-            .AsExpandable()
+            .AsExpandable() 
             .Where(queryFilter.Where(query));
         
         var total = await queryable

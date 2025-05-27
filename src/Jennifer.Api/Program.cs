@@ -1,14 +1,12 @@
 using eXtensionSharp;
-using eXtensionSharp.Mongo;
 using Jennifer.Api;
 using Jennifer.Account;
+using Jennifer.Account.Data;
 using Jennifer.Infrastructure.Options;
-using Jennifer.SharedKernel;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
 using Scalar.AspNetCore;
 using Serilog;
-using StackExchange.Redis;
 using JwtOptions = Jennifer.Infrastructure.Options.JwtOptions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -55,7 +53,8 @@ var options = new JenniferOptions("account",
 builder.Services.AddJennifer(options,
         (provider, optionsBuilder) =>
         {
-            optionsBuilder.UseSqlServer(builder.Configuration["SQLSERVER_CONNECTION"]);
+            optionsBuilder.UseSqlServer(builder.Configuration["SQLSERVER_CONNECTION"])
+                .AddInterceptors(new AuditInterceptor());
             if (builder.Environment.IsDevelopment())
             {
                 optionsBuilder.EnableSensitiveDataLogging()
@@ -77,6 +76,8 @@ builder.Services.AddJennifer(options,
     .WithJenniferCache(builder.Configuration["REDIS_AUTH_CONNECTION"])
     // Add jennifer signalr
     .WithJenniferSignalr(builder.Configuration["REDIS_HUB_BACKPLANE"])
+    // Add jennifer mongodb
+    .WithJenniferMongodb(builder.Configuration["MONGODB_CONNECTION"])
     // Add jennifer email
     .WithJenniferMailService();
 

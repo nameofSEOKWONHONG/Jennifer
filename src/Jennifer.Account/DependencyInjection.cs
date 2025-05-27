@@ -19,7 +19,6 @@ using Jennifer.Infrastructure.Abstractions;
 using Jennifer.Infrastructure.Abstractions.Behaviors;
 using Jennifer.Infrastructure.Middlewares;
 using Jennifer.Infrastructure.Options;
-using Jennifer.SharedKernel;
 using Mediator;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -28,6 +27,7 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using StackExchange.Redis;
@@ -205,73 +205,37 @@ public static class DependencyInjection
     public static IServiceCollection WithJenniferCache(this IServiceCollection services, string redisConnectionString)
     {
         ArgumentNullException.ThrowIfNull(redisConnectionString);
-        
+
         try
         {
             IConnectionMultiplexer connectionMultiplexer =
                 ConnectionMultiplexer.Connect(redisConnectionString);
 
             services.AddSingleton(connectionMultiplexer);
-            
-            services.AddStackExchangeRedisCache(options => 
+
+            services.AddStackExchangeRedisCache(options =>
                 options.ConnectionMultiplexerFactory = () =>
                     Task.FromResult(connectionMultiplexer));
         }
-        catch
+        finally
         {
-            services.AddDistributedMemoryCache();
+            services.AddHybridCache(options =>
+            {
+                // Maximum size of cached items
+                options.MaximumPayloadBytes = 1024 * 1024 * 10; // 10MB
+                options.MaximumKeyLength = 512;
+                
+                // Default timeouts
+                options.DefaultEntryOptions = new HybridCacheEntryOptions
+                {
+                    Expiration = TimeSpan.FromMinutes(JenniferOptionSingleton.Instance.Options.Jwt.ExpireMinutes),
+                    LocalCacheExpiration = TimeSpan.FromMinutes(JenniferOptionSingleton.Instance.Options.Jwt.ExpireMinutes)
+                };
+            });            
         }
-
-        services.AddMemoryCache();
         
         return services;
     }
-
-    // /// <summary>
-    // /// Adds Jennifer.Account's hybrid caching services to the specified dependency injection container.
-    // /// </summary>
-    // /// <param name="services">The service collection to which the hybrid caching services will be added.</param>
-    // /// <param name="cacheOptions">A delegate to configure hybrid cache options. If null, the following default settings will be applied:
-    // /// - MaximumPayloadBytes: 1MB (1024 * 1024)
-    // /// - MaximumKeyLength: 1024
-    // /// - DefaultEntryOptions:
-    // /// - Expiration: 30 minutes
-    // /// - LocalCacheExpiration: 5 minutes</param>
-    // /// <param name="redisOptions">An optional delegate to configure Redis cache options. If provided, Redis will be configured as part of the hybrid caching mechanism.</param>
-    // public static IServiceCollection WithJenniferHybridCache(this IServiceCollection services,
-    //     Action<HybridCacheOptions> cacheOptions,
-    //     Action<RedisCacheOptions> redisOptions)
-    // {
-    //     if (cacheOptions.xIsEmpty())
-    //     {
-    //         cacheOptions = (options) =>
-    //         {
-    //             options.MaximumPayloadBytes = 1024 * 1024;
-    //             options.MaximumKeyLength = 1024;
-    //             options.DefaultEntryOptions = new HybridCacheEntryOptions
-    //             {
-    //                 Expiration = TimeSpan.FromMinutes(30),
-    //                 LocalCacheExpiration = TimeSpan.FromMinutes(5)
-    //             };
-    //         };
-    //     }
-    //     services.AddHybridCache(cacheOptions);
-    //     
-    //     if (redisOptions.xIsEmpty())
-    //     {
-    //         redisOptions = (options) =>
-    //         {
-    //             options.Configuration = "localhost";
-    //             options.InstanceName = "Jennifer";
-    //             
-    //
-    //         };
-    //     }
-    //     
-    //     services.AddStackExchangeRedisCache(redisOptions);
-    //
-    //     return services;
-    // }
 
     /// <summary>
     /// Adds the Jennifer.Account Auth Hub services to the dependency injection container.

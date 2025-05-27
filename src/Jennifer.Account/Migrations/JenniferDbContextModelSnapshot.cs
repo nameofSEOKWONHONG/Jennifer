@@ -22,6 +22,43 @@ namespace Jennifer.Account.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Jennifer.Account.Models.Audit", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AffectedColumns")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("DateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("NewValues")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OldValues")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PrimaryKey")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TableName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Type")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Audits", "account");
+                });
+
             modelBuilder.Entity("Jennifer.Account.Models.Configuration", b =>
                 {
                     b.Property<Guid>("Id")
@@ -342,7 +379,7 @@ namespace Jennifer.Account.Migrations
             modelBuilder.Entity("Jennifer.Account.Models.UserClaim", b =>
                 {
                     b.HasOne("Jennifer.Account.Models.User", "User")
-                        .WithMany("Claims")
+                        .WithMany("UserClaims")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -400,11 +437,11 @@ namespace Jennifer.Account.Migrations
 
             modelBuilder.Entity("Jennifer.Account.Models.User", b =>
                 {
-                    b.Navigation("Claims");
-
                     b.Navigation("Logins");
 
                     b.Navigation("Tokens");
+
+                    b.Navigation("UserClaims");
 
                     b.Navigation("UserRoles");
                 });

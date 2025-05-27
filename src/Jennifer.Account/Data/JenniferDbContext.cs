@@ -20,6 +20,7 @@ public class JenniferDbContext : IdentityDbContext<User, Role, Guid,
     
     public DbSet<EmailVerificationCode> EmailVerificationCodes { get; set; }
     public DbSet<Configuration> Configurations { get; set; }
+    public DbSet<Audit> Audits { get; set; }
 
     public JenniferDbContext(DbContextOptions<JenniferDbContext> options,
         IUserContext userContext): base(options)
@@ -45,6 +46,7 @@ public class JenniferDbContext : IdentityDbContext<User, Role, Guid,
         modelBuilder.ApplyConfiguration(new RoleClaimEntityConfiguration());
         modelBuilder.ApplyConfiguration(new EmailVerificationCodeEntityConfiguration());
         modelBuilder.ApplyConfiguration(new ConfigurationEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new AuditEntityConfiguration());
     }
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())

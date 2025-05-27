@@ -18,7 +18,7 @@ internal sealed class SignUpCommandHandler(
 {
     public async ValueTask<Result<Guid>> Handle(SignUpCommand command, CancellationToken cancellationToken)
     {
-        var exists = await dbContext.Users.FirstAsync(m => m.NormalizedEmail == command.Email.ToUpper(), cancellationToken: cancellationToken);
+        var exists = await dbContext.Users.FirstOrDefaultAsync(m => m.NormalizedEmail == command.Email.ToUpper(), cancellationToken: cancellationToken);
         if (exists.xIsNotEmpty())
         {
             switch (exists.EmailConfirmed)
