@@ -16,18 +16,13 @@ internal sealed class CreateRoleClaimCommandHandler(JenniferDbContext dbContext)
         var list = new List<RoleClaim>();
         foreach (var createRoleClaimRequest in command.requests)
         {
-            var roleClaim = new RoleClaim()
-            {
-                RoleId = command.RoleId,
-                ClaimType = createRoleClaimRequest.ClaimType,
-                ClaimValue = createRoleClaimRequest.ClaimValue,
-            };
-            list.Add(roleClaim);
+            var item = RoleClaim.Create(command.RoleId, createRoleClaimRequest.ClaimType, createRoleClaimRequest.ClaimValue);
+            list.Add(item);
         }
 
         await dbContext.RoleClaims.AddRangeAsync(list, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
         
-        return Result.Success();
+        return await Result.SuccessAsync();
     }
 }

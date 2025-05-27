@@ -16,7 +16,6 @@ public class JenniferDbContext : IdentityDbContext<User, Role, Guid,
     UserToken>
 {
     private readonly IUserContext _userContext;
-    private readonly IMediator _mediator;
     
     public DbSet<EmailVerificationCode> EmailVerificationCodes { get; set; }
     public DbSet<Configuration> Configurations { get; set; }

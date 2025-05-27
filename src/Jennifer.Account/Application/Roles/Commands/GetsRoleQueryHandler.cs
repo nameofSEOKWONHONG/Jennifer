@@ -6,9 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Jennifer.Account.Application.Roles.Commands;
 
-internal sealed class GetsRoleQueryHandler(JenniferDbContext dbContext) : IQueryHandler<GetsRoleQuery, PagingResult<IEnumerable<RoleDto>>>
+internal sealed class GetsRoleQueryHandler(JenniferDbContext dbContext) : IQueryHandler<GetsRoleQuery, PaginatedResult<IEnumerable<RoleDto>>>
 {
-    public async ValueTask<PagingResult<IEnumerable<RoleDto>>> Handle(GetsRoleQuery query, CancellationToken cancellationToken)
+    public async ValueTask<PaginatedResult<IEnumerable<RoleDto>>> Handle(GetsRoleQuery query, CancellationToken cancellationToken)
     {
         var queryable = dbContext.Roles.AsNoTracking()
             .Where(m => m.NormalizedName == query.RoleName.ToUpper());
@@ -24,6 +24,6 @@ internal sealed class GetsRoleQueryHandler(JenniferDbContext dbContext) : IQuery
             .Take(query.PageSize)       
             .ToArrayAsync(cancellationToken);
         
-        return PagingResult<IEnumerable<RoleDto>>.Success(total, result, query.PageNo, query.PageSize);
+        return await PaginatedResult<IEnumerable<RoleDto>>.SuccessAsync(total, result, query.PageNo, query.PageSize);
     }
 }

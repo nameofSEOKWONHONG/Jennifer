@@ -10,8 +10,14 @@ public class Role: IdentityRole<Guid>
 {
     public virtual ICollection<UserRole> UserRoles { get; set; }
     public virtual ICollection<RoleClaim> RoleClaims { get; set; }
-    
 
+    public static Role Create(string name) =>
+        new Role()
+        {
+            Name = name,
+            NormalizedName = name.ToUpper(),
+            ConcurrencyStamp = Guid.NewGuid().ToString(),
+        };
 }
 
 

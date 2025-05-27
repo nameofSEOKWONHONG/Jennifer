@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Jennifer.Account.Application.Auth.Services.Implements;
 
-internal sealed class VerifyCodeSendEmailService(ILogger<VerifyCodeSendEmailService> logger,
+internal sealed class VerifyCodeSendEmailService(
     JenniferDbContext dbContext,
     IEmailQueue emailQueue) : ServiceBase<VerifyCodeSendEmailRequest, Result>, 
     IVerifyCodeSendEmailService {
@@ -59,6 +59,6 @@ Jennifer";
         
         await emailQueue.EnqueueAsync(mail, cancellationToken);
 
-        return Result.Success();
+        return await Result.SuccessAsync();
     }
 }

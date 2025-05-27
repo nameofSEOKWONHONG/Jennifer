@@ -25,6 +25,6 @@ internal sealed class GetUserQueryHandler(
             .Select(queryFilter.Selector)
             .FirstOrDefaultAsync(cancellationToken);
         
-        return Result<UserDto>.Success(result);
+        return await Result<UserDto>.SuccessAsync(result);
     }
 }

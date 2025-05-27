@@ -4,10 +4,17 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Jennifer.Account.Models;
-public class RoleClaim: IdentityRoleClaim<Guid>
+public sealed class RoleClaim: IdentityRoleClaim<Guid>
 {
     public Role Role { get; set; }
 
+    public static RoleClaim Create(Guid roleId, string claimType, string claimValue) =>
+        new()
+        {
+            RoleId = roleId,
+            ClaimType = claimType,
+            ClaimValue = claimValue,
+        };
 }
 
 public class RoleClaimEntityConfiguration : IEntityTypeConfiguration<RoleClaim>

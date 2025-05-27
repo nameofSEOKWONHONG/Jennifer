@@ -9,16 +9,11 @@ internal sealed class CreateRoleCommandHandler(JenniferDbContext dbContext) : IC
 {
     public async ValueTask<Result<Guid>> Handle(CreateRoleCommand command, CancellationToken cancellationToken)
     {
-        var item = new Role()
-        {
-            Name = command.RoleName,
-            NormalizedName = command.RoleName.ToUpper(),
-            ConcurrencyStamp = Guid.NewGuid().ToString(),
-        };
+        var item = Role.Create(command.RoleName);
         
         dbContext.Roles.Add(item);
         await dbContext.SaveChangesAsync(cancellationToken);
         
-        return Result<Guid>.Success(item.Id);
+        return await Result<Guid>.SuccessAsync(item.Id);
     }
 }

@@ -12,14 +12,12 @@ public sealed class UserFetcher(HybridCache cache, JenniferReadOnlyDbContext dbC
     public async Task<User> FetchAsync(Guid id)
     {
         if (_cached is not null) return _cached;
-
-        const string userCacheKeyFormat = "user-{0}";
-        string userCacheKey = string.Format(userCacheKeyFormat, id);
-
+        
+        string userCacheKey = CachingConsts.UserCacheKey(id);
         async ValueTask<User> FetchUserFromDatabase(CancellationToken token) =>
             await dbContext.Users.FirstOrDefaultAsync(u => u.Id == id, cancellationToken: token);
-
         _cached = await cache.GetOrCreateAsync(userCacheKey, FetchUserFromDatabase);
+        
         return _cached;
     }
 }

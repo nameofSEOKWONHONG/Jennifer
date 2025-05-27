@@ -13,8 +13,7 @@ namespace Jennifer.Account.Application.Auth.Commands.SignUp;
 internal sealed class SignUpCommandHandler(
     ISessionContext context,
     JenniferDbContext dbContext,
-    IPasswordHasher<User> passwordHasher,
-    ISender sender) : ICommandHandler<SignUpCommand, Result<Guid>>
+    IPasswordHasher<User> passwordHasher) : ICommandHandler<SignUpCommand, Result<Guid>>
 {
     public async ValueTask<Result<Guid>> Handle(SignUpCommand command, CancellationToken cancellationToken)
     {
@@ -24,10 +23,10 @@ internal sealed class SignUpCommandHandler(
             switch (exists.EmailConfirmed)
             {
                 case true:
-                    return Result<Guid>.Failure("Email already exists.");
+                    return await Result<Guid>.FailureAsync("Email already exists.");
                 case false:
                     context.DomainEventPublisher.Enqueue(new EmailVerifyUserDomainEvent(exists));
-                    return Result<Guid>.Success(exists.Id);
+                    return await Result<Guid>.SuccessAsync(exists.Id);
             }
         }
         
@@ -37,6 +36,6 @@ internal sealed class SignUpCommandHandler(
         await dbContext.Users.AddAsync(user, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        return Result<Guid>.Success(user.Id);
+        return await Result<Guid>.SuccessAsync(user.Id);
     }
 }

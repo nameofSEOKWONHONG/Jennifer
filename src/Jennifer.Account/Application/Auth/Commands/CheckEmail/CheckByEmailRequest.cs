@@ -17,9 +17,9 @@ internal sealed class CheckByEmailQueryHandler(UserManager<User> userManager): I
     {
         var exists = await userManager.FindByEmailAsync(request.Email);
         if(exists.xIsNotEmpty())
-            return Result.Failure(new Error(string.Empty, "Email already exists"));
+            return await Result.FailureAsync(new Error(string.Empty, "Email already exists"));
 
-        return Result.Success();
+        return await Result.SuccessAsync();
     }
 }
 

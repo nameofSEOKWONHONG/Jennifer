@@ -16,12 +16,43 @@ public class Result : IResult
     public static Result Success() => new() { IsSuccess = true };
     public static Result Failure(string message) => new() { IsSuccess = false, Message = message };
     public static Result Failure(Error error) => new() { IsSuccess = false, Error = error};
+    public static Task<Result> SuccessAsync() => Task.FromResult(Success());
+    public static Task<Result> FailureAsync(string message) => Task.FromResult(Failure(message));
+    public static Task<Result> FailureAsync(Error error) => Task.FromResult(Failure(error));   
 }
+
 public class Result<T>: Result, IResult
 {
     public T Data { get; set; }
     
     public static Result<T> Success(T data) => new() { IsSuccess = true, Data = data };
-    public static Result<T> Failure(string message) => new() { IsSuccess = false, Message = message };
-    public static Result<T> Failure(Error error) => new() { IsSuccess = false, Error = error};   
+    public new static Result<T> Failure(string message) => new() { IsSuccess = false, Message = message };
+    public new static Result<T> Failure(Error error) => new() { IsSuccess = false, Error = error};
+    public static Task<Result<T>> SuccessAsync(T data) => Task.FromResult(Success(data));
+    public new static Task<Result<T>> FailureAsync(string message) => Task.FromResult(Failure(message));
+    public new static Task<Result<T>> FailureAsync(Error error) => Task.FromResult(Failure(error));  
+}
+
+public class PaginatedResult<T> : Result<T>, IResult
+{
+    public int PageNo { get; set; }
+
+    public int TotalPages { get; set; }
+
+    public int TotalCount { get; set; }
+    public int PageSize { get; set; }
+
+    public bool HasPreviousPage => PageNo > 1;
+
+    public bool HasNextPage => PageNo < TotalPages;
+    
+    public static Task<PaginatedResult<T>> SuccessAsync(int totalCount, T data, int pageNo, int pageSize) =>
+        Task.FromResult(new PaginatedResult<T>
+        {
+            IsSuccess = true,
+            Data = data,
+            PageNo = pageNo,
+            PageSize = pageSize,
+            TotalCount = totalCount
+        });
 }

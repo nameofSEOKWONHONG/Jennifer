@@ -1,14 +1,12 @@
-﻿using eXtensionSharp;
-using Jennifer.Account.Application.Users.Filters;
+﻿using Jennifer.Account.Application.Users.Filters;
 using Jennifer.Account.Data;
-using Jennifer.Account.Session.Abstracts;
 using Jennifer.SharedKernel;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 
 namespace Jennifer.Account.Application.Users.Commands;
 
-internal sealed class RemoveUserCommandHandler(ISessionContext context,
+internal sealed class RemoveUserCommandHandler(
     IUserQueryFilter queryFilter,
     JenniferDbContext dbContext): ICommandHandler<RemoveUserCommand, Result>
 {
@@ -23,6 +21,6 @@ internal sealed class RemoveUserCommandHandler(ISessionContext context,
 
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        return Result.Success();
+        return await Result.SuccessAsync();
     }
 }

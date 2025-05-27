@@ -238,11 +238,14 @@ public static class DependencyInjection
     }
 
     /// <summary>
-    /// Adds the Jennifer.Account Auth Hub services to the dependency injection container.
+    /// Configures and adds SignalR services to the specified dependency injection container for Jennifer.Account,
+    /// enabling optional communication through a Redis backplane.
     /// </summary>
-    /// <param name="services">The service collection to which the SignalR and related Jennifer.Account.Hub services will be added.</param>
-    /// <param name="backplaneOptions">An optional delegate to configure Redis options for SignalR. If null, the default SignalR setup will be used without Redis integration.</param>
-    public static IServiceCollection WithJenniferSignalr(this IServiceCollection services, string backplaneConnectionString)
+    /// <param name="services">The service collection to which SignalR services will be added.</param>
+    /// <param name="backplaneConnectionString">The connection string for the Redis backplane used to coordinate SignalR messages across servers in a distributed environment.</param>
+    /// <returns>The updated service collection with SignalR and Redis backplane services registered.</returns>
+    public static IServiceCollection WithJenniferSignalr(this IServiceCollection services,
+        string backplaneConnectionString)
     {
         ArgumentNullException.ThrowIfNull(backplaneConnectionString);
         

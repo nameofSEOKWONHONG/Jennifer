@@ -12,13 +12,13 @@ namespace Jennifer.Account.Application.Users.Commands;
 internal sealed record ModifyUserRequest(Guid UserId, string UserName, string PhoneNumber);
 internal sealed record ModifyUserCommand(Guid UserId, string UserName, string PhoneNumber): ICommand<Result>;
 
-internal sealed class ModifyUserCommandHandler(ISessionContext context,
+internal sealed class ModifyUserCommandHandler(
     JenniferDbContext dbContext): ICommandHandler<ModifyUserCommand, Result>
 {
     public async ValueTask<Result> Handle(ModifyUserCommand command, CancellationToken cancellationToken)
     {
         var exists = await dbContext.Users.FirstOrDefaultAsync(x => x.Id == command.UserId, cancellationToken: cancellationToken);
-        if(exists.xIsEmpty()) return Result.Failure("not found user");
+        if(exists.xIsEmpty()) return await Result.FailureAsync("not found user");
         
         exists.PhoneNumber = command.PhoneNumber;
         exists.UserName = command.UserName;
@@ -27,7 +27,7 @@ internal sealed class ModifyUserCommandHandler(ISessionContext context,
         
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        return Result.Success();
+        return await Result.SuccessAsync();
     }
 }
 
@@ -64,7 +64,7 @@ internal sealed class AddOrUpdateUserRoleCommandHandler(JenniferDbContext dbCont
         
         await dbContext.SaveChangesAsync(cancellationToken);
         
-        return Result.Success();
+        return await Result.SuccessAsync();
     }
 }
 

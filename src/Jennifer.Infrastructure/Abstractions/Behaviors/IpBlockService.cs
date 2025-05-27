@@ -35,7 +35,7 @@ public class IpBlockService: IIpBlockService
         await _redis.StringSetAsync(key, "1");
         _cache.Set(key, true, _ttl);
         
-        await _subscriber.PublishAsync("ip:block:update", ip);
+        await _subscriber.PublishAsync(RedisChannel.Literal("ip:block:update"), ip);
     }
     
     public async Task UnblockIpAsync(string ip)
@@ -63,7 +63,7 @@ public class IpBlockService: IIpBlockService
 
     public void SubscribeToUpdates()
     {
-        _subscriber.Subscribe("ip:block:update", async (channel, message) =>
+        _subscriber.Subscribe(RedisChannel.Literal("ip:block:update"), async (channel, message) =>
         {
             var parts = message.ToString().Split('§');
             if (parts.Length != 2) return;

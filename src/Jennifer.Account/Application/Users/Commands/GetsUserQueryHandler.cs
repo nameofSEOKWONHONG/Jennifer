@@ -12,9 +12,9 @@ namespace Jennifer.Account.Application.Users.Commands;
 internal sealed class GetsUserQueryHandler(
     ISessionContext context,
     IUserQueryFilter queryFilter,
-    JenniferDbContext dbContext) : IQueryHandler<GetsUserQuery, PagingResult<UserDto[]>>
+    JenniferDbContext dbContext) : IQueryHandler<GetsUserQuery, PaginatedResult<UserDto[]>>
 {
-    public async ValueTask<PagingResult<UserDto[]>> Handle(GetsUserQuery query, CancellationToken cancellationToken)
+    public async ValueTask<PaginatedResult<UserDto[]>> Handle(GetsUserQuery query, CancellationToken cancellationToken)
     {
         var user = await context.User.GetUserAsync();
         var user2 = await context.User.GetUserAsync();
@@ -33,6 +33,6 @@ internal sealed class GetsUserQueryHandler(
             .Select(queryFilter.Selector)
             .ToArrayAsync(cancellationToken: cancellationToken);
         
-        return PagingResult<UserDto[]>.Success(total, result, query.PageNo, query.PageSize);
+        return await PaginatedResult<UserDto[]>.SuccessAsync(total, result, query.PageNo, query.PageSize);
     }
 }

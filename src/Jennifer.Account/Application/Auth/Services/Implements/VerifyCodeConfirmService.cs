@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Jennifer.Account.Application.Auth.Services.Implements;
 
-internal sealed class VerifyCodeConfirmService(ILogger<VerifyCodeConfirmService> logger, JenniferDbContext dbContext): 
+internal sealed class VerifyCodeConfirmService(JenniferDbContext dbContext): 
     ServiceBase<VerifyCodeRequest, Result>, IVerifyCodeConfirmService
 {
     protected override async Task<Result> HandleAsync(VerifyCodeRequest request, CancellationToken cancellationToken)

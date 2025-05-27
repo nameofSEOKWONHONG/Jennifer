@@ -70,7 +70,7 @@ builder.Services.AddJennifer(options,
             identityOptions.SignIn.RequireConfirmedPhoneNumber = false;
             identityOptions.Tokens.AuthenticatorTokenProvider = null!; // optional     
             identityOptions.User.RequireUniqueEmail = true;
-            identityOptions.User.AllowedUserNameCharacters = null;
+            identityOptions.User.AllowedUserNameCharacters = null!;
         })
     // Add jennifer cache
     .WithJenniferCache(builder.Configuration["REDIS_AUTH_CONNECTION"])
