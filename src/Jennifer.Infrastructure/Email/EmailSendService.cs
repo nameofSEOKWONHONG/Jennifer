@@ -104,7 +104,7 @@ public class EmailSendService : BackgroundService
             message.Body = bodyBuilder.ToMessageBody();
 
             document.ToEmail = email.To.Select(m => m.To).ToList().xJoin();
-            document.Src = message.xSerialize();
+            document.Src = (new {email.From, email.To, email.Cc, email.IsHtml}).xSerialize();
 
             using var client = new SmtpClient();
             await client.ConnectAsync(JenniferOptionSingleton.Instance.Options.EmailSmtp.SmtpHost,
