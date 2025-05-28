@@ -40,9 +40,9 @@ public static class AuthEndpoint
             .Produces<bool>(StatusCodes.Status200OK)
             .ProducesValidationProblem()
             .WithDescription(@"
-            Validates if the provided email address is available for registration.
-            Returns true if the email can be used for a new account, false if it's already registered.
-            The endpoint helps prevent duplicate registrations and ensures email uniqueness in the system.
+            제공된 이메일 주소가 회원가입이 가능한지 확인합니다.
+            이메일이 신규 계정으로 사용 가능한 경우 true를 반환하고, 이미 등록된 경우 false를 반환합니다.
+            이 엔드포인트는 중복 등록을 방지하고 시스템의 이메일 고유성을 보장합니다.
 ")
             ;
 
@@ -66,16 +66,21 @@ public static class AuthEndpoint
             .Produces<TokenResponse>(StatusCodes.Status200OK)
             .ProducesValidationProblem()
             .WithDescription(@"
-            Creates a new user account with the provided information.
-            Returns a token response containing JWT and refresh tokens upon successful registration.
-            Email verification will be sent to complete the registration process.
+            제공된 정보로 새 사용자 계정을 생성합니다.
+            성공적인 등록 시 JWT 및 갱신 토큰이 포함된 토큰 응답을 반환합니다.
+            등록 절차를 완료하기 위한 이메일 인증이 발송됩니다.
 ")
             .WithName("SignUp");
         
         group.MapPost("/signup/verify", 
                 async (SignUpVerifyRequest request, ISender sender, CancellationToken ct) => 
                     await sender.Send(new SignUpVerifyCommand(request.UserId, request.Code), ct))
-            .WithName("SignUpVerify");
+            .WithName("SignUpVerify")
+            .WithDescription(@"
+            회원가입시 발급된 인증코드를 확인합니다.
+            인증코드가 일치하면 계정이 활성화됩니다.
+            인증코드가 일치하지 않으면 실패를 반환합니다.
+");
         
         // group.MapGet("/signup/verify/{id}/{code}", 
         //         async (Guid id, string code, ICommandHandler<SignUpVerifyCommand, IResult> handler, CancellationToken ct) => 
@@ -86,7 +91,12 @@ public static class AuthEndpoint
             async (SignUpRetryRequest request, ISender sender,
                     CancellationToken ct) =>
                 await sender.Send(new SignUpRetryCommand(request.Email), ct))
-            .WithName("SignUpRetry");
+            .WithName("SignUpRetry")
+            .WithDescription(@"
+            회원가입 인증 메일을 재발송합니다.
+            인증 메일이 도착하지 않았거나 만료된 경우 사용됩니다.
+            등록된 이메일 주소로 새로운 인증 코드가 발송됩니다.
+");
 
         #endregion
         
@@ -98,7 +108,12 @@ public static class AuthEndpoint
                     var command = new SignUpAdminCommand(request.Email, request.Password, request.UserName, request.PhoneNumber);
                     return await sender.Send(command, ct);
                 })
-            .WithName("SignUpAdmin");
+            .WithName("SignUpAdmin")
+            .WithDescription(@"
+            관리자 계정을 생성합니다.
+            관리자 권한이 있는 사용자만 접근 가능합니다.
+            관리자 계정 생성 후 즉시 활성화되며 별도의 인증이 필요하지 않습니다.
+");
         
         #endregion
         
@@ -107,22 +122,27 @@ public static class AuthEndpoint
                 await sender.Send(new SignInCommand(request.Email, request.Password), ct))
             .WithName("SignIn")
             .WithDescription(@"
-Sign in with email and password. 
-Returns a JWT token and refresh token. 
-Use the refresh token to obtain a new JWT token. 
-The refresh token expires after 7 days.");
+이메일과 비밀번호로 로그인합니다.
+JWT 토큰과 갱신 토큰을 반환합니다.
+갱신 토큰을 사용하여 새로운 JWT 토큰을 얻을 수 있습니다.
+갱신 토큰은 7일 후 만료됩니다.");
         
         group.MapPost("/signin/external", 
                 async (ExternalSignInRequest request, ISender sender, CancellationToken ct) =>
                     await sender.Send(new ExternalOAuthCommand(request.Provider, request.AccessToken), ct))
-            .WithName("ExternalSignIn");        
+            .WithName("ExternalSignIn")
+            .WithDescription(@"
+            외부 OAuth 공급자를 통해 로그인합니다.
+            지원되는 공급자의 액세스 토큰으로 인증합니다.
+            성공시 JWT 토큰과 갱신 토큰을 반환합니다.
+");        
         
         group.MapPost("/signout",
             async (ISender sender, CancellationToken ct) => 
                 await sender.Send(new SignOutCommand(true), ct))
             .WithName("SignOut")
             .Produces(StatusCodes.Status200OK)
-            .WithDescription("Signs out the currently authenticated user and invalidates their tokens.")
+            .WithDescription("현재 인증된 사용자를 로그아웃하고 토큰을 무효화합니다.")
             .RequireAuthorization();
 
         group.MapPost("/refreshtoken",
@@ -131,7 +151,7 @@ The refresh token expires after 7 days.");
                     await sender.Send(new RefreshTokenCommand(refreshToken), ct))
             .WithName("RefreshToken")
             .Produces<TokenResponse>(StatusCodes.Status200OK)
-            .WithDescription("Generates a new JWT token using a valid refresh token.");
+            .WithDescription("유효한 갱신 토큰을 사용하여 새로운 JWT 토큰을 생성합니다.");
         
         #region [none login state change password]
         
@@ -145,21 +165,33 @@ The refresh token expires after 7 days.");
                 async (PasswordForgotRequest request, ISender sender, CancellationToken ct) =>
                     await sender.Send(new PasswordForgotCommand(request.Email, request.UserName), ct))
             .WithName("PasswordForgot")
-            ;
+            .WithDescription(@"
+            비밀번호 재설정을 위한 인증 코드를 생성하고 이메일로 발송합니다.
+            이메일과 사용자 이름이 일치하는 계정이 있어야 합니다.
+            인증 코드는 제한된 시간 동안만 유효합니다.
+");
         
         group.MapPost("/password/forgot/verify",
                 async (VerifyCodeRequest request, ISender sender,
                         CancellationToken ct) =>
                     await sender.Send(new PasswordForgotVerifyCommand(request.Email, request.Code), ct))
             .WithName("PasswordForgotVerify")
-            ;
+            .WithDescription(@"
+            비밀번호 재설정을 위해 발급된 인증 코드를 확인합니다.
+            이메일 주소와 인증 코드가 일치해야 합니다.
+            인증에 성공하면 비밀번호를 변경할 수 있습니다.
+");
 
         group.MapPost("/password/forgot/change",
                 async (PasswordForgotChangeRequest request, ISender sender,
                         CancellationToken ct) =>
                     await sender.Send(new PasswordForgotChangeCommand(request.Email,  request.Code, request.NewPassword), ct))
             .WithName("PasswordForgotChange")
-            ;
+            .WithDescription(@"
+            인증된 코드로 새 비밀번호로 변경합니다.
+            이메일 주소와 인증 코드가 일치해야 합니다.
+            새 비밀번호는 보안 요구사항을 충족해야 합니다.
+");
 
         #endregion
         
@@ -170,7 +202,11 @@ The refresh token expires after 7 days.");
             })
             .WithName("PasswordChange")
             .RequireAuthorization()
-            ;
+            .WithDescription(@"
+            로그인된 사용자의 비밀번호를 변경합니다.
+            현재 비밀번호와 새 비밀번호가 필요합니다.
+            새 비밀번호는 보안 요구사항을 충족해야 합니다.
+");
 
         /*
          * [2fa login]
@@ -181,10 +217,10 @@ The refresh token expires after 7 days.");
                 await sender.Send(command))
             .WithName("Setup2FACommand")
             .WithDescription(@"
-            Sets up two-factor authentication (2FA) for a user account.
-            Generates a unique secret key and QR code for configuring authenticator apps.
-            Returns the secret key and QR code image in base64 format.
-            The user must verify the 2FA setup by providing a valid code before 2FA is enabled.
+            사용자 계정에 대한 2단계 인증(2FA)을 설정합니다.
+            인증 앱 구성을 위한 고유 보안 키와 QR 코드를 생성합니다.
+            보안 키와 QR 코드 이미지를 base64 형식으로 반환합니다.
+            사용자는 2FA가 활성화되기 전에 유효한 코드를 제공하여 2FA 설정을 확인해야 합니다.
             ");
             
 
@@ -192,12 +228,10 @@ The refresh token expires after 7 days.");
             await sender.Send(command))
             .WithName("Verify2FACommand")
             .WithDescription(@"
-            Verifies and enables two-factor authentication for a user account.
-            Validates the provided 2FA code against the user's secret key.
-            Upon successful verification, 2FA is enabled for the account.
-            Returns success if verification passes, failure if the code is invalid.
+            사용자 계정에 대한 2단계 인증을 확인하고 활성화합니다.
+            제공된 2FA 코드를 사용자의 보안 키와 대조하여 확인합니다.
+            확인이 성공하면 계정에 대해 2FA가 활성화됩니다.
+            확인이 성공하면 성공을, 코드가 유효하지 않으면 실패를 반환합니다.
             ");
     }
 }
-
-

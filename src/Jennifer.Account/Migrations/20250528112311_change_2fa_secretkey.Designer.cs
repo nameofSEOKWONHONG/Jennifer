@@ -4,6 +4,7 @@ using Jennifer.Account.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Jennifer.Account.Migrations
 {
     [DbContext(typeof(JenniferDbContext))]
-    partial class JenniferDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250528112311_change_2fa_secretkey")]
+    partial class change_2fa_secretkey
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

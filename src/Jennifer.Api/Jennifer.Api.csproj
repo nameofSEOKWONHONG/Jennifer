@@ -21,6 +21,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Jennifer.Account\Jennifer.Account.csproj" />
+      <ProjectReference Include="..\Jennifer.Todo\Jennifer.Todo.csproj" />
     </ItemGroup>
 
     <ItemGroup>

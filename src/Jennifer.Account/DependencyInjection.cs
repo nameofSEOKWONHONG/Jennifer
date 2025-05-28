@@ -11,6 +11,7 @@ using Jennifer.External.OAuth;
 using Jennifer.Infrastructure;
 using Jennifer.Infrastructure.Email;
 using Jennifer.Account.Application.Auth;
+using Jennifer.Account.Application.Options;
 using Jennifer.Account.Application.Roles;
 using Jennifer.Account.Application.Tests;
 using Jennifer.Account.Application.Users;
@@ -301,11 +302,14 @@ public static class DependencyInjection
     private static void UseJenniferEndpoints(this IEndpointRouteBuilder app)
     {
         app.MapAuthEndpoint();
+        app.MapOptionEndpoint();
+        app.MapRoleEndpoint();
+        app.MapTestEndpoint();
         app.MapUserEndpoint();
+        
         // app.MapUserRoleEndpoint();
         // app.MapUserClaimEndpoint();
         // app.MapRoleEndpoint();
-        app.MapTestEndpoint();
     }
 
     /// <summary>

@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Jennifer.Account.Application.Roles.Commands;
 
-internal sealed record GetRoleQueryRequest(Guid Id);
 internal sealed record GetRoleQuery(Guid Id):IQuery<Result<RoleDto>>;
 internal sealed class GetRoleQueryHandler(JenniferDbContext dbContext): IQueryHandler<GetRoleQuery, Result<RoleDto>>
 {

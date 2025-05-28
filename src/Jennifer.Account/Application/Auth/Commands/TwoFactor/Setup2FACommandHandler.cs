@@ -6,7 +6,6 @@ using Jennifer.SharedKernel;
 using Mediator;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using OtpNet;
 using QRCoder;
 
 namespace Jennifer.Account.Application.Auth.Commands.TwoFactor;
@@ -22,16 +21,20 @@ internal sealed class Setup2FACommandHandler(UserManager<User> userManager,
     public async ValueTask<Result<Setup2FAResult>> Handle(Setup2FACommand command, CancellationToken cancellationToken)
     {
         var user = await userManager.FindByIdAsync(command.UserId.ToString());
-        if (user == null) return await Result<Setup2FAResult>.FailureAsync("User not found");
-        if (user.TwoFactorEnabled) return await Result<Setup2FAResult>.FailureAsync("2FA already enabled");
+        if (user.xIsEmpty()) 
+            return await Result<Setup2FAResult>.FailureAsync("User not found");
         
-        var secret = KeyGeneration.GenerateRandomKey(20);
-        var secretBase32 = Base32Encoding.ToString(secret);
-
-        user.TwoFactorSecretKey = secretBase32;
-        await userManager.UpdateAsync(user);
+        if (user.TwoFactorEnabled) 
+            return await Result<Setup2FAResult>.FailureAsync("2FA already enabled");
         
-        var otpUri = $"otpauth://totp/Jennifer:{user.Email}?secret={secretBase32}&issuer=Jennifer";
+        var secretKey = await userManager.GetAuthenticatorKeyAsync(user);
+        if (string.IsNullOrEmpty(secretKey))
+        {
+            await userManager.ResetAuthenticatorKeyAsync(user);
+            secretKey = await userManager.GetAuthenticatorKeyAsync(user);
+        }
+        
+        var otpUri = $"otpauth://totp/Jennifer:{user.Email}?secret={secretKey}&issuer=Jennifer";
         var templateOtpUri = await dbContext.Options.AsNoTracking().FirstOrDefaultAsync(m => m.Type == ENUM_ACCOUNT_OPTION.OTP_URI, cancellationToken: cancellationToken);
         if (templateOtpUri.xIsNotEmpty()) otpUri = templateOtpUri.Value;
 
@@ -41,6 +44,6 @@ internal sealed class Setup2FACommandHandler(UserManager<User> userManager,
         var qrBytes = qrCode.GetGraphic(20);
         var qrBase64 = Convert.ToBase64String(qrBytes);
 
-        return await Result<Setup2FAResult>.SuccessAsync(new Setup2FAResult(secretBase32, qrBase64));
+        return await Result<Setup2FAResult>.SuccessAsync(new Setup2FAResult(secretKey, qrBase64));
     }
 }
