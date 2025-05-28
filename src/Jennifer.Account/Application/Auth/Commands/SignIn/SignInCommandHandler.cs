@@ -1,8 +1,11 @@
 ﻿using System.Security.Claims;
+using eXtensionSharp;
 using FluentValidation;
+using Jennifer.Account.Application.Auth.Commands.TwoFactor;
 using Jennifer.Account.Application.Auth.Contracts;
 using Jennifer.Account.Application.Auth.Services.Abstracts;
 using Jennifer.Account.Models;
+using Jennifer.Infrastructure.Abstractions.ServiceCore;
 using Jennifer.SharedKernel;
 using Mediator;
 using Microsoft.AspNetCore.Identity;
@@ -11,8 +14,7 @@ namespace Jennifer.Account.Application.Auth.Commands.SignIn;
 
 internal sealed class SignInCommandHandler(        
     UserManager<User> userManager,
-    RoleManager<Role> roleManager,
-    IJwtService jwtService): ICommandHandler<SignInCommand, Result<TokenResponse>>
+    IServiceExecutionBuilderFactory factory): ICommandHandler<SignInCommand, Result<TokenResponse>>
 {
     public async ValueTask<Result<TokenResponse>> Handle(SignInCommand command, CancellationToken cancellationToken)
     {
@@ -24,33 +26,16 @@ internal sealed class SignInCommandHandler(
         
         if(!await userManager.CheckPasswordAsync(user, command.Password))
             return await Result<TokenResponse>.FailureAsync("wrong password");
-
-        var userClaims = await userManager.GetClaimsAsync(user);
-        var roles = await userManager.GetRolesAsync(user);
-        var roleClaims = new List<Claim>();
-        foreach (var roleName in roles)
-        {
-            roleClaims.Add(new Claim(ClaimTypes.Role, roleName));
-
-            var role = await roleManager.FindByNameAsync(roleName);
-            if (role != null)
-            {
-                var claims = await roleManager.GetClaimsAsync(role);
-                foreach (var claim in claims)
-                {
-                    roleClaims.Add(claim); // ClaimType/Value 그대로
-                }
-            }
-        }
-
-        var refreshToken = jwtService.GenerateRefreshToken();
-        var refreshTokenObj = new Services.Implements.RefreshToken(refreshToken, DateTime.UtcNow.AddDays(7), DateTime.UtcNow, user.Id.ToString());
         
-        var result = await userManager.SetAuthenticationTokenAsync(user, loginProvider:"internal", tokenName:"refreshToken", tokenValue:refreshToken);
-        if(!result.Succeeded) throw new ValidationException(result.Errors.Select(m => m.Description).First());
+        Result<TokenResponse> result = null;
         
-        var encodedRefreshToken = jwtService.ObjectToTokenString(refreshTokenObj);
-        var token = new TokenResponse(jwtService.GenerateJwtToken(user, userClaims.ToList(), roleClaims), encodedRefreshToken);
-        return await Result<TokenResponse>.SuccessAsync(token);
+        var builder = factory.Create();
+        await builder.Register<IGenerateTokenService, User, Result<TokenResponse>>()
+            .Request(user)
+            .When(() => user.xIsNotEmpty())
+            .Handle(r => result = r)
+            .ExecuteAsync(cancellationToken);
+
+        return result;
     }
 }

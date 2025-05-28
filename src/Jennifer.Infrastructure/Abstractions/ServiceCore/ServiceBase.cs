@@ -13,7 +13,7 @@ where TResult : IResult
         _validator = validator;
     }
 
-    public async Task<TResult> ExecuteAsync(TRequest request, CancellationToken cancellationToken = default)
+    public async ValueTask<TResult> ExecuteAsync(TRequest request, CancellationToken cancellationToken = default)
     {
         await ValidateAsync(request, cancellationToken);
         await OnPreExecuteAsync(request, cancellationToken);

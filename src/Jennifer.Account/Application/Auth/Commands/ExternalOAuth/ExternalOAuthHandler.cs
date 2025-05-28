@@ -81,7 +81,7 @@ internal sealed class ExternalOAuthHandler(
         var refreshToken = jwtService.GenerateRefreshToken();
         var refreshTokenObj = new Services.Implements.RefreshToken(refreshToken, DateTime.UtcNow.AddDays(7), DateTime.UtcNow, user.Id.ToString());
         await userManager.SetAuthenticationTokenAsync(user, loginProvider:"internal", tokenName:"refreshToken", tokenValue:refreshToken);
-        var token = new TokenResponse(jwtService.GenerateJwtToken(user, userClaims.ToList(), roleClaims), jwtService.ObjectToTokenString(refreshTokenObj));
+        var token = new TokenResponse(jwtService.GenerateJwtToken(user, userClaims.ToList(), roleClaims), jwtService.ObjectToTokenString(refreshTokenObj), user.TwoFactorEnabled);
         return await Result<TokenResponse>.SuccessAsync(token);
     }
 }

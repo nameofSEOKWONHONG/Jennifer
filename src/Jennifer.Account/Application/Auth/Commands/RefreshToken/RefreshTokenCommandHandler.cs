@@ -70,7 +70,7 @@ internal sealed class RefreshTokenCommandHandler(
             SlidingExpiration = TimeSpan.FromMinutes(JenniferOptionSingleton.Instance.Options.Jwt.ExpireMinutes)
         }, token: cancellationToken);
         
-        var newToken = new TokenResponse(jwtService.GenerateJwtToken(user, userClaims.ToList(), roleClaims), jwtService.ObjectToTokenString(newRefreshTokenObj));
+        var newToken = new TokenResponse(jwtService.GenerateJwtToken(user, userClaims.ToList(), roleClaims), jwtService.ObjectToTokenString(newRefreshTokenObj), user.TwoFactorEnabled);
         return await Result<TokenResponse>.SuccessAsync(newToken);
     }
 }
