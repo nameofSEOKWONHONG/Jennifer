@@ -2,7 +2,7 @@
 
 namespace Jennifer.Account.Application.Auth.Contracts;
 
-public record TokenResponse(string AccessToken, string RefreshToken);
+public record TokenResponse(string AccessToken, string RefreshToken, bool isTwoFactor);
 
 public record SignInRequest(string Email, string Password);
 

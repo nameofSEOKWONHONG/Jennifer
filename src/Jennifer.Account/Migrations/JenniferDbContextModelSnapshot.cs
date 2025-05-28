@@ -257,6 +257,9 @@ namespace Jennifer.Account.Migrations
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
 
+                    b.Property<string>("TwoFactorSecretKey")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("Type")
                         .HasColumnType("int");
 

@@ -1,4 +1,5 @@
-﻿using Asp.Versioning;
+﻿using System.Diagnostics.CodeAnalysis;
+using Asp.Versioning;
 using Jennifer.Account.Application.Users.Commands;
 using Jennifer.Infrastructure.Abstractions;
 using Mediator;
@@ -10,6 +11,7 @@ namespace Jennifer.Account.Application.Users;
 
 internal static class UserEndpoint
 {
+    [SuppressMessage("ReSharper.DPA", "DPA0005: Database issues")]
     internal static void MapUserEndpoint(this IEndpointRouteBuilder endpoint)
     {
         var apiVersionSet = endpoint.NewApiVersionSet()
@@ -56,5 +58,12 @@ internal static class UserEndpoint
             await sender.Send(new CreateUserClaimCommand(id, request), ct))
             .MapToApiVersion(1)
             .WithName("AddRoleClaim");
+
+        group.MapPatch("/2fa/set/", async (Set2FACommand command, ISender sender, CancellationToken ct) =>
+                await sender.Send(command, ct))
+            .MapToApiVersion(1)
+            .WithName("Set2FA")
+            .WithDescription(
+                "Enable or disable Two-Factor Authentication (2FA) for a specific user. Requires user ID and enable/disable flag.");
     }
 }

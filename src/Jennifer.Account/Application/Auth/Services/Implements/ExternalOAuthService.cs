@@ -113,7 +113,7 @@ internal sealed class ExternalOAuthService: ServiceBase<ExternalSignInRequest, R
         var refreshToken = _jwtService.GenerateRefreshToken();
         var refreshTokenObj = new RefreshToken(refreshToken, DateTime.UtcNow.AddDays(7), DateTime.UtcNow, user.Id.ToString());
         await _userManager.SetAuthenticationTokenAsync(user, loginProvider:"internal", tokenName:"refreshToken", tokenValue:refreshToken);
-        var token = new TokenResponse(_jwtService.GenerateJwtToken(user, userClaims.ToList(), roleClaims), _jwtService.ObjectToTokenString(refreshTokenObj));
+        var token = new TokenResponse(_jwtService.GenerateJwtToken(user, userClaims.ToList(), roleClaims), _jwtService.ObjectToTokenString(refreshTokenObj), user.TwoFactorEnabled);
         return Result<TokenResponse>.Success(token);
     }
 }

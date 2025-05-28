@@ -13,6 +13,7 @@ namespace Jennifer.Account.Models;
 
 public class User : IdentityUser<Guid>, IAuditable
 {
+    public string TwoFactorSecretKey { get; set; }
     public ENUM_USER_TYPE Type { get; set; }
     public bool IsDelete { get; set; }
     public DateTimeOffset CreatedOn { get; set; } = DateTimeOffset.UtcNow;
