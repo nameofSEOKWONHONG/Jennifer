@@ -1,7 +1,11 @@
-﻿using Jennifer.Account.Models;
+﻿using eXtensionSharp;
+using Jennifer.Account.Data;
+using Jennifer.Account.Models;
+using Jennifer.Account.Models.Contracts;
 using Jennifer.SharedKernel;
 using Mediator;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using OtpNet;
 using QRCoder;
 
@@ -12,14 +16,15 @@ namespace Jennifer.Account.Application.Auth.Commands.TwoFactor;
 /// for a user. This command generates a secret key and a corresponding QR code that can be scanned
 /// by an authenticator application to enable 2FA for the user.
 /// </summary>
-/// TODO: 발급자 사항에 따라 otpUri는 변경되어야 함.
-internal sealed class Setup2FACommandHandler(UserManager<User> userManager) : ICommandHandler<Setup2FACommand, Result<Setup2FAResult>>
+internal sealed class Setup2FACommandHandler(UserManager<User> userManager,
+    JenniferDbContext dbContext) : ICommandHandler<Setup2FACommand, Result<Setup2FAResult>>
 {
     public async ValueTask<Result<Setup2FAResult>> Handle(Setup2FACommand command, CancellationToken cancellationToken)
     {
         var user = await userManager.FindByIdAsync(command.UserId.ToString());
         if (user == null) return await Result<Setup2FAResult>.FailureAsync("User not found");
-
+        if (user.TwoFactorEnabled) return await Result<Setup2FAResult>.FailureAsync("2FA already enabled");
+        
         var secret = KeyGeneration.GenerateRandomKey(20);
         var secretBase32 = Base32Encoding.ToString(secret);
 
@@ -27,6 +32,8 @@ internal sealed class Setup2FACommandHandler(UserManager<User> userManager) : IC
         await userManager.UpdateAsync(user);
         
         var otpUri = $"otpauth://totp/Jennifer:{user.Email}?secret={secretBase32}&issuer=Jennifer";
+        var templateOtpUri = await dbContext.Options.AsNoTracking().FirstOrDefaultAsync(m => m.Type == ENUM_ACCOUNT_OPTION.OTP_URI, cancellationToken: cancellationToken);
+        if (templateOtpUri.xIsNotEmpty()) otpUri = templateOtpUri.Value;
 
         using var qrGen = new QRCodeGenerator();
         using var qrCodeData = qrGen.CreateQrCode(otpUri, QRCodeGenerator.ECCLevel.Q);

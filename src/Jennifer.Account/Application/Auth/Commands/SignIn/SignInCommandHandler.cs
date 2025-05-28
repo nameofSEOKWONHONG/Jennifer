@@ -26,6 +26,11 @@ internal sealed class SignInCommandHandler(
         
         if(!await userManager.CheckPasswordAsync(user, command.Password))
             return await Result<TokenResponse>.FailureAsync("wrong password");
+
+        if (user.TwoFactorEnabled)
+        {
+            return await Result<TokenResponse>.SuccessAsync(new TokenResponse(user.Id.ToString(), null, true));
+        }
         
         Result<TokenResponse> result = null;
         

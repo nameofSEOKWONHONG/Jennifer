@@ -31,13 +31,13 @@ internal sealed class SignUpVerifyCommandHandler(
             .ExecuteAsync(cancellationToken);
                 
         if(!verified.IsSuccess) 
-            return Result.Failure(verified.Message);
+            return await Result.FailureAsync(verified.Message);
 
         user.EmailConfirmed = true;
 
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        return Result.Success();
+        return await Result.SuccessAsync();
     }
 }
 

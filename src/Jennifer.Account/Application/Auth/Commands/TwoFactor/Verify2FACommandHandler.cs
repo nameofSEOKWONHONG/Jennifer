@@ -18,7 +18,8 @@ internal sealed class Verify2FACommandHandler(
     public async ValueTask<Result<TokenResponse>> Handle(Verify2FACommand command, CancellationToken cancellationToken)
     {
         var user = await userManager.FindByIdAsync(command.UserId.ToString());
-        if (user?.TwoFactorSecretKey == null) return await Result<TokenResponse>.FailureAsync("No secret configured");
+        if (user.xIsEmpty()) return await Result<TokenResponse>.FailureAsync("User not found");
+        if (user!.TwoFactorSecretKey.xIsEmpty()) return await Result<TokenResponse>.FailureAsync("No secret configured");
 
         var totp = new Totp(Base32Encoding.ToBytes(user.TwoFactorSecretKey));
         var isValid = totp.VerifyTotp(command.Code, out _, new VerificationWindow(2, 2));

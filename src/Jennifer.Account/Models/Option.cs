@@ -1,6 +1,5 @@
 ﻿using Ardalis.SmartEnum.EFCore;
 using Jennifer.Account.Models.Contracts;
-using Jennifer.Infrastructure.Converters;
 using Jennifer.Infrastructure.Options;
 using Jennifer.SharedKernel;
 using Microsoft.EntityFrameworkCore;
@@ -8,29 +7,35 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Jennifer.Account.Models;
 
-public class Configuration: IAuditable
+public class Option: IAuditable
 {
-    public Guid Id { get; set; }
-    public ENUM_CONFIGURATION_TYPE Type { get; set; }
+    public int Id { get; set; }
+    public ENUM_ACCOUNT_OPTION Type { get; set; }
     public string Value { get; set; }
     public DateTimeOffset CreatedOn { get; set; }
     public string CreatedBy { get; set; }
     public DateTimeOffset? ModifiedOn { get; set; }
     public string ModifiedBy { get; set; }
+    
+    public static Option Create(ENUM_ACCOUNT_OPTION type, string value) =>
+        new Option()
+        {
+            Type = type,
+            Value = value,
+        };
 }
 
-public class ConfigurationEntityConfiguration: IEntityTypeConfiguration<Configuration>
+public class OptionEntityConfiguration: IEntityTypeConfiguration<Option>
 {
-    public void Configure(EntityTypeBuilder<Configuration> builder)
+    public void Configure(EntityTypeBuilder<Option> builder)
     {
-        builder.ToTable($"{nameof(Configuration)}s", JenniferOptionSingleton.Instance.Options.Schema);
+        builder.ToTable($"{nameof(Option)}s", JenniferOptionSingleton.Instance.Options.Schema);
         builder.HasKey(m => m.Id);
         builder.Property(m => m.Id)
-            .ValueGeneratedOnAdd()
-            .HasValueGenerator<GuidV7ValueGenerator>();
+            .ValueGeneratedOnAdd();
         builder.Property(m => m.Type)
             .HasMaxLength(256)
-            .HasConversion(new SmartEnumConverter<ENUM_CONFIGURATION_TYPE, string>())
+            .HasConversion(new SmartEnumConverter<ENUM_ACCOUNT_OPTION, string>())
             .IsRequired();
         builder.Property(m => m.Value)
             .IsRequired();

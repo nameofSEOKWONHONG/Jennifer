@@ -25,8 +25,8 @@ internal sealed class SignUpRetryCommandHandler(
             .Handle(r => result = r)
             .ExecuteAsync(cancellationToken);
 
-        if (!result.IsSuccess) return Result.Failure("signup retry fail");
+        if (!result.IsSuccess) return await Result.FailureAsync("signup retry fail");
         
-        return Result.Success();
+        return await Result.SuccessAsync();
     }
 }

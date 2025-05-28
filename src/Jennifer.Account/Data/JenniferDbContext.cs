@@ -18,7 +18,7 @@ public class JenniferDbContext : IdentityDbContext<User, Role, Guid,
     private readonly IUserContext _userContext;
     
     public DbSet<EmailVerificationCode> EmailVerificationCodes { get; set; }
-    public DbSet<Configuration> Configurations { get; set; }
+    public DbSet<Option> Options { get; set; }
     public DbSet<Audit> Audits { get; set; }
 
     public JenniferDbContext(DbContextOptions<JenniferDbContext> options,
@@ -44,7 +44,7 @@ public class JenniferDbContext : IdentityDbContext<User, Role, Guid,
         modelBuilder.ApplyConfiguration(new RoleEntityConfiguration());
         modelBuilder.ApplyConfiguration(new RoleClaimEntityConfiguration());
         modelBuilder.ApplyConfiguration(new EmailVerificationCodeEntityConfiguration());
-        modelBuilder.ApplyConfiguration(new ConfigurationEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new OptionEntityConfiguration());
         modelBuilder.ApplyConfiguration(new AuditEntityConfiguration());
     }
 

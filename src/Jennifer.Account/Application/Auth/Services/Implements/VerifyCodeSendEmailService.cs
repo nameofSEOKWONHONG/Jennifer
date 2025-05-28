@@ -3,10 +3,12 @@ using Jennifer.Account.Application.Auth.Contracts;
 using Jennifer.Account.Application.Auth.Services.Abstracts;
 using Jennifer.Account.Data;
 using Jennifer.Account.Models;
+using Jennifer.Account.Models.Contracts;
 using Jennifer.Account.Session;
 using Jennifer.Infrastructure.Abstractions.ServiceCore;
 using Jennifer.Infrastructure.Email;
 using Jennifer.SharedKernel;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Jennifer.Account.Application.Auth.Services.Implements;
@@ -36,6 +38,13 @@ Jennifer 서비스 이용을 위한 이메일 인증 코드를 안내해 드립�
 
 감사합니다.
 Jennifer";
+
+        var templateSubject = await dbContext.Options.AsNoTracking()
+            .FirstOrDefaultAsync(m => m.Type == ENUM_ACCOUNT_OPTION.WELCOME_MESSAGE_SUBJECT, cancellationToken: cancellationToken);
+        var templateFormat = await dbContext.Options.AsNoTracking()
+            .FirstOrDefaultAsync(m => m.Type == ENUM_ACCOUNT_OPTION.WELCOME_MESSAGE_BODY, cancellationToken: cancellationToken);
+        if (templateSubject.xIsNotEmpty()) emailSubject = templateSubject.Value;
+        if (templateFormat.xIsNotEmpty()) emailFormat = templateFormat.Value;
 
         await dbContext.EmailVerificationCodes.AddAsync(new EmailVerificationCode()
         {

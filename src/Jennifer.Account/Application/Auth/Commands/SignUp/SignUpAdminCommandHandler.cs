@@ -14,7 +14,7 @@ internal sealed class SignUpAdminCommandHandler(JenniferDbContext context, IPass
     {
         if (await context.Users.AnyAsync(m => m.Email == command.Email, cancellationToken: cancellationToken))
         {
-            return Result<Guid>.Failure("email already exists.");
+            return await Result<Guid>.FailureAsync("email already exists.");
         }
 
         var user = new User()
@@ -33,12 +33,10 @@ internal sealed class SignUpAdminCommandHandler(JenniferDbContext context, IPass
         };
         user.PasswordHash = passwordHasher.HashPassword(user, command.Password);
         
-        //user.Raise(new SignUpAdminDomainEvent(user.Id));
-        
         context.Users.Add(user);
         
         await context.SaveChangesAsync(cancellationToken);
         
-        return Result<Guid>.Success(user.Id);
+        return await Result<Guid>.SuccessAsync(user.Id);
     }
 }
