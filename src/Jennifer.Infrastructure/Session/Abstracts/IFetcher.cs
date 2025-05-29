@@ -1,4 +1,4 @@
-﻿namespace Jennifer.Account.Session.Abstracts;
+﻿namespace Jennifer.Infrastructure.Session.Abstracts;
 
 public interface IFetcher<TOut, in TIn>
 {

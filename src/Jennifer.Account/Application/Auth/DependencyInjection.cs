@@ -15,7 +15,6 @@ internal static class DependencyInjection
         services.AddScoped<IVerifyCodeConfirmService, VerifyCodeConfirmService>();
         // services.AddScoped<IConfigurationAddService, ConfigurationAddService>();
         services.AddScoped<IExternalOAuthService, ExternalOAuthService>();
-        services.AddScoped<IGenerateTokenService, GenerateTokenService>();
         services.AddValidatorsFromAssemblyContaining<UserDtoValidator>(); // 자동 검증 필터 추가
     }
 }

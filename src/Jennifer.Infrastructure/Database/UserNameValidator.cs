@@ -1,7 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Identity;
 
-namespace Jennifer.Infrastructure;
+namespace Jennifer.Infrastructure.Database;
 
 public class UserNameValidator<TUser> : IUserValidator<TUser>
     where TUser : class
@@ -20,7 +20,7 @@ public class UserNameValidator<TUser> : IUserValidator<TUser>
             errors.Add(new IdentityError
             {
                 Code = "InvalidUserName",
-                Description = "사용자 이름은 한글과 숫자만 포함할 수 있습니다."
+                Description = "사용자 이름은 한글과 영문, 숫자만 포함할 수 있습니다."
             });
         }
 

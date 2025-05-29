@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Jennifer.Account.Application.Auth.Commands.SignUp;
 
 internal sealed class SignUpCommandHandler(
-    ISessionContext context,
+    ISessionContext session,
     JenniferDbContext dbContext,
     IPasswordHasher<User> passwordHasher) : ICommandHandler<SignUpCommand, Result<Guid>>
 {
@@ -25,13 +25,12 @@ internal sealed class SignUpCommandHandler(
                 case true:
                     return await Result<Guid>.FailureAsync("Email already exists.");
                 case false:
-                    //TODO : 해결 해야 함.
-                    //context.DomainEventPublisher.Enqueue(new UserCompleteDomainEvent(exists));
+                    session.DomainEventPublisher.Enqueue(new UserCompleteDomainEvent(exists));
                     return await Result<Guid>.SuccessAsync(exists.Id);
             }
         }
         
-        var user = User.Create(context.DomainEventPublisher, command.Email, command.UserName, command.PhoneNumber, ENUM_USER_TYPE.CUSTOMER);
+        var user = User.Create(session.DomainEventPublisher, command.Email, command.UserName, command.PhoneNumber, ENUM_USER_TYPE.CUSTOMER);
         user.PasswordHash = passwordHasher.HashPassword(user, command.Password);
         
         await dbContext.Users.AddAsync(user, cancellationToken);

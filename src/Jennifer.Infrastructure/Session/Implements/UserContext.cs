@@ -1,9 +1,9 @@
 ﻿using System.Security.Claims;
-using Jennifer.Account.Session.Abstracts;
 using Jennifer.Domain.Account;
+using Jennifer.Infrastructure.Session.Abstracts;
 using Microsoft.AspNetCore.Http;
 
-namespace Jennifer.Account.Session.Implements;
+namespace Jennifer.Infrastructure.Session.Implements;
 
 public sealed class UserContext(IHttpContextAccessor httpContextAccessor,
     IUserFetcher userFetcher) : IUserContext

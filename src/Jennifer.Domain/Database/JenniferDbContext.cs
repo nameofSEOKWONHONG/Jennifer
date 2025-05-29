@@ -17,6 +17,7 @@ public class JenniferDbContext : IdentityDbContext<User, Role, Guid,
     public DbSet<EmailVerificationCode> EmailVerificationCodes { get; set; }
     public DbSet<Option> Options { get; set; }
     public DbSet<Audit> Audits { get; set; }
+    public DbSet<KafkaDeadLetter> KafkaDeadLetters { get; set; }
 
     public JenniferDbContext(DbContextOptions<JenniferDbContext> options): base(options)
     {

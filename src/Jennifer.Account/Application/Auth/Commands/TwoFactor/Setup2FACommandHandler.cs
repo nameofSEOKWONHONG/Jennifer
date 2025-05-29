@@ -15,17 +15,17 @@ namespace Jennifer.Account.Application.Auth.Commands.TwoFactor;
 /// for a user. This command generates a secret key and a corresponding QR code that can be scanned
 /// by an authenticator application to enable 2FA for the user.
 /// </summary>
-internal sealed class Setup2FACommandHandler(UserManager<User> userManager,
-    JenniferDbContext dbContext) : ICommandHandler<Setup2FACommand, Result<Setup2FAResult>>
+internal sealed class Setup2FaCommandHandler(UserManager<User> userManager,
+    JenniferDbContext dbContext) : ICommandHandler<Setup2FaCommand, Result<Setup2FaResult>>
 {
-    public async ValueTask<Result<Setup2FAResult>> Handle(Setup2FACommand command, CancellationToken cancellationToken)
+    public async ValueTask<Result<Setup2FaResult>> Handle(Setup2FaCommand command, CancellationToken cancellationToken)
     {
         var user = await userManager.FindByIdAsync(command.UserId.ToString());
         if (user.xIsEmpty()) 
-            return await Result<Setup2FAResult>.FailureAsync("User not found");
+            return await Result<Setup2FaResult>.FailureAsync("User not found");
         
         if (user.TwoFactorEnabled) 
-            return await Result<Setup2FAResult>.FailureAsync("2FA already enabled");
+            return await Result<Setup2FaResult>.FailureAsync("2FA already enabled");
         
         var secretKey = await userManager.GetAuthenticatorKeyAsync(user);
         if (string.IsNullOrEmpty(secretKey))
@@ -44,6 +44,6 @@ internal sealed class Setup2FACommandHandler(UserManager<User> userManager,
         var qrBytes = qrCode.GetGraphic(20);
         var qrBase64 = Convert.ToBase64String(qrBytes);
 
-        return await Result<Setup2FAResult>.SuccessAsync(new Setup2FAResult(secretKey, qrBase64));
+        return await Result<Setup2FaResult>.SuccessAsync(new Setup2FaResult(secretKey, qrBase64));
     }
 }

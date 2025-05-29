@@ -213,7 +213,7 @@ JWT 토큰과 갱신 토큰을 반환합니다.
          * 1. 로그인 상태에서 계정 -> 2fa 활성화 -> QR 코드 발급 -> Auth 앱 등록 -> 강제 로그 아웃 후 로그인 재시도
          * 2. 로그인 -> (2FA 활성화시)OTP 코드 입력 -> 로그인 완료
          */
-        group.MapPost("/2fa/setup", async (Setup2FACommand command, ISender sender) =>
+        group.MapPost("/2fa/setup", async (Setup2FaCommand command, ISender sender) =>
                 await sender.Send(command))
             .WithName("Setup2FACommand")
             .WithDescription(@"
@@ -224,7 +224,7 @@ JWT 토큰과 갱신 토큰을 반환합니다.
             ");
             
 
-        group.MapPost("/2fa/verify", async (Verify2FACommand command, ISender sender) =>
+        group.MapPost("/2fa/verify", async (Verify2FaCommand command, ISender sender) =>
             await sender.Send(command))
             .WithName("Verify2FACommand")
             .WithDescription(@"

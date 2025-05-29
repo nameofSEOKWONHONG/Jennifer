@@ -1,20 +1,19 @@
 ﻿using eXtensionSharp;
+using Jennifer.Account.Application.Auth.Commands.SignIn;
 using Jennifer.Account.Application.Auth.Contracts;
-using Jennifer.Account.Application.Auth.Services.Abstracts;
 using Jennifer.Domain.Account;
-using Jennifer.Infrastructure.Abstractions.ServiceCore;
 using Jennifer.SharedKernel;
 using Mediator;
 using Microsoft.AspNetCore.Identity;
 
 namespace Jennifer.Account.Application.Auth.Commands.TwoFactor;
 
-internal sealed class Verify2FACommandHandler(
+internal sealed class Verify2FaCommandHandler(
     UserManager<User> userManager,
-    IServiceExecutionBuilderFactory factory
-) : ICommandHandler<Verify2FACommand, Result<TokenResponse>>
+    ISender sender
+) : ICommandHandler<Verify2FaCommand, Result<TokenResponse>>
 {
-    public async ValueTask<Result<TokenResponse>> Handle(Verify2FACommand command, CancellationToken cancellationToken)
+    public async ValueTask<Result<TokenResponse>> Handle(Verify2FaCommand command, CancellationToken cancellationToken)
     {
         var user = await userManager.FindByIdAsync(command.UserId.ToString());
         if (user.xIsEmpty()) 
@@ -36,15 +35,6 @@ internal sealed class Verify2FACommandHandler(
             await userManager.UpdateAsync(user);
         }
 
-        Result<TokenResponse> result = null;
-        
-        var builder = factory.Create();
-        await builder.Register<IGenerateTokenService, User, Result<TokenResponse>>()
-            .Request(user)
-            .When(() => user.xIsNotEmpty())
-            .Handle(r => result = r)
-            .ExecuteAsync(cancellationToken);
-
-        return result;
+        return await sender.Send(new TokenGenerateCommand(user), cancellationToken);
     }
 }

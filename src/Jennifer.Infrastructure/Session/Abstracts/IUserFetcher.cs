@@ -1,6 +1,7 @@
-﻿using Jennifer.Domain.Account;
+﻿using Jennifer.Account.Session.Abstracts;
+using Jennifer.Domain.Account;
 
-namespace Jennifer.Account.Session.Abstracts;
+namespace Jennifer.Infrastructure.Session.Abstracts;
 
 // internal interface IUserRoleFetcher : ICachedFetcher<IEnumerable<UserRole>, Guid> { }
 public interface IUserFetcher : IFetcher<User, Guid>;

@@ -1,5 +1,5 @@
 ﻿using Jennifer.Account.Session.Abstracts;
-using Jennifer.Account.Session.Implements;
+using Jennifer.Infrastructure.Session.Abstracts;
 using Jennifer.Infrastructure.Session.Implements;
 using Microsoft.Extensions.DependencyInjection;
 

@@ -20,6 +20,7 @@ using Jennifer.External.OAuth.Contracts;
 using Jennifer.Infrastructure.Abstractions;
 using Jennifer.Infrastructure.Abstractions.Behaviors;
 using Jennifer.Infrastructure.Abstractions.DomainEvents;
+using Jennifer.Infrastructure.Database;
 using Jennifer.Infrastructure.Middlewares;
 using Jennifer.Infrastructure.Session;
 using Jennifer.SharedKernel;

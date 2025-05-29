@@ -1,8 +1,5 @@
-﻿using eXtensionSharp;
-using Jennifer.Account.Application.Auth.Contracts;
-using Jennifer.Account.Application.Auth.Services.Abstracts;
+﻿using Jennifer.Account.Application.Auth.Contracts;
 using Jennifer.Domain.Account;
-using Jennifer.Infrastructure.Abstractions.ServiceCore;
 using Jennifer.SharedKernel;
 using Mediator;
 using Microsoft.AspNetCore.Identity;
@@ -11,7 +8,7 @@ namespace Jennifer.Account.Application.Auth.Commands.SignIn;
 
 internal sealed class SignInCommandHandler(        
     UserManager<User> userManager,
-    IServiceExecutionBuilderFactory factory): ICommandHandler<SignInCommand, Result<TokenResponse>>
+    ISender sender): ICommandHandler<SignInCommand, Result<TokenResponse>>
 {
     public async ValueTask<Result<TokenResponse>> Handle(SignInCommand command, CancellationToken cancellationToken)
     {
@@ -29,15 +26,6 @@ internal sealed class SignInCommandHandler(
             return await Result<TokenResponse>.SuccessAsync(new TokenResponse(user.Id.ToString(), null, true));
         }
         
-        Result<TokenResponse> result = null;
-        
-        var builder = factory.Create();
-        await builder.Register<IGenerateTokenService, User, Result<TokenResponse>>()
-            .Request(user)
-            .When(() => user.xIsNotEmpty())
-            .Handle(r => result = r)
-            .ExecuteAsync(cancellationToken);
-
-        return result;
+        return await sender.Send(new TokenGenerateCommand(user), cancellationToken);
     }
 }

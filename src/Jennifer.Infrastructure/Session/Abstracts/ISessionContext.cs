@@ -1,4 +1,5 @@
-﻿using Jennifer.SharedKernel;
+﻿using Jennifer.Infrastructure.Session.Abstracts;
+using Jennifer.SharedKernel;
 
 namespace Jennifer.Account.Session.Abstracts;
 

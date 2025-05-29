@@ -1,9 +1,8 @@
 ﻿using Jennifer.Account.Session.Abstracts;
-using Jennifer.Infrastructure.Abstractions.Behaviors;
-using Jennifer.Infrastructure.Abstractions.DomainEvents;
+using Jennifer.Infrastructure.Session.Abstracts;
 using Jennifer.SharedKernel;
 
-namespace Jennifer.Account.Session.Implements;
+namespace Jennifer.Infrastructure.Session.Implements;
 
 public class SessionContext : ISessionContext
 {

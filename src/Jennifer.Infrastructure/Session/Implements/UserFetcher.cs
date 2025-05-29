@@ -1,6 +1,7 @@
 ﻿using Jennifer.Account.Session.Abstracts;
 using Jennifer.Domain.Account;
 using Jennifer.Domain.Database;
+using Jennifer.Infrastructure.Session.Abstracts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
 

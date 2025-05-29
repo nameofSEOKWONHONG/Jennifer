@@ -1,6 +1,6 @@
 ﻿using Jennifer.Domain.Account;
 
-namespace Jennifer.Account.Session.Abstracts;
+namespace Jennifer.Infrastructure.Session.Abstracts;
 
 public interface IUserContext
 {
