@@ -21,6 +21,7 @@ public class User : IdentityUser<Guid>, IAuditable
     public virtual ICollection<UserClaim> UserClaims { get; set; }
     public virtual ICollection<UserLogin> Logins { get; set; }
     public virtual ICollection<UserToken> Tokens { get; set; }
+    public virtual ICollection<UserOption> UserOptions { get; set; }
 
     public static User Create(IDomainEventPublisher publisher, string email, string username, string phoneNumber, ENUM_USER_TYPE type)
     {
@@ -103,6 +104,11 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<User>
         builder.HasMany(m => m.Tokens)
             .WithOne(ut => ut.User)
             .HasForeignKey(ut => ut.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+        
+        builder.HasMany(m => m.UserOptions)
+            .WithOne(m => m.User)
+            .HasForeignKey(m => m.UserId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

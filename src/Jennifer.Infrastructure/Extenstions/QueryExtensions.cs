@@ -1,5 +1,5 @@
 ﻿using eXtensionSharp;
-using Jennifer.Account.Session.Abstracts;
+using Jennifer.Infrastructure.Session.Abstracts;
 using Jennifer.SharedKernel;
 
 namespace Jennifer.Infrastructure.Extenstions;
@@ -17,7 +17,7 @@ public static class QueryExtensions
     public static async Task AssignSession<T>(this T item, ISessionContext session)
         where T : IAuditable
     {
-        var user = await session.User.GetUserAsync();
+        var user = await session.User.GetAsync();
         if (item.CreatedBy.xIsNotEmpty())
         {
             item.ModifiedBy = user.Id.ToString();

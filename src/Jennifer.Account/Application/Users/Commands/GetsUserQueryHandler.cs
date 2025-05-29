@@ -1,8 +1,8 @@
 ﻿using Jennifer.Account.Application.Auth.Contracts;
 using Jennifer.Account.Application.Users.Filters;
-using Jennifer.Account.Session.Abstracts;
 using Jennifer.Domain.Account;
 using Jennifer.Infrastructure.Database;
+using Jennifer.Infrastructure.Session.Abstracts;
 using Jennifer.SharedKernel;
 using LinqKit;
 using Mediator;
@@ -11,11 +11,16 @@ using Microsoft.EntityFrameworkCore;
 namespace Jennifer.Account.Application.Users.Commands;
 
 internal sealed class GetsUserQueryHandler(
+    ISessionContext session,
     IUserQueryFilter queryFilter,
     JenniferDbContext dbContext) : IQueryHandler<GetsUserQuery, PaginatedResult<UserDto[]>>
 {
     public async ValueTask<PaginatedResult<UserDto[]>> Handle(GetsUserQuery query, CancellationToken cancellationToken)
     {
+        var options = await session.Option.GetAsync();
+        var userOptions = await session.UserOption.GetAsync();
+        var user = await session.User.GetAsync();
+        
         var queryable = dbContext
             .Users
             .AsNoTracking()

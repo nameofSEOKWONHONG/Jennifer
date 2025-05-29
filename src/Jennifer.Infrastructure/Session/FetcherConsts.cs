@@ -10,4 +10,10 @@ public sealed class CachingConsts
     
     private const string UserCacheKeyFormat = "user:{0}";
     public static string UserCacheKey(string userId) => string.Format(UserCacheKeyFormat, userId);
+    
+    private const string OptionCacheKeyFormat = "option:{0}";
+    public static string OptionCacheKey(string sid) => string.Format(OptionCacheKeyFormat, sid);
+    
+    private const string UserOptionCacheKeyFormat = "useroption:{0}";
+    public static string UserOptionCacheKey(string sid) => string.Format(UserOptionCacheKeyFormat, sid);
 }

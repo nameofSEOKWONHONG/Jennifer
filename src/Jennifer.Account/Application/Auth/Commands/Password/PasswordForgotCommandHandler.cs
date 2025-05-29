@@ -18,7 +18,7 @@ internal sealed class PasswordForgotCommandHandler(
         var builder = factory.Create();
         await builder.Register<IVerifyCodeSendEmailService, VerifyCodeSendEmailRequest, Result>()
             .Request(new VerifyCodeSendEmailRequest(command.Email, command.UserName,
-                ENUM_EMAIL_VERIFICATION_TYPE.PASSWORD_FORGOT))
+                ENUM_EMAIL_VERIFY_TYPE.PASSWORD_FORGOT))
             .Handle(r => result = r)
             .ExecuteAsync(cancellationToken);
         

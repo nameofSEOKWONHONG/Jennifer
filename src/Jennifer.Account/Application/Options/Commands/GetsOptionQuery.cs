@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Jennifer.Account.Application.Options.Commands;
 
-public sealed record GetsOptionQuery(ENUM_ACCOUNT_OPTION Type, int PageNo, int PageSize): IQuery<PaginatedResult<Option[]>>;
+public sealed record GetsOptionQuery(ENUM_OPTION_TYPE Type, int PageNo, int PageSize): IQuery<PaginatedResult<Option[]>>;
 public sealed class GetsOptionQueryHandler(JenniferDbContext dbContext): IQueryHandler<GetsOptionQuery, PaginatedResult<Option[]>>
 {
     public async ValueTask<PaginatedResult<Option[]>> Handle(GetsOptionQuery query, CancellationToken cancellationToken)

@@ -18,6 +18,7 @@ public class JenniferDbContext : IdentityDbContext<User, Role, Guid,
     public DbSet<Option> Options { get; set; }
     public DbSet<Audit> Audits { get; set; }
     public DbSet<KafkaDeadLetter> KafkaDeadLetters { get; set; }
+    public DbSet<UserOption> UserOptions { get; set; }
 
     public JenniferDbContext(DbContextOptions<JenniferDbContext> options): base(options)
     {
@@ -43,6 +44,7 @@ public class JenniferDbContext : IdentityDbContext<User, Role, Guid,
         modelBuilder.ApplyConfiguration(new OptionEntityConfiguration());
         modelBuilder.ApplyConfiguration(new AuditEntityConfiguration());
         modelBuilder.ApplyConfiguration(new KafkaDeadLetterConfiguration());
+        modelBuilder.ApplyConfiguration(new UserOptionEntityConfiguration());
     }
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())

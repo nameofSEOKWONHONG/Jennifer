@@ -14,13 +14,13 @@ public class PasswordForgotChangeRequest
     public string Email { get; set; }
     public string Code { get; set; }
     public string NewPassword { get; set; }
-    public ENUM_EMAIL_VERIFICATION_TYPE Type { get; set; }
+    public ENUM_EMAIL_VERIFY_TYPE Type { get; set; }
 }
 
 /// <summary>
 /// Represents a registration request for creating a new user account.
 /// </summary>
-/// <see cref="ENUM_EMAIL_VERIFICATION_TYPE"/>
+/// <see cref="ENUM_EMAIL_VERIFY_TYPE"/>
 public class RegisterRequest
 {
     /// <summary>
@@ -69,9 +69,9 @@ public class RegisterRequest
     /// <remarks>
     /// This property is used to specify the email verification method
     /// when handling a registration request. It is associated with
-    /// <see cref="ENUM_EMAIL_VERIFICATION_TYPE"/> which defines the allowed verification types.
+    /// <see cref="ENUM_EMAIL_VERIFY_TYPE"/> which defines the allowed verification types.
     /// </remarks>
-    public ENUM_EMAIL_VERIFICATION_TYPE Type { get; set; }   
+    public ENUM_EMAIL_VERIFY_TYPE Type { get; set; }   
 }
 
 public class RegisterAdminRequest
@@ -85,10 +85,10 @@ public class RegisterAdminRequest
 /// <summary>
 /// Represents a request for verifying an email address using a verification code.
 /// </summary>
-/// <see cref="ENUM_EMAIL_VERIFICATION_TYPE"/>
+/// <see cref="ENUM_EMAIL_VERIFY_TYPE"/>
 public class VerifyCodeRequest
 {
-    public VerifyCodeRequest(string email, string code, ENUM_EMAIL_VERIFICATION_TYPE type)
+    public VerifyCodeRequest(string email, string code, ENUM_EMAIL_VERIFY_TYPE type)
     {
         Email = email;
         Code = code;
@@ -97,7 +97,7 @@ public class VerifyCodeRequest
 
     public string Email { get; set; }
     public string Code { get; set; }
-    public ENUM_EMAIL_VERIFICATION_TYPE Type { get; set; }   
+    public ENUM_EMAIL_VERIFY_TYPE Type { get; set; }   
 }
 
 public class VerifyCodeResponse
@@ -112,6 +112,6 @@ public class VerifyCodeResponse
     public string Message { get; set; }   
 }
 
-public record VerifyCodeSendEmailRequest(string Email, string UserName, ENUM_EMAIL_VERIFICATION_TYPE Type);
+public record VerifyCodeSendEmailRequest(string Email, string UserName, ENUM_EMAIL_VERIFY_TYPE Type);
 
 public record ExternalSignInRequest(string Provider, string AccessToken);

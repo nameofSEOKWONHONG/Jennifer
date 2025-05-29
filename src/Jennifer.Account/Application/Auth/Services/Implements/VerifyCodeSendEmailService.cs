@@ -38,9 +38,9 @@ Jennifer 서비스 이용을 위한 이메일 인증 코드를 안내해 드립�
 Jennifer";
 
         var templateSubject = await dbContext.Options.AsNoTracking()
-            .FirstOrDefaultAsync(m => m.Type == ENUM_ACCOUNT_OPTION.WELCOME_MESSAGE_SUBJECT, cancellationToken: cancellationToken);
+            .FirstOrDefaultAsync(m => m.Type == ENUM_OPTION_TYPE.WELCOME_MESSAGE_SUBJECT, cancellationToken: cancellationToken);
         var templateFormat = await dbContext.Options.AsNoTracking()
-            .FirstOrDefaultAsync(m => m.Type == ENUM_ACCOUNT_OPTION.WELCOME_MESSAGE_BODY, cancellationToken: cancellationToken);
+            .FirstOrDefaultAsync(m => m.Type == ENUM_OPTION_TYPE.WELCOME_MESSAGE_BODY, cancellationToken: cancellationToken);
         if (templateSubject.xIsNotEmpty()) emailSubject = templateSubject.Value;
         if (templateFormat.xIsNotEmpty()) emailFormat = templateFormat.Value;
 

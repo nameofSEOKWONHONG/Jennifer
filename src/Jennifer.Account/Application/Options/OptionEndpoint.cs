@@ -25,7 +25,7 @@ internal static class OptionEndpoint
             ;
         group.MapGet("/{type}/{pageNo}/{pageSize}", async (string type, int pageNo, int pageSize,
                     ISender sender, CancellationToken cancellationToken) =>
-                await sender.Send(new GetsOptionQuery(ENUM_ACCOUNT_OPTION.FromValue(type), pageNo, pageSize), cancellationToken))
+                await sender.Send(new GetsOptionQuery(ENUM_OPTION_TYPE.FromValue(type), pageNo, pageSize), cancellationToken))
             .MapToApiVersion(1)
             .WithName("GetsOptions")
             .WithDescription("유형으로 필터링된 옵션 목록 페이징 조회");

@@ -75,7 +75,6 @@ public class AuditInterceptor : SaveChangesInterceptor
         }
 
         var auditItems = auditEntries
-            .AsEnumerable()
             .Where(m => !m.HasTemporaryProperties && m.AuditType.xIsNotEmpty())
             .ToArray();
         

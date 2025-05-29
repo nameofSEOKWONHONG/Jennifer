@@ -15,7 +15,7 @@ public class EmailVerificationCode
     /// 6자리 코드
     /// </summary>
     public string Code { get; set; }
-    public ENUM_EMAIL_VERIFICATION_TYPE Type { get; set; }
+    public ENUM_EMAIL_VERIFY_TYPE Type { get; set; }
     public int FailedCount { get; set; }
     public DateTimeOffset ExpiresAt { get; set; }
     public bool IsUsed { get; set; }
@@ -41,7 +41,7 @@ public class EmailVerificationCodeEntityConfiguration: IEntityTypeConfiguration<
         builder.Property(m => m.ExpiresAt)
             .IsRequired();
         builder.Property(m => m.Type)
-            .HasConversion(new SmartEnumConverter<ENUM_EMAIL_VERIFICATION_TYPE, int>())
+            .HasConversion(new SmartEnumConverter<ENUM_EMAIL_VERIFY_TYPE, int>())
             .IsRequired();
     }
 }

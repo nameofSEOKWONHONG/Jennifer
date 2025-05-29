@@ -1,8 +1,6 @@
-﻿using System.Text.RegularExpressions;
-using eXtensionSharp;
-using Jennifer.Domain.Account;
-using Jennifer.Infrastructure.Database;
+﻿using Jennifer.Infrastructure.Database;
 using Jennifer.Infrastructure.Session.Abstracts;
+using Jennifer.Infrastructure.Session.Contracts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Hybrid;
@@ -13,17 +11,33 @@ public sealed class UserFetcher(IDistributedCache cache,
     HybridCache hybridCache,
     JenniferReadOnlyDbContext dbContext) : IUserFetcher
 {
-    private User _cached;
-    public async Task<User> FetchAsync(string sid)
+    private UserFetchResult _cached;
+    public async Task<UserFetchResult> FetchAsync(string sid)
     {
         if (_cached is not null) return _cached;
         
         var value = await cache.GetStringAsync(CachingConsts.SidCacheKey(sid));
-        async ValueTask<User> FetchUserFromDatabase(CancellationToken token) =>
-            await dbContext.Users.FirstOrDefaultAsync(u => u.Id == Guid.Parse(value), cancellationToken: token);
+        async ValueTask<UserFetchResult> FetchUserFromDatabase(CancellationToken token) =>
+            await dbContext.Users.Where(m => m.Id == Guid.Parse(value))
+                .Select(m => new UserFetchResult
+                {
+                    Id = m.Id,
+                    UserName = m.UserName,
+                    Email = m.Email,
+                    PhoneNumber = m.PhoneNumber
+                })
+                .FirstAsync(cancellationToken: token);
         
         _cached = await hybridCache.GetOrCreateAsync(CachingConsts.UserCacheKey(value), FetchUserFromDatabase);
         
         return _cached;
+    }
+
+    public async Task ClearAsync(string sid)
+    {
+        var value = await cache.GetStringAsync(CachingConsts.SidCacheKey(sid));
+        var userKey = CachingConsts.UserCacheKey(value);
+        await hybridCache.RemoveAsync(userKey);
+        await cache.RemoveAsync(CachingConsts.SidCacheKey(sid));
     }
 }

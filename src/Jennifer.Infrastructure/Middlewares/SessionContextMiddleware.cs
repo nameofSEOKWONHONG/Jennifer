@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using eXtensionSharp;
+using Jennifer.Infrastructure.Session;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Distributed;
 
@@ -18,12 +19,7 @@ public class SessionContextMiddleware
         
         if (context.User.Identity?.IsAuthenticated == true)
         {
-            var userid = context.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var exists = await cache.GetAsync(userid);
-            if (exists.xIsNotEmpty())
-            {
-                await cache.RefreshAsync(userid);    
-            }
+            //something to do...
         }        
     }
 }

@@ -1,9 +1,8 @@
-﻿using Jennifer.Domain.Account;
+﻿namespace Jennifer.Infrastructure.Session.Abstracts;
 
-namespace Jennifer.Infrastructure.Session.Abstracts;
-
-public interface IUserContext
+public interface IUnifiedContext<TFetchResult>
 {
     string Sid { get; }
-    Task<User> GetUserAsync();
+    Task<TFetchResult> GetAsync();
+    Task ClearAsync();
 }

@@ -9,14 +9,14 @@ namespace Jennifer.Domain.Account;
 public class Option: IAuditable
 {
     public int Id { get; set; }
-    public ENUM_ACCOUNT_OPTION Type { get; set; }
+    public ENUM_OPTION_TYPE Type { get; set; }
     public string Value { get; set; }
     public DateTimeOffset CreatedOn { get; set; }
     public string CreatedBy { get; set; }
     public DateTimeOffset? ModifiedOn { get; set; }
     public string ModifiedBy { get; set; }
     
-    public static Option Create(ENUM_ACCOUNT_OPTION type, string value) =>
+    public static Option Create(ENUM_OPTION_TYPE type, string value) =>
         new Option()
         {
             Type = type,
@@ -34,7 +34,7 @@ public class OptionEntityConfiguration: IEntityTypeConfiguration<Option>
             .ValueGeneratedOnAdd();
         builder.Property(m => m.Type)
             .HasMaxLength(256)
-            .HasConversion(new SmartEnumConverter<ENUM_ACCOUNT_OPTION, string>())
+            .HasConversion(new SmartEnumConverter<ENUM_OPTION_TYPE, string>())
             .IsRequired();
         builder.Property(m => m.Value)
             .IsRequired();

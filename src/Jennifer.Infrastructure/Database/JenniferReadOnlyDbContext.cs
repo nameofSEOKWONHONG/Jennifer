@@ -1,6 +1,7 @@
 ﻿using Jennifer.Domain.Account;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using SmartEnum.EFCore;
 
 namespace Jennifer.Infrastructure.Database;
 
@@ -20,11 +21,17 @@ public class JenniferReadOnlyDbContext: IdentityDbContext<User, Role, Guid,
     UserToken>
 {       
     public DbSet<EmailVerificationCode> EmailVerificationCodes { get; set; }
-    public DbSet<Option> Configurations { get; set; }
+    public DbSet<Option> Options { get; set; }
+    public DbSet<UserOption> UserOptions { get; set; }
 
     public JenniferReadOnlyDbContext(DbContextOptions<JenniferReadOnlyDbContext> options): base(options)
     {
         
+    }
+
+    protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+    {
+        configurationBuilder.ConfigureSmartEnum();
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -46,6 +53,7 @@ public class JenniferReadOnlyDbContext: IdentityDbContext<User, Role, Guid,
         modelBuilder.ApplyConfiguration(new RoleClaimEntityConfiguration());
         modelBuilder.ApplyConfiguration(new EmailVerificationCodeEntityConfiguration());
         modelBuilder.ApplyConfiguration(new OptionEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new UserOptionEntityConfiguration());
     }
     
     public override int SaveChanges()

@@ -81,9 +81,6 @@ builder.Services.AddJennifer(options,
     // Add jennifer email
     .WithJenniferMailService();
 
-
-builder.Services.AddSwaggerGen();
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -96,12 +93,10 @@ if (app.Environment.IsDevelopment())
         options.Authentication = 
             new ScalarAuthenticationOptions
             {
-                PreferredSecurityScheme = "Bearer"
+                PreferredSecuritySchemes = ["Bearer"]
             };        
     });
 }
-
-app.UseSwagger();
 
 app.UseHttpsRedirection();
 

@@ -35,7 +35,7 @@ internal sealed class Setup2FaCommandHandler(UserManager<User> userManager,
         }
         
         var otpUri = $"otpauth://totp/Jennifer:{user.Email}?secret={secretKey}&issuer=Jennifer";
-        var templateOtpUri = await dbContext.Options.AsNoTracking().FirstOrDefaultAsync(m => m.Type == ENUM_ACCOUNT_OPTION.OTP_URI, cancellationToken: cancellationToken);
+        var templateOtpUri = await dbContext.Options.AsNoTracking().FirstOrDefaultAsync(m => m.Type == ENUM_OPTION_TYPE.OTP_URI, cancellationToken: cancellationToken);
         if (templateOtpUri.xIsNotEmpty()) otpUri = templateOtpUri.Value;
 
         using var qrGen = new QRCodeGenerator();

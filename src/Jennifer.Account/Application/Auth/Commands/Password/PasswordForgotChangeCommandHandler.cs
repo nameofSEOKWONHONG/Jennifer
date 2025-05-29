@@ -20,7 +20,7 @@ internal sealed class PasswordForgotChangeCommandHandler(
         var builder = factory.Create();
         Result verified = null;
         await builder.Register<IVerifyCodeConfirmService, VerifyCodeRequest, Result>()
-            .Request(new VerifyCodeRequest(command.Email, command.Code, ENUM_EMAIL_VERIFICATION_TYPE.PASSWORD_FORGOT))
+            .Request(new VerifyCodeRequest(command.Email, command.Code, ENUM_EMAIL_VERIFY_TYPE.PASSWORD_FORGOT))
             .Handle(r => verified = r)
             .ExecuteAsync(cancellationToken);
         

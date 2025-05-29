@@ -46,11 +46,11 @@ public sealed class SignUpCommand : ICommand<Result<Guid>>
     /// <remarks>
     /// This property is used to specify the email verification method
     /// when handling a registration request. It is associated with
-    /// <see cref="ENUM_EMAIL_VERIFICATION_TYPE"/> which defines the allowed verification types.
+    /// <see cref="ENUM_EMAIL_VERIFY_TYPE"/> which defines the allowed verification types.
     /// </remarks>
-    public ENUM_EMAIL_VERIFICATION_TYPE Type { get; set; }
+    public ENUM_EMAIL_VERIFY_TYPE Type { get; set; }
 
-    public SignUpCommand(string email, string password, string userName, string phoneNumber, ENUM_EMAIL_VERIFICATION_TYPE type)
+    public SignUpCommand(string email, string password, string userName, string phoneNumber, ENUM_EMAIL_VERIFY_TYPE type)
     {
         Email = email;
         Password = password;

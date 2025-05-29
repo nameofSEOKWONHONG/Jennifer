@@ -2,6 +2,7 @@
 using eXtensionSharp;
 using Jennifer.Domain.Account;
 using Jennifer.Infrastructure.Session;
+using Jennifer.Infrastructure.Session.Abstracts;
 using Jennifer.SharedKernel;
 using Mediator;
 using Microsoft.AspNetCore.Http;
@@ -12,27 +13,20 @@ namespace Jennifer.Account.Application.Auth.Commands.SignOut;
 
 internal sealed class SignOutCommandHandler(
     UserManager<User> userManager,
-    IHttpContextAccessor accessor,
-    HybridCache cache
+    ISessionContext session
 ): ICommandHandler<SignOutCommand, Result>
 {
     public async ValueTask<Result> Handle(SignOutCommand command, CancellationToken cancellationToken)
     {
-        var sid = accessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (sid.xIsEmpty()) 
-            return await Result.FailureAsync("not found sid");
-        
-        var user = await userManager.FindByIdAsync(sid);
-        if(user is null) 
+        var user = await session.User.GetAsync(); 
+        if (user.xIsEmpty()) 
             return await Result.FailureAsync("not found user");
         
-        var result = await userManager.RemoveAuthenticationTokenAsync(user, loginProvider:"internal", tokenName:"refreshToken");
+        var exists = await userManager.FindByIdAsync(user.Id.ToString());
+        var result = await userManager.RemoveAuthenticationTokenAsync(exists, loginProvider:"internal", tokenName:"refreshToken");
         if(!result.Succeeded) return await Result.FailureAsync("not found refreshToken");
 
-        var sidKey = CachingConsts.SidCacheKey(sid);
-        var userKey = CachingConsts.UserCacheKey(sid);
-        await cache.RemoveAsync(sidKey, cancellationToken);
-        await cache.RemoveAsync(userKey, cancellationToken);
+        await session.User.ClearAsync();
         
         return await Result.SuccessAsync();
     }

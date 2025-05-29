@@ -20,7 +20,7 @@ internal sealed class UserCompleteDomainEventHandler(ILogger<UserCompleteDomainE
         var builder = factory.Create();
         await builder.Register<IVerifyCodeSendEmailService, VerifyCodeSendEmailRequest, Result>()
             .Request(new VerifyCodeSendEmailRequest(notification.User.Email, notification.User.UserName,
-                ENUM_EMAIL_VERIFICATION_TYPE.SIGN_UP_BEFORE))
+                ENUM_EMAIL_VERIFY_TYPE.SIGN_UP_BEFORE))
             .Handle(r => result = r)
             .ExecuteAsync(cancellationToken);
         

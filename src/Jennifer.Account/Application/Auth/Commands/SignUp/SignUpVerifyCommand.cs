@@ -26,7 +26,7 @@ internal sealed class SignUpVerifyCommandHandler(
         Result verified = null;
         var builder = factory.Create();
         await builder.Register<IVerifyCodeConfirmService, VerifyCodeRequest, Result>()
-            .Request(new VerifyCodeRequest(user.Email, command.Code, ENUM_EMAIL_VERIFICATION_TYPE.SIGN_UP_BEFORE))
+            .Request(new VerifyCodeRequest(user.Email, command.Code, ENUM_EMAIL_VERIFY_TYPE.SIGN_UP_BEFORE))
             .Handle(r => verified = r)
             .ExecuteAsync(cancellationToken);
                 

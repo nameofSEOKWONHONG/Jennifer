@@ -1,11 +1,13 @@
-﻿using Jennifer.Infrastructure.Session.Abstracts;
+﻿using Jennifer.Infrastructure.Session.Contracts;
 using Jennifer.SharedKernel;
 
-namespace Jennifer.Account.Session.Abstracts;
+namespace Jennifer.Infrastructure.Session.Abstracts;
 
 public interface ISessionContext
 {
-    IUserContext User { get; }
+    IUnifiedContext<UserFetchResult> User { get; }
+    IUnifiedContext<UserOptionFetchResult[]> UserOption { get; }
+    IUnifiedContext<OptionFetchResult[]> Option { get; }
     IDomainEventPublisher DomainEventPublisher { get; }
     bool IsAuthenticated { get; }
 }
