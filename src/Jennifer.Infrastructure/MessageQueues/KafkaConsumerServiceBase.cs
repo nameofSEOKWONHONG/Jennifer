@@ -18,7 +18,7 @@ namespace Jennifer.Infrastructure.MessageQueues;
 /// <typeparam name="TDbContext">
 /// The type of the database context to perform data operations. The context import must be registered in KafkaDeadLetter.
 /// </typeparam>
-public abstract class KafkaConsumerService<TService, TDbContext>(
+public abstract class KafkaConsumerServiceBase<TService, TDbContext>(
     ILogger<TService> logger,
     IConsumer<string, string> consumer,
     IServiceScopeFactory serviceScopeFactory,
