@@ -1,8 +1,5 @@
-﻿using eXtensionSharp.Mongo;
-using Jennifer.External.OAuth.Abstracts;
-using Jennifer.External.OAuth.Contracts;
+﻿using Jennifer.External.OAuth.Abstracts;
 using Jennifer.External.OAuth.Implements;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Jennifer.External.OAuth;

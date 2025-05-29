@@ -13,6 +13,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{92FB0540-C2E3-4A09-A039-0209A289D5C6}"
 	ProjectSection(SolutionItems) = preProject
 		compose.yaml = compose.yaml
+		Directory.Packages.props = Directory.Packages.props
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jennifer.Todo", "Jennifer.Todo\Jennifer.Todo.csproj", "{1C14ADF8-545B-49EE-B4E3-DCF794634E45}"

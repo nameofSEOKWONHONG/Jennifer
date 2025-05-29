@@ -1,14 +1,12 @@
-﻿using eXtensionSharp;
-
-namespace Jennifer.SharedKernel;
+﻿namespace Jennifer.SharedKernel;
 
 public class JwtOptions
 {
     public JwtOptions(string key, string issuer, string audience, int expireMinutes, int refreshExpireMinutes)
     {
-        if(key.xIsEmpty()) throw new ArgumentNullException(nameof(key));
-        if(issuer.xIsEmpty()) throw new ArgumentNullException(nameof(issuer));
-        if(audience.xIsEmpty()) throw new ArgumentNullException(nameof(audience));
+        if(string.IsNullOrWhiteSpace(key)) throw new ArgumentNullException(nameof(key));
+        if(string.IsNullOrWhiteSpace(issuer)) throw new ArgumentNullException(nameof(issuer));
+        if(string.IsNullOrWhiteSpace(audience)) throw new ArgumentNullException(nameof(audience));
         if(expireMinutes <= 0) throw new ArgumentNullException(nameof(expireMinutes));
         if(refreshExpireMinutes <= 0) throw new ArgumentNullException(nameof(refreshExpireMinutes));
         
@@ -30,8 +28,8 @@ public class CryptoOptions
 {
     public CryptoOptions(string aesKey, string aesIv)
     {
-        if(aesKey.xIsEmpty()) throw new ArgumentNullException(nameof(aesKey));
-        if(aesIv.xIsEmpty()) throw new ArgumentNullException(nameof(aesIv));
+        if(string.IsNullOrWhiteSpace(aesKey)) throw new ArgumentNullException(nameof(aesKey));
+        if(string.IsNullOrWhiteSpace(aesIv)) throw new ArgumentNullException(nameof(aesIv));
         
         AesKey = aesKey;
         AesIV = aesIv;
@@ -75,9 +73,9 @@ public class JenniferOptions
         JwtOptions jwtOptions,
         EmailSmtpOptions emailSmtpOptions)
     {
-        if(schema.xIsEmpty()) throw new ArgumentNullException(nameof(schema));
-        if(jwtOptions.xIsEmpty()) throw new ArgumentNullException(nameof(JwtOptions));
-        if(cryptoOptions.xIsEmpty()) throw new ArgumentNullException(nameof(CryptoOptions));
+        if(schema is null) throw new ArgumentNullException(nameof(schema));
+        if(jwtOptions  is null) throw new ArgumentNullException(nameof(JwtOptions));
+        if(cryptoOptions is null) throw new ArgumentNullException(nameof(CryptoOptions));
         
         this.Schema = schema;
         this.ConnectionString = connectionString;

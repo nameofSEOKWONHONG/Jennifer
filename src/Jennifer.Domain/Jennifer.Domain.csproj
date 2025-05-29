@@ -3,16 +3,17 @@
     <PropertyGroup>
         <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
+        <Nullable>disable</Nullable>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.5" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.5" />
-        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.5" />
-        <PackageReference Include="Ardalis.SmartEnum" Version="8.2.0" />
-        <PackageReference Include="Ardalis.SmartEnum.EFCore" Version="8.2.0" />
-        <PackageReference Include="Ardalis.SmartEnum.SystemTextJson" Version="8.1.0" />        
+        <PackageReference Include="Microsoft.EntityFrameworkCore"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational"/>
+        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore"/>
+        <PackageReference Include="Ardalis.SmartEnum"/>
+        <PackageReference Include="Ardalis.SmartEnum.EFCore"/>
+        <PackageReference Include="Ardalis.SmartEnum.SystemTextJson"/>
+        <PackageReference Include="eXtensionSharp"/>
     </ItemGroup>
 
     <ItemGroup>      

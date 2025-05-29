@@ -1,5 +1,4 @@
 ﻿using System.Text.Json;
-using eXtensionSharp;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace Jennifer.Domain.Common;
@@ -33,9 +32,9 @@ internal class AuditEntry
             TableName = TableName,
             DateTime = DateTime.UtcNow,
             PrimaryKey = JsonSerializer.Serialize(KeyValues),
-            OldValues = OldValues.xIsEmpty() ? null : JsonSerializer.Serialize(OldValues),
-            NewValues = NewValues.xIsEmpty() ? null : JsonSerializer.Serialize(NewValues),
-            AffectedColumns = ChangedColumns.xIsEmpty() ? null : JsonSerializer.Serialize(ChangedColumns)
+            OldValues = OldValues is null ? null : JsonSerializer.Serialize(OldValues),
+            NewValues = NewValues is null ? null : JsonSerializer.Serialize(NewValues),
+            AffectedColumns = ChangedColumns is null ? null : JsonSerializer.Serialize(ChangedColumns)
         };
         return audit;
     }
