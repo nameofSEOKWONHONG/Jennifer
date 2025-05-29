@@ -1,7 +1,7 @@
 ﻿using eXtensionSharp;
-using Jennifer.Account.Data;
-using Jennifer.Account.Models;
-using Jennifer.Account.Models.Contracts;
+using Jennifer.Domain.Account;
+using Jennifer.Domain.Account.Contracts;
+using Jennifer.Domain.Database;
 using Jennifer.SharedKernel;
 using Mediator;
 using Microsoft.AspNetCore.Identity;

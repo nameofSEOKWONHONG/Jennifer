@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 using Jennifer.Account.Application.Auth.Services.Implements;
-using Jennifer.Account.Models;
+using Jennifer.Domain.Account;
 
 namespace Jennifer.Account.Application.Auth.Services.Abstracts;
 

@@ -1,15 +1,13 @@
 ﻿using eXtensionSharp;
 using Jennifer.Account.Application.Auth.Contracts;
 using Jennifer.Account.Application.Auth.Services.Abstracts;
-using Jennifer.Account.Data;
-using Jennifer.Account.Models;
-using Jennifer.Account.Models.Contracts;
-using Jennifer.Account.Session;
+using Jennifer.Domain.Account;
+using Jennifer.Domain.Account.Contracts;
+using Jennifer.Domain.Database;
 using Jennifer.Infrastructure.Abstractions.ServiceCore;
 using Jennifer.Infrastructure.Email;
 using Jennifer.SharedKernel;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace Jennifer.Account.Application.Auth.Services.Implements;
 

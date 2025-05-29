@@ -2,7 +2,7 @@
 using eXtensionSharp;
 using Jennifer.Account.Application.Auth.Contracts;
 using Jennifer.Account.Application.Auth.Services.Abstracts;
-using Jennifer.Account.Models;
+using Jennifer.Domain.Account;
 using Jennifer.External.OAuth.Abstracts;
 using Jennifer.SharedKernel;
 using Mediator;

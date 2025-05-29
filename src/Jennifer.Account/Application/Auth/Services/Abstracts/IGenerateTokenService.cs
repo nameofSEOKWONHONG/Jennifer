@@ -1,5 +1,5 @@
 ﻿using Jennifer.Account.Application.Auth.Contracts;
-using Jennifer.Account.Models;
+using Jennifer.Domain.Account;
 using Jennifer.Infrastructure.Abstractions.ServiceCore;
 using Jennifer.SharedKernel;
 

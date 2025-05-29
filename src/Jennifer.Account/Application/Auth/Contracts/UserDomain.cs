@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using Jennifer.Account.Models;
 using Jennifer.SharedKernel;
 
 namespace Jennifer.Account.Application.Auth.Contracts;

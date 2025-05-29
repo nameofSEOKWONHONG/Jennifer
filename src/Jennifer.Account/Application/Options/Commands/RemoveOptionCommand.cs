@@ -1,10 +1,11 @@
 ﻿using eXtensionSharp;
-using Jennifer.Account.Data;
+using Jennifer.Domain.Account;
+using Jennifer.Domain.Database;
 using Jennifer.SharedKernel;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 
-namespace Jennifer.Account.Application.Options;
+namespace Jennifer.Account.Application.Options.Commands;
 
 public sealed record RemoveOptionCommand(int Id): ICommand<Result>;
 public sealed class RemoveOptionCommandHandler(JenniferDbContext dbContext): ICommandHandler<RemoveOptionCommand, Result>

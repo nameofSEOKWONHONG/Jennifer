@@ -1,7 +1,8 @@
 ﻿using eXtensionSharp;
 using Jennifer.Account.Application.Auth.Contracts;
 using Jennifer.Account.Application.Auth.Services.Abstracts;
-using Jennifer.Account.Data;
+using Jennifer.Domain.Account;
+using Jennifer.Domain.Database;
 using Jennifer.Infrastructure.Abstractions.ServiceCore;
 using Jennifer.SharedKernel;
 using Microsoft.EntityFrameworkCore;

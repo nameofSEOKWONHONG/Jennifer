@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using eXtensionSharp;
-using Jennifer.Account.Data;
-using Jennifer.Account.Models;
+using Jennifer.Domain.Account;
+using Jennifer.Infrastructure.Session;
 using Jennifer.SharedKernel;
 using Mediator;
 using Microsoft.AspNetCore.Http;

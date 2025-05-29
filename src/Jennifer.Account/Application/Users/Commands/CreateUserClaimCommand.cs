@@ -1,5 +1,5 @@
-﻿using Jennifer.Account.Data;
-using Jennifer.Account.Models;
+﻿using Jennifer.Domain.Account;
+using Jennifer.Domain.Database;
 using Jennifer.SharedKernel;
 using Mediator;
 using Microsoft.EntityFrameworkCore;

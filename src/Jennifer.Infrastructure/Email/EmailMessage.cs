@@ -1,5 +1,4 @@
 ﻿using eXtensionSharp;
-using Jennifer.Infrastructure.Options;
 using Jennifer.SharedKernel;
 using Microsoft.AspNetCore.StaticFiles;
 

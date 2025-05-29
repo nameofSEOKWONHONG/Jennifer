@@ -2,7 +2,7 @@
 using FluentValidation;
 using Jennifer.Account.Application.Auth.Contracts;
 using Jennifer.Account.Application.Auth.Services.Abstracts;
-using Jennifer.Account.Models;
+using Jennifer.Domain.Account;
 using Jennifer.Infrastructure.Abstractions.ServiceCore;
 using Jennifer.SharedKernel;
 using Microsoft.AspNetCore.Identity;

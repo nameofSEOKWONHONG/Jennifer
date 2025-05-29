@@ -1,11 +1,12 @@
 ﻿using eXtensionSharp;
-using Jennifer.Account.Data;
-using Jennifer.Account.Models.Contracts;
+using Jennifer.Domain.Account;
+using Jennifer.Domain.Account.Contracts;
+using Jennifer.Domain.Database;
 using Jennifer.SharedKernel;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 
-namespace Jennifer.Account.Application.Options;
+namespace Jennifer.Account.Application.Options.Commands;
 
 public sealed record UpdateOptionCommand(int Id, ENUM_ACCOUNT_OPTION Type, string Value): ICommand<Result>;
 public sealed class UpdateOptionCommandHandler(JenniferDbContext dbContext): ICommandHandler<UpdateOptionCommand, Result>

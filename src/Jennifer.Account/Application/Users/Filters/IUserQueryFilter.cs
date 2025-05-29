@@ -1,7 +1,7 @@
 ﻿using System.Linq.Expressions;
 using Jennifer.Account.Application.Auth.Contracts;
 using Jennifer.Account.Application.Users.Commands;
-using Jennifer.Account.Models;
+using Jennifer.Domain.Account;
 
 namespace Jennifer.Account.Application.Users.Filters;
 

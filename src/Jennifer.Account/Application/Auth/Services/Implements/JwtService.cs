@@ -4,9 +4,8 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using Jennifer.Account.Application.Auth.Services.Abstracts;
-using Jennifer.Account.Models;
-using Jennifer.Infrastructure.Extenstions;
-using Jennifer.Infrastructure.Options;
+using Jennifer.Domain.Account;
+using Jennifer.Domain.Converters;
 using Jennifer.SharedKernel;
 using Microsoft.IdentityModel.Tokens;
 

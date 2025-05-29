@@ -1,6 +1,6 @@
 ﻿using eXtensionSharp;
 using eXtensionSharp.Mongo;
-using Jennifer.Infrastructure.Options;
+using Jennifer.SharedKernel;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.Extensions.Hosting;

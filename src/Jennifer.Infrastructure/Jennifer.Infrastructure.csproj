@@ -7,6 +7,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.5" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.5" />
         <FrameworkReference Include="Microsoft.AspNetCore.App" />
         <PackageReference Include="Confluent.Kafka" Version="2.10.0" />
         <PackageReference Include="eXtensionSharp" Version="1.0.2" />
@@ -14,6 +16,7 @@
         <PackageReference Include="eXtensionSharp.Mongo" Version="0.0.3" />
         <PackageReference Include="Mediator.Abstractions" Version="3.0.0-preview.65" />
         <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.6" />
+
         <PackageReference Include="RabbitMQ.Client" Version="7.1.2" />
         <PackageReference Include="MailKit" Version="4.12.0" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.5" />
@@ -31,10 +34,16 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Jennifer.Domain\Jennifer.Domain.csproj" />
       <ProjectReference Include="..\Jennifer.SharedKernel\Jennifer.SharedKernel.csproj" />
     </ItemGroup>
 
     <ItemGroup>
       <Content Remove="C:\Users\h2091\.nuget\packages\extensionsharp\1.0.2\contentFiles\any\net9.0\README.md" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Database\" />
+      <Folder Include="Extenstions\" />
     </ItemGroup>
 </Project>

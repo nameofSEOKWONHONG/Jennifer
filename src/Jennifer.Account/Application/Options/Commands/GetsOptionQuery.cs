@@ -1,13 +1,13 @@
 ﻿using eXtensionSharp;
-using Jennifer.Account.Data;
-using Jennifer.Account.Models;
-using Jennifer.Account.Models.Contracts;
+using Jennifer.Domain.Account;
+using Jennifer.Domain.Account.Contracts;
+using Jennifer.Domain.Database;
 using Jennifer.SharedKernel;
 using LinqKit;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 
-namespace Jennifer.Account.Application.Options;
+namespace Jennifer.Account.Application.Options.Commands;
 
 public sealed record GetsOptionQuery(ENUM_ACCOUNT_OPTION Type, int PageNo, int PageSize): IQuery<PaginatedResult<Option[]>>;
 public sealed class GetsOptionQueryHandler(JenniferDbContext dbContext): IQueryHandler<GetsOptionQuery, PaginatedResult<Option[]>>

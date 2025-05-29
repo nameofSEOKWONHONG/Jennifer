@@ -2,8 +2,7 @@
 using eXtensionSharp;
 using Jennifer.Account.Application.Auth.Contracts;
 using Jennifer.Account.Application.Auth.Services.Abstracts;
-using Jennifer.Account.Models;
-using Jennifer.Account.Session;
+using Jennifer.Domain.Account;
 using Jennifer.External.OAuth.Abstracts;
 using Jennifer.Infrastructure.Abstractions.ServiceCore;
 using Jennifer.SharedKernel;
@@ -55,11 +54,11 @@ internal sealed class ExternalOAuthService: ServiceBase<ExternalSignInRequest, R
         // 1. 외부 서비스에 access_token을 전달하여 사용자 정보 확인
         var instance = _externalOAuthHandlerFactory.Resolve(request.Provider);
         var verified = await instance.Verify(request.AccessToken, cancellationToken);
-        if (!verified.IsSuccess) return null;
+        if (!verified.IsSuccess) return await Result<TokenResponse>.FailureAsync("Verify failed.");
 
         // 2. provider별 ID 가져오기
         string providerId = verified.ExternalId;
-        if (providerId.xIsEmpty()) return null;
+        if (providerId.xIsEmpty()) return await Result<TokenResponse>.FailureAsync("Verify failed.");
 
         // 3. 이미 연결된 외부 로그인 사용자 확인
         var user = await _userManager.FindByLoginAsync(request.Provider, providerId);
@@ -83,13 +82,13 @@ internal sealed class ExternalOAuthService: ServiceBase<ExternalSignInRequest, R
                 };
 
                 var result = await _userManager.CreateAsync(user);
-                if (!result.Succeeded) return null;
+                if (!result.Succeeded) return await Result<TokenResponse>.FailureAsync("Create failed.");
             }
 
             // 6. 외부 로그인 정보 연결
             var loginInfo = new UserLoginInfo(request.Provider, providerId, request.Provider);
             var linkResult = await _userManager.AddLoginAsync(user, loginInfo);
-            if (!linkResult.Succeeded) return null;
+            if (!linkResult.Succeeded) return await Result<TokenResponse>.FailureAsync("Link failed.");
         }
 
         var userClaims = await _userManager.GetClaimsAsync(user);
@@ -114,6 +113,6 @@ internal sealed class ExternalOAuthService: ServiceBase<ExternalSignInRequest, R
         var refreshTokenObj = new RefreshToken(refreshToken, DateTime.UtcNow.AddDays(7), DateTime.UtcNow, user.Id.ToString());
         await _userManager.SetAuthenticationTokenAsync(user, loginProvider:"internal", tokenName:"refreshToken", tokenValue:refreshToken);
         var token = new TokenResponse(_jwtService.GenerateJwtToken(user, userClaims.ToList(), roleClaims), _jwtService.ObjectToTokenString(refreshTokenObj), user.TwoFactorEnabled);
-        return Result<TokenResponse>.Success(token);
+        return await Result<TokenResponse>.SuccessAsync(token);
     }
 }

@@ -1,8 +1,7 @@
 ﻿using eXtensionSharp;
 using FluentValidation;
-using Jennifer.Account.Data;
-using Jennifer.Account.Models;
-using Jennifer.Account.Session.Abstracts;
+using Jennifer.Domain.Account;
+using Jennifer.Domain.Database;
 using Jennifer.SharedKernel;
 using Mediator;
 using Microsoft.EntityFrameworkCore;

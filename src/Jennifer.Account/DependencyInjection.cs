@@ -3,9 +3,7 @@ using System.Text;
 using eXtensionSharp.Mongo;
 using FluentValidation;
 using Jennifer.Account.Application.Auth.Commands.SignUp;
-using Jennifer.Account.Data;
 using Jennifer.Account.Hubs;
-using Jennifer.Account.Models;
 using Jennifer.Account.Session;
 using Jennifer.External.OAuth;
 using Jennifer.Infrastructure;
@@ -15,11 +13,16 @@ using Jennifer.Account.Application.Options;
 using Jennifer.Account.Application.Roles;
 using Jennifer.Account.Application.Tests;
 using Jennifer.Account.Application.Users;
+using Jennifer.Domain.Account;
+using Jennifer.Domain.Common;
+using Jennifer.Domain.Database;
 using Jennifer.External.OAuth.Contracts;
 using Jennifer.Infrastructure.Abstractions;
 using Jennifer.Infrastructure.Abstractions.Behaviors;
+using Jennifer.Infrastructure.Abstractions.DomainEvents;
 using Jennifer.Infrastructure.Middlewares;
-using Jennifer.Infrastructure.Options;
+using Jennifer.Infrastructure.Session;
+using Jennifer.SharedKernel;
 using Mediator;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -32,7 +35,7 @@ using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using StackExchange.Redis;
-using Role = Jennifer.Account.Models.Role;
+using Role = Jennifer.Domain.Account.Role;
 
 namespace Jennifer.Account;
 
@@ -73,6 +76,7 @@ public static class DependencyInjection
 
         services.AddDbContext<JenniferDbContext>(dbContextSetup);
         services.AddDbContext<JenniferReadOnlyDbContext>(dbContextSetup);
+        services.AddScoped<ITransactionDbContext, JenniferDbContext>();
         
         services.AddIdentity<User, Role>(identitySetup)
             .AddEntityFrameworkStores<JenniferDbContext>()
@@ -188,14 +192,12 @@ public static class DependencyInjection
             options.ServiceLifetime = ServiceLifetime.Scoped;
         });
         //Registered behaviors are executed in order (e.g., IpBlockBehavior, DomainEventBehavior, ValidationBehavior, TransactionBehavior)
-        services.AddScoped(typeof(IPipelineBehavior<,>), typeof(IpBlockBehavior<,>));
         services.AddScoped(typeof(IPipelineBehavior<,>), typeof(DomainEventBehavior<,>));
         services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
         services.AddScoped(typeof(IPipelineBehavior<,>), typeof(TransactionBehavior<,>));
         services.AddValidatorsFromAssemblyContaining<SignUpAdminCommandValidator>();
         services.AddScoped<IDomainEventPublisher, DomainEventPublisher>();
         services.AddSingleton<IIpBlockService, IpBlockService>();
-
         #endregion
 
         services.AddScoped<ISlimSender, SlimSender>();
@@ -330,6 +332,7 @@ public static class DependencyInjection
         app.UseAuthentication();
         app.UseAuthorization();
 
+        app.UseMiddleware<IpBlockMiddleware>();
         app.UseMiddleware<ProblemDetailsMiddleware>();
         app.UseMiddleware<SessionContextMiddleware>();
 

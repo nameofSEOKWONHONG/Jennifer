@@ -1,9 +1,9 @@
-﻿using Mediator;
+﻿using Jennifer.Infrastructure.Abstractions.DomainEvents;
+using Jennifer.SharedKernel;
+using Mediator;
 using Microsoft.Extensions.Logging;
 
 namespace Jennifer.Infrastructure.Abstractions.Behaviors;
-
-public sealed record ErrorMessage(Exception Exception);
 
 public class DomainEventBehavior<TMessage, TResponse>: IPipelineBehavior<TMessage, TResponse>
     where TMessage : IMessage // Constrained to IMessage, or constrain to IBaseCommand or any custom interface you've implemented

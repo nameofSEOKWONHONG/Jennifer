@@ -1,12 +1,12 @@
 ﻿using eXtensionSharp;
-using Jennifer.Account.Data;
-using Jennifer.Account.Models;
-using Jennifer.Account.Models.Contracts;
+using Jennifer.Domain.Account;
+using Jennifer.Domain.Account.Contracts;
+using Jennifer.Domain.Database;
 using Jennifer.SharedKernel;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 
-namespace Jennifer.Account.Application.Options;
+namespace Jennifer.Account.Application.Options.Commands;
 
 public sealed record CreateOptionCommand(ENUM_ACCOUNT_OPTION type, string Value): ICommand<Result<int>>;
 public sealed class CreateOptionCommandHandler(

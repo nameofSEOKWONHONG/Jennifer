@@ -1,5 +1,6 @@
 ﻿using Jennifer.Account.Application.Roles.Contracts;
-using Jennifer.Account.Data;
+using Jennifer.Domain.Account;
+using Jennifer.Domain.Database;
 using Jennifer.SharedKernel;
 using Mediator;
 using Microsoft.EntityFrameworkCore;

@@ -19,12 +19,6 @@
         <PackageReference Include="Microsoft.Extensions.Caching.Hybrid" Version="9.5.0" />
         <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="9.0.5" />
         <PackageReference Include="Microsoft.AspNetCore.SignalR.StackExchangeRedis" Version="9.0.5" />
-        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.5" />        
-
-        <PackageReference Include="Ardalis.SmartEnum" Version="8.2.0" />
-        <PackageReference Include="Ardalis.SmartEnum.EFCore" Version="8.2.0" />
-        <PackageReference Include="Ardalis.SmartEnum.SystemTextJson" Version="8.1.0" />
-        
         
         <PackageReference Include="Microsoft.Azure.AppConfiguration.AspNetCore" Version="8.1.2" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.5" />
@@ -42,9 +36,14 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Jennifer.Domain\Jennifer.Domain.csproj" />
       <ProjectReference Include="..\Jennifer.External.OAuth\Jennifer.External.OAuth.csproj" />
       <ProjectReference Include="..\Jennifer.Infrastructure\Jennifer.Infrastructure.csproj" />
       <ProjectReference Include="..\Jennifer.SharedKernel\Jennifer.SharedKernel.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Data\" />
     </ItemGroup>
     
 </Project>

@@ -1,8 +1,8 @@
 ﻿using eXtensionSharp;
-using Jennifer.Account.Data;
-using Jennifer.Account.Models;
-using Jennifer.Account.Models.Contracts;
 using Jennifer.Account.Session.Abstracts;
+using Jennifer.Domain.Account;
+using Jennifer.Domain.Account.Contracts;
+using Jennifer.Domain.Database;
 using Jennifer.SharedKernel;
 using Mediator;
 using Microsoft.AspNetCore.Identity;
@@ -25,12 +25,13 @@ internal sealed class SignUpCommandHandler(
                 case true:
                     return await Result<Guid>.FailureAsync("Email already exists.");
                 case false:
-                    context.DomainEventPublisher.Enqueue(new EmailVerifyUserDomainEvent(exists));
+                    //TODO : 해결 해야 함.
+                    //context.DomainEventPublisher.Enqueue(new UserCompleteDomainEvent(exists));
                     return await Result<Guid>.SuccessAsync(exists.Id);
             }
         }
         
-        var user = User.Create(context, command.Email, command.UserName, command.PhoneNumber, ENUM_USER_TYPE.CUSTOMER);
+        var user = User.Create(context.DomainEventPublisher, command.Email, command.UserName, command.PhoneNumber, ENUM_USER_TYPE.CUSTOMER);
         user.PasswordHash = passwordHasher.HashPassword(user, command.Password);
         
         await dbContext.Users.AddAsync(user, cancellationToken);

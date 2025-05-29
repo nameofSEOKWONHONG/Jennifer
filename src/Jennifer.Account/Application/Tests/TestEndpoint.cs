@@ -1,7 +1,8 @@
 ﻿using Asp.Versioning;
 using eXtensionSharp;
 using FluentValidation;
-using Jennifer.Account.Data;
+using Jennifer.Domain.Account;
+using Jennifer.Domain.Database;
 using Jennifer.Infrastructure.Abstractions.ServiceCore;
 using Jennifer.SharedKernel;
 using Microsoft.AspNetCore.Builder;

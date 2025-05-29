@@ -1,13 +1,13 @@
 using eXtensionSharp;
 using Jennifer.Api;
 using Jennifer.Account;
-using Jennifer.Account.Data;
-using Jennifer.Infrastructure.Options;
+using Jennifer.Domain.Common;
+using Jennifer.SharedKernel;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
 using Scalar.AspNetCore;
 using Serilog;
-using JwtOptions = Jennifer.Infrastructure.Options.JwtOptions;
+using JwtOptions = Jennifer.SharedKernel.JwtOptions;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -1,8 +1,7 @@
-﻿using eXtensionSharp;
-using Jennifer.Account.Application.Auth.Contracts;
+﻿using Jennifer.Account.Application.Auth.Contracts;
 using Jennifer.Account.Application.Users.Filters;
-using Jennifer.Account.Data;
-using Jennifer.Account.Session.Abstracts;
+using Jennifer.Domain.Account;
+using Jennifer.Domain.Database;
 using Jennifer.SharedKernel;
 using LinqKit;
 using Mediator;
