@@ -2,5 +2,5 @@
 
 public interface IFetcher<TOut, in TIn>
 {
-    Task<TOut> FetchAsync(TIn input);
+    Task<TOut> FetchAsync(TIn sid);
 }

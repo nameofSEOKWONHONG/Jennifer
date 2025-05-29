@@ -29,8 +29,10 @@ internal sealed class SignOutCommandHandler(
         var result = await userManager.RemoveAuthenticationTokenAsync(user, loginProvider:"internal", tokenName:"refreshToken");
         if(!result.Succeeded) return await Result.FailureAsync("not found refreshToken");
 
-        var key = CachingConsts.UserCacheKey(user.Id);
-        await cache.RemoveAsync(key, cancellationToken);
+        var sidKey = CachingConsts.SidCacheKey(sid);
+        var userKey = CachingConsts.UserCacheKey(sid);
+        await cache.RemoveAsync(sidKey, cancellationToken);
+        await cache.RemoveAsync(userKey, cancellationToken);
         
         return await Result.SuccessAsync();
     }

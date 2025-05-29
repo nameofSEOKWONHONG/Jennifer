@@ -19,6 +19,7 @@
     <PackageVersion Include="Microsoft.AspNetCore.SignalR.StackExchangeRedis" Version="9.0.5" />
     <PackageVersion Include="Microsoft.Azure.AppConfiguration.AspNetCore" Version="8.1.2" />
     <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.5" />
+    <PackageVersion Include="NUlid" Version="1.7.3" />
     <PackageVersion Include="QRCoder" Version="1.6.0" />
     <PackageVersion Include="RabbitMQ.Client" Version="7.1.2" />
     <PackageVersion Include="Mediator.Abstractions" Version="3.0.0-preview.65" />
@@ -27,20 +28,17 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageVersion>
     <PackageVersion Include="ZLinq" Version="1.4.6" />
-    <PackageVersion Include="ZString" Version="2.6.0" />    
-    
+    <PackageVersion Include="ZString" Version="2.6.0" />
     <PackageVersion Include="Ardalis.SmartEnum" Version="8.2.0" />
     <PackageVersion Include="Ardalis.SmartEnum.EFCore" Version="8.2.0" />
     <PackageVersion Include="Ardalis.SmartEnum.SystemTextJson" Version="8.1.0" />
-
     <PackageVersion Include="eXtensionSharp" Version="1.0.2" />
     <PackageVersion Include="eXtensionSharp.Mongo" Version="0.0.3" />
     <PackageVersion Include="eXtensionSharp.AspNet" Version="0.0.3" />
-    
     <PackageVersion Include="Confluent.Kafka" Version="2.10.0" />
     <PackageVersion Include="Microsoft.Data.SqlClient" Version="5.1.6" />
     <PackageVersion Include="RabbitMQ.Client" Version="7.1.2" />
-    <PackageVersion Include="MailKit" Version="4.12.0" />    
+    <PackageVersion Include="MailKit" Version="4.12.0" />
     <PackageVersion Include="AWSSDK.SecretsManager" Version="4.0.0.2" />
     <PackageVersion Include="AWSSDK.SimpleSystemsManagement" Version="4.0.1.2" />
     <PackageVersion Include="Serilog.AspNetCore" Version="9.0.0" />
@@ -52,8 +50,7 @@
     <PackageVersion Include="FluentValidation" Version="12.0.0" />
     <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="12.0.0" />
     <PackageVersion Include="StackExchange.Redis" Version="2.8.37" />
-
-    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="9.0.4"/>
+    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="9.0.4" />
     <PackageVersion Include="Scalar.AspNetCore" Version="2.2.7" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.5">
       <PrivateAssets>all</PrivateAssets>

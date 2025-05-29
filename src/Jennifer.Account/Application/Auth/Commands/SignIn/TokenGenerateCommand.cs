@@ -2,9 +2,11 @@
 using Jennifer.Account.Application.Auth.Contracts;
 using Jennifer.Account.Application.Auth.Services.Abstracts;
 using Jennifer.Domain.Account;
+using Jennifer.Infrastructure.Session;
 using Jennifer.SharedKernel;
 using Mediator;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace Jennifer.Account.Application.Auth.Commands.SignIn;
 
@@ -12,7 +14,8 @@ internal sealed record TokenGenerateCommand(User User):ICommand<Result<TokenResp
 internal sealed class TokenGenerateCommandHandler(
     UserManager<User> userManager,
     RoleManager<Role> roleManager,
-    IJwtService jwtService      
+    IJwtService jwtService,
+    IDistributedCache cache
     ):ICommandHandler<TokenGenerateCommand, Result<TokenResponse>>
 {
     public async ValueTask<Result<TokenResponse>> Handle(TokenGenerateCommand command, CancellationToken cancellationToken)
@@ -42,9 +45,13 @@ internal sealed class TokenGenerateCommandHandler(
         var error = new ValidationError(result.Errors.Select(x => new Error(x.Code, x.Description))
             .ToArray());
         if (!result.Succeeded) return await Result<TokenResponse>.FailureAsync(error);
-        
+
+        var sid = UlidGenerator.Instance.GenerateString();
         var encodedRefreshToken = jwtService.ObjectToTokenString(refreshTokenObj);
-        var token = new TokenResponse(jwtService.GenerateJwtToken(command.User, userClaims.ToList(), roleClaims), encodedRefreshToken, isTwoFactor:command.User.TwoFactorEnabled);
+        var token = new TokenResponse(jwtService.GenerateJwtToken(sid, command.User, userClaims.ToList(), roleClaims), encodedRefreshToken, isTwoFactor:command.User.TwoFactorEnabled);
+
+        await cache.SetStringAsync(CachingConsts.SidCacheKey(sid), command.User.Id.ToString(), token: cancellationToken);
+        
         return await Result<TokenResponse>.SuccessAsync(token);
     }
 }

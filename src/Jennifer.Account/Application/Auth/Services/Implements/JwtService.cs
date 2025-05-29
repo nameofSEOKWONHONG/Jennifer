@@ -17,11 +17,11 @@ internal sealed class JwtService : IJwtService
     {
     }
     
-    public string GenerateJwtToken(User user, List<Claim> userClaims, List<Claim> roleClaims)
+    public string GenerateJwtToken(string sid, User user, List<Claim> userClaims, List<Claim> roleClaims)
     {
         var claims = new List<Claim>()
         {
-            new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+            new Claim(JwtRegisteredClaimNames.Sub, sid),
             new Claim("emailConfirmed", user.EmailConfirmed.ToString()),
             new Claim("cs", user.ConcurrencyStamp!)
         };

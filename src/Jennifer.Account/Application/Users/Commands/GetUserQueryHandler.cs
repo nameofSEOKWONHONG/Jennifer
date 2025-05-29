@@ -1,7 +1,7 @@
 ﻿using Jennifer.Account.Application.Auth.Contracts;
 using Jennifer.Account.Application.Users.Filters;
 using Jennifer.Domain.Account;
-using Jennifer.Domain.Database;
+using Jennifer.Infrastructure.Database;
 using Jennifer.SharedKernel;
 using LinqKit;
 using Mediator;

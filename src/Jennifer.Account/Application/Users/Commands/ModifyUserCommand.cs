@@ -1,7 +1,9 @@
 ﻿using eXtensionSharp;
 using FluentValidation;
+using Jennifer.Account.Session.Abstracts;
 using Jennifer.Domain.Account;
-using Jennifer.Domain.Database;
+using Jennifer.Infrastructure.Database;
+using Jennifer.Infrastructure.Extenstions;
 using Jennifer.SharedKernel;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
@@ -12,12 +14,15 @@ internal sealed record ModifyUserRequest(Guid UserId, string UserName, string Ph
 internal sealed record ModifyUserCommand(Guid UserId, string UserName, string PhoneNumber): ICommand<Result>;
 
 internal sealed class ModifyUserCommandHandler(
+    ISessionContext session,
     JenniferDbContext dbContext): ICommandHandler<ModifyUserCommand, Result>
 {
     public async ValueTask<Result> Handle(ModifyUserCommand command, CancellationToken cancellationToken)
     {
         var exists = await dbContext.Users.FirstOrDefaultAsync(x => x.Id == command.UserId, cancellationToken: cancellationToken);
         if(exists.xIsEmpty()) return await Result.FailureAsync("not found user");
+
+        await exists.AssignSession(session);
         
         exists.PhoneNumber = command.PhoneNumber;
         exists.UserName = command.UserName;

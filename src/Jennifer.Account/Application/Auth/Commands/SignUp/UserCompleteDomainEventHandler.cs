@@ -10,16 +10,16 @@ using Microsoft.Extensions.Logging;
 namespace Jennifer.Account.Application.Auth.Commands.SignUp;
 
 internal sealed class UserCompleteDomainEventHandler(ILogger<UserCompleteDomainEventHandler> logger,
-    IServiceExecutionBuilderFactory factory): IDomainEventHandler<UserCompleteDomainEvent>
+    IServiceExecutionBuilderFactory factory): INotificationHandler<UserCompleteDomainEvent>
 {
-    public async Task Handle(UserCompleteDomainEvent domainEvent, CancellationToken cancellationToken)
+    public async ValueTask Handle(UserCompleteDomainEvent notification, CancellationToken cancellationToken)
     {
-        logger.LogDebug("Domain Event:{UserId}", domainEvent.User.Id);
+        logger.LogDebug("Domain Event:{UserId}", notification.User.Id);
         
         Result result = null;
         var builder = factory.Create();
         await builder.Register<IVerifyCodeSendEmailService, VerifyCodeSendEmailRequest, Result>()
-            .Request(new VerifyCodeSendEmailRequest(domainEvent.User.Email, domainEvent.User.UserName,
+            .Request(new VerifyCodeSendEmailRequest(notification.User.Email, notification.User.UserName,
                 ENUM_EMAIL_VERIFICATION_TYPE.SIGN_UP_BEFORE))
             .Handle(r => result = r)
             .ExecuteAsync(cancellationToken);

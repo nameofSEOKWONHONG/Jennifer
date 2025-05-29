@@ -2,7 +2,7 @@
 using Jennifer.Account.Session.Abstracts;
 using Jennifer.Domain.Account;
 using Jennifer.Domain.Account.Contracts;
-using Jennifer.Domain.Database;
+using Jennifer.Infrastructure.Database;
 using Jennifer.SharedKernel;
 using Mediator;
 using Microsoft.AspNetCore.Identity;

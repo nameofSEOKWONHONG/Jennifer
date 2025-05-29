@@ -1,7 +1,6 @@
-﻿using System.Security.Claims;
-using eXtensionSharp;
+﻿using eXtensionSharp;
+using Jennifer.Account.Application.Auth.Commands.SignIn;
 using Jennifer.Account.Application.Auth.Contracts;
-using Jennifer.Account.Application.Auth.Services.Abstracts;
 using Jennifer.Domain.Account;
 using Jennifer.External.OAuth.Abstracts;
 using Jennifer.SharedKernel;
@@ -12,9 +11,8 @@ namespace Jennifer.Account.Application.Auth.Commands.ExternalOAuth;
 
 internal sealed class ExternalOAuthHandler(
     UserManager<User> userManager,
-    RoleManager<Role> roleManager,
     IExternalOAuthHandlerFactory externalOAuthHandlerFactory,
-    IJwtService jwtService): ICommandHandler<ExternalOAuthCommand, Result<TokenResponse>>
+    ISender sender): ICommandHandler<ExternalOAuthCommand, Result<TokenResponse>>
 {
 
     public async ValueTask<Result<TokenResponse>> Handle(ExternalOAuthCommand command, CancellationToken cancellationToken)
@@ -60,28 +58,6 @@ internal sealed class ExternalOAuthHandler(
             if (!linkResult.Succeeded) return null;
         }
 
-        var userClaims = await userManager.GetClaimsAsync(user);
-        var roles = await userManager.GetRolesAsync(user);
-        var roleClaims = new List<Claim>();
-        foreach (var roleName in roles)
-        {
-            roleClaims.Add(new Claim(ClaimTypes.Role, roleName));
-
-            var role = await roleManager.FindByNameAsync(roleName);
-            if (role != null)
-            {
-                var claims = await roleManager.GetClaimsAsync(role);
-                foreach (var claim in claims)
-                {
-                    roleClaims.Add(claim); // ClaimType/Value 그대로
-                }
-            }
-        }
-
-        var refreshToken = jwtService.GenerateRefreshToken();
-        var refreshTokenObj = new Services.Implements.RefreshToken(refreshToken, DateTime.UtcNow.AddDays(7), DateTime.UtcNow, user.Id.ToString());
-        await userManager.SetAuthenticationTokenAsync(user, loginProvider:"internal", tokenName:"refreshToken", tokenValue:refreshToken);
-        var token = new TokenResponse(jwtService.GenerateJwtToken(user, userClaims.ToList(), roleClaims), jwtService.ObjectToTokenString(refreshTokenObj), user.TwoFactorEnabled);
-        return await Result<TokenResponse>.SuccessAsync(token);
+        return await sender.Send(new TokenGenerateCommand(user), cancellationToken);
     }
 }

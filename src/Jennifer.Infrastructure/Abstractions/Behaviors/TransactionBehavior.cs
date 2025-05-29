@@ -14,6 +14,9 @@ public sealed class TransactionBehavior<TRequest, TResponse>(ITransactionDbConte
         //     return await next(message, cancellationToken);
 
         logger.LogDebug("Begin Transaction for {Command}", typeof(TRequest).Name);
+        
+        if(dbContext.Database.CurrentTransaction != null)
+            return await next(message, cancellationToken);
 
         await using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
         try

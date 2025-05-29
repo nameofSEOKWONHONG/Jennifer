@@ -4,6 +4,6 @@ namespace Jennifer.Infrastructure.Session.Abstracts;
 
 public interface IUserContext
 {
-    string UserId { get; }
+    string Sid { get; }
     Task<User> GetUserAsync();
 }

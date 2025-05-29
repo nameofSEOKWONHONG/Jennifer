@@ -15,7 +15,6 @@ using Jennifer.Account.Application.Tests;
 using Jennifer.Account.Application.Users;
 using Jennifer.Domain.Account;
 using Jennifer.Domain.Common;
-using Jennifer.Domain.Database;
 using Jennifer.External.OAuth.Contracts;
 using Jennifer.Infrastructure.Abstractions;
 using Jennifer.Infrastructure.Abstractions.Behaviors;

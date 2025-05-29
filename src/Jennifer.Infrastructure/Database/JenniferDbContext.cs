@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SmartEnum.EFCore;
 
-namespace Jennifer.Domain.Database;
+namespace Jennifer.Infrastructure.Database;
 
 public class JenniferDbContext : IdentityDbContext<User, Role, Guid, 
     UserClaim, 
@@ -42,6 +42,7 @@ public class JenniferDbContext : IdentityDbContext<User, Role, Guid,
         modelBuilder.ApplyConfiguration(new EmailVerificationCodeEntityConfiguration());
         modelBuilder.ApplyConfiguration(new OptionEntityConfiguration());
         modelBuilder.ApplyConfiguration(new AuditEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new KafkaDeadLetterConfiguration());
     }
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())

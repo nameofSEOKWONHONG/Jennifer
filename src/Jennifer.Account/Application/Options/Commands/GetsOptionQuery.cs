@@ -1,7 +1,7 @@
 ﻿using eXtensionSharp;
 using Jennifer.Domain.Account;
 using Jennifer.Domain.Account.Contracts;
-using Jennifer.Domain.Database;
+using Jennifer.Infrastructure.Database;
 using Jennifer.SharedKernel;
 using LinqKit;
 using Mediator;

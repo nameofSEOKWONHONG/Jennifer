@@ -1,3 +1,5 @@
-﻿namespace Jennifer.SharedKernel;
+﻿using Mediator;
 
-public interface IDomainEvent;
+namespace Jennifer.SharedKernel;
+
+public interface IDomainEvent: INotification;

@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace Jennifer.Domain.Database;
+namespace Jennifer.Infrastructure.Database;
 
 /// <summary>
 /// Represents a read-only version of a database context for managing application identity and account-related data.
