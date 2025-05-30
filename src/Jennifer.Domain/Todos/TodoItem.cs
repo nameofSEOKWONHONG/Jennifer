@@ -31,6 +31,8 @@ public sealed class TodoItem : IAuditable
             IsCompleted = isCompleted,
             CompletedAt = completedAt,
             Priority = priority,
+            CreatedOn = DateTimeOffset.UtcNow,
+            CreatedBy = userId.ToString(),
         };
     }
 }

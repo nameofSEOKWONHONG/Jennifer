@@ -17,7 +17,7 @@ public sealed class GetsTodoQueryHandler(
     public async ValueTask<PaginatedResult<TodoItemDto>> Handle(GetsTodoQuery query, CancellationToken cancellationToken)
     {
         var user = await session.User.GetAsync();
-        var queryable = dbContext.TodoItems.AsNoTracking().Where(m => m.Id == user.Id);
+        var queryable = dbContext.TodoItems.AsNoTracking().Where(m => m.UserId == user.Id);
         var total = await queryable.CountAsync(cancellationToken: cancellationToken);
         var items = await queryable
             .Select(m => new TodoItemDto(m.Id, m.UserId, m.Description, m.DueDate, m.Labels, m.IsCompleted, m.CompletedAt, m.Priority))

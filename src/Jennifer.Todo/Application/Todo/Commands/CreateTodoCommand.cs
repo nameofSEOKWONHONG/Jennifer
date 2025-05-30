@@ -6,6 +6,7 @@ using Jennifer.Infrastructure.Session.Abstracts;
 using Jennifer.SharedKernel;
 using Jennifer.Todo.Application.Todo.Contracts;
 using Mediator;
+using Microsoft.EntityFrameworkCore;
 
 namespace Jennifer.Todo.Application.Todo.Commands;
 
@@ -18,8 +19,8 @@ public sealed class CreateTodoCommandHandler(
     public async ValueTask<Result<Guid>> Handle(CreateTodoCommand command, CancellationToken cancellationToken)
     {
         var user = await session.User.GetAsync();
-        var exists = dbContext.TodoItems.Any(m => m.Id == command.Item.Id && m.UserId == user.Id);
-        if(exists.xIsNotEmpty()) return await Result<Guid>.FailureAsync("already exists");
+        var exists = await dbContext.TodoItems.AnyAsync(m => m.Id == command.Item.Id && m.UserId == user.Id, cancellationToken: cancellationToken);
+        if(exists == true) return await Result<Guid>.FailureAsync("already exists");
         
         var newTodoItem = TodoItem.Create(user.Id, 
             command.Item.Description, 

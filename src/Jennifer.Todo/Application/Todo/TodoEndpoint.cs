@@ -28,26 +28,31 @@ public static class Endpoint
         group.MapGet("/", async ([AsParameters]GetsTodoRequest request, ISender sender, CancellationToken cancellationToken) =>
                 await sender.Send(new GetsTodoQuery(request.Description, request.PageNo, request.PageSize),
                     cancellationToken))
+                .MapToApiVersion(1)
             .WithName("GetsTodo")
             .WithDescription("");
         
         group.MapGet("/{id}", async ([AsParameters]GetTodoRequest request, ISender sender, CancellationToken cancellationToken) =>
             await sender.Send(new GetTodoQuery(request.Id), cancellationToken))
+            .MapToApiVersion(1)
             .WithName("GetTodo")
             .WithDescription("");
         
         group.MapPost("/", async ([FromBody]TodoItemDto dto, ISender sender, CancellationToken cancellationToken) =>
             await sender.Send(new CreateTodoCommand(dto), cancellationToken))
+            .MapToApiVersion(1)
             .WithName("CreateTodo")
             .WithDescription("");
         
         group.MapPut("/", async ([FromBody]TodoItemDto dto, ISender sender, CancellationToken cancellationToken) =>
             await sender.Send(new UpdateTodoCommand(dto), cancellationToken))
+            .MapToApiVersion(1)
             .WithName("UpdateTodo")
             .WithDescription("");
         
         group.MapDelete("/{id}", async (Guid id, ISender sender, CancellationToken cancellationToken) =>
             await sender.Send(new RemoveTodoItemCommand(id), cancellationToken))
+            .MapToApiVersion(1)
             .WithName("RemoveTodo")
             .WithDescription("");
     }

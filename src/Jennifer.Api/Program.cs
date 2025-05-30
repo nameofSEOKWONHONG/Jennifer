@@ -61,13 +61,20 @@ builder.Services.AddMediator(options =>
         typeof(Jennifer.Account.DependencyInjection).Assembly,
         typeof(Jennifer.Todo.DependencyInjection).Assembly,
     ];
+    options.PipelineBehaviors =
+    [
+        typeof(DomainEventBehavior<,>),
+        typeof(TransactionBehavior<,>),
+        typeof(ValidationBehavior<,>)
+    ];
 });
 //Registered behaviors are executed in order
 //(e.g., DomainEventBehavior -> ValidationBehavior -> TransactionBehavior)
 //(e.g., TransactionBehavior -> ValidationBehavior -> DomainEventBehavior)
-builder.Services.AddScoped(typeof(IPipelineBehavior<,>), typeof(DomainEventBehavior<,>));
-builder.Services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
-builder.Services.AddScoped(typeof(IPipelineBehavior<,>), typeof(TransactionBehavior<,>));
+// builder.Services.AddScoped(typeof(IPipelineBehavior<,>), typeof(DomainEventBehavior<,>));
+// builder.Services.AddScoped(typeof(IPipelineBehavior<,>), typeof(TransactionBehavior<,>));
+// builder.Services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+
 builder.Services.AddValidatorsFromAssemblyContaining<SignUpAdminCommandValidator>();
 builder.Services.AddScoped<IDomainEventPublisher, DomainEventPublisher>();
 builder.Services.AddSingleton<IIpBlockService, IpBlockService>();
