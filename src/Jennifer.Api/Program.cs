@@ -40,14 +40,10 @@ var smtpOptions = new EmailSmtpOptions(
     builder.Configuration["SMTP_PASSWORD"]
 );
 
-var options = new JenniferOptions("account", 
-    builder.Configuration["SQLSERVER_CONNECTION"], 
-    builder.Configuration["MONGODB_CONNECTION"], 
+var options = new JenniferOptions("account",
     cryptoOptions, 
     jwtOptions,
     smtpOptions);
-
-
 
 // Add jennifer account manager
 builder.Services.AddJennifer(options,
@@ -79,7 +75,7 @@ builder.Services.AddJennifer(options,
     // Add jennifer mongodb
     .WithJenniferMongodb(builder.Configuration["MONGODB_CONNECTION"])
     // Add jennifer email
-    .WithJenniferMailService();
+    .WithJenniferMailService(builder.Configuration["KAFKA_CONNECTION"]);
 
 var app = builder.Build();
 

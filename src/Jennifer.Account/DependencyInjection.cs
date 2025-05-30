@@ -1,5 +1,7 @@
 ﻿using System.IO.Compression;
+using System.Net;
 using System.Text;
+using Confluent.Kafka;
 using eXtensionSharp.Mongo;
 using FluentValidation;
 using Jennifer.Account.Application.Auth.Commands.SignUp;
@@ -152,11 +154,6 @@ public static class DependencyInjection
         services.AddTestService();
         services.AddSessionService();
         services.AddExternalOAuthHandler();
-        services.AddJMongoDb(JenniferOptionSingleton.Instance.Options.MongodbConnectionString, config =>
-        {
-            config.AddInitializer<ExternalOAuthDocumentConfiguration>();
-            config.AddInitializer<EmailSendResultDocumentConfiguration>();
-        });
 
         #endregion
 
@@ -289,10 +286,36 @@ public static class DependencyInjection
     /// </summary>
     /// <param name="services">The service collection to which the Jennifer.Mail services will be added.
     /// This includes a singleton registration for email queuing and a hosted service for email sending operations.</param>
-    public static void WithJenniferMailService(this IServiceCollection services)
+    public static void WithJenniferMailService(this IServiceCollection services, string kafkaConnectionString)
     {
-        services.AddSingleton<IEmailQueue, EmailQueue>();
-        services.AddHostedService<EmailSendService>();
+        // services.AddSingleton<IEmailQueue, EmailQueue>();
+        // services.AddHostedService<EmailSendService>();
+        services.AddHostedService<EmailConsumerService>();
+        services.AddSingleton<IProducer<string, string>>(sp =>
+        {
+            var config = new ProducerConfig
+            {
+                BootstrapServers = kafkaConnectionString,
+                ClientId = Dns.GetHostName(),
+                Acks = Acks.All, // 메시지 손실 방지
+                EnableIdempotence = true, // 중복 방지 (선택 사항)
+            };
+            return new ProducerBuilder<string, string>(config).Build();
+        });
+        services.AddSingleton<IConsumer<string, string>>(sp =>
+        {
+            var config = new ConsumerConfig()
+            {
+                BootstrapServers = kafkaConnectionString,
+                GroupId = "jennifer-consumer-group",
+                AutoOffsetReset = AutoOffsetReset.Earliest,
+                EnableAutoCommit = false,
+                EnableAutoOffsetStore = false,
+                ClientId = Dns.GetHostName(),
+                SecurityProtocol = SecurityProtocol.Plaintext
+            };
+            return new ConsumerBuilder<string, string>(config).Build();
+        });
     }
 
     /// <summary>

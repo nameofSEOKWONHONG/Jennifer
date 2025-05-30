@@ -59,27 +59,24 @@ public class EmailSmtpOptions
 public class JenniferOptions
 {
     public string Schema { get;  }
-    public string ConnectionString { get;  }
-    public string MongodbConnectionString { get;  }
     public JwtOptions Jwt { get;  }
     public CryptoOptions Crypto { get;  }
     
     public EmailSmtpOptions EmailSmtp { get;  }
 
-    public JenniferOptions(string schema, 
-        string connectionString, 
-        string mongodbConnectionString,
+    public JenniferOptions(string schema,
         CryptoOptions cryptoOptions, 
         JwtOptions jwtOptions,
         EmailSmtpOptions emailSmtpOptions)
     {
-        if(schema is null) throw new ArgumentNullException(nameof(schema));
-        if(jwtOptions  is null) throw new ArgumentNullException(nameof(JwtOptions));
-        if(cryptoOptions is null) throw new ArgumentNullException(nameof(CryptoOptions));
+        ArgumentNullException.ThrowIfNull(schema);
+        
+        ArgumentNullException.ThrowIfNull(cryptoOptions);
+        ArgumentNullException.ThrowIfNull(jwtOptions);
+        ArgumentNullException.ThrowIfNull(emailSmtpOptions);
         
         this.Schema = schema;
-        this.ConnectionString = connectionString;
-        this.MongodbConnectionString = mongodbConnectionString;
+        
         this.Jwt = jwtOptions;
         this.Crypto = cryptoOptions;
         this.EmailSmtp = emailSmtpOptions;

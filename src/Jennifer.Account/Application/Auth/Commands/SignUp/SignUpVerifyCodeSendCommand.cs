@@ -1,23 +1,21 @@
 ﻿using Confluent.Kafka;
 using eXtensionSharp;
-using Jennifer.Account.Application.Auth.Contracts;
-using Jennifer.Account.Application.Auth.Services.Abstracts;
 using Jennifer.Domain.Account;
 using Jennifer.Domain.Account.Contracts;
-using Jennifer.Infrastructure.Abstractions.ServiceCore;
 using Jennifer.Infrastructure.Database;
 using Jennifer.Infrastructure.Email;
 using Jennifer.SharedKernel;
+using Mediator;
 using Microsoft.EntityFrameworkCore;
 
-namespace Jennifer.Account.Application.Auth.Services.Implements;
+namespace Jennifer.Account.Application.Auth.Commands.SignUp;
 
-internal sealed class VerifyCodeSendEmailService(
+internal sealed record SignUpVerifyCodeSendCommand(string Email, string UserName, ENUM_EMAIL_VERIFY_TYPE Type):ICommand<Result>;
+internal sealed class SignUpVerifyCodeSendCommandHandler(
     JenniferDbContext dbContext,
-    IProducer<string, string> producer) : ServiceBase<VerifyCodeSendEmailRequest, Result>, 
-    IVerifyCodeSendEmailService {
-    
-    protected override async Task<Result> HandleAsync(VerifyCodeSendEmailRequest request, CancellationToken cancellationToken)
+    IProducer<string, string> producer):ICommandHandler<SignUpVerifyCodeSendCommand, Result>
+{
+    public async ValueTask<Result> Handle(SignUpVerifyCodeSendCommand command, CancellationToken cancellationToken)
     {
         var code = new Random().Next(100000, 999999).ToString();
         var emailSubject = "Jennifer 이메일 인증 코드 안내";
@@ -47,8 +45,8 @@ Jennifer";
 
         await dbContext.EmailVerificationCodes.AddAsync(new EmailVerificationCode()
         {
-            Email = request.Email,
-            Type = request.Type,
+            Email = command.Email,
+            Type = command.Type,
             Code = code,
             FailedCount = 0,
             ExpiresAt = DateTimeOffset.UtcNow.AddMinutes(30),
@@ -57,19 +55,19 @@ Jennifer";
         }, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        var emailBody = string.Format(emailFormat, request.UserName.xValue<string>(request.Email), code);
+        var emailBody = string.Format(emailFormat, command.UserName.xValue<string>(command.Email), code);
         var mail = new EmailMessageBuilder()
-            .To(request.UserName.xIsEmpty().xValue<string>(request.Email), request.Email)
+            .To(command.UserName.xIsEmpty().xValue<string>(command.Email), command.Email)
             .Subject(emailSubject)
             .Body(emailBody)
             .IsHtml(false)
             .Build();
-        
+
         var message = new Message<string, string>();
         message.Key = Guid.NewGuid().ToString();
         message.Value = mail.xSerialize();
         await producer.ProduceAsync("email", message, cancellationToken);
-
+        
         return await Result.SuccessAsync();
     }
 }

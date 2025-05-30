@@ -1,4 +1,5 @@
 ﻿using Confluent.Kafka;
+using eXtensionSharp;
 using Jennifer.Domain.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,13 +23,10 @@ public abstract class KafkaConsumerServiceBase<TService, TDbContext>(
     ILogger<TService> logger,
     IConsumer<string, string> consumer,
     IServiceScopeFactory serviceScopeFactory,
-    string topicName)
-    : BackgroundService
+    string topicName) : BackgroundService
     where TService : class
     where TDbContext : DbContext
 {
-    protected readonly ILogger<TService> logger = logger;
-
     protected sealed override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         consumer.Subscribe(topicName);
@@ -37,32 +35,40 @@ public abstract class KafkaConsumerServiceBase<TService, TDbContext>(
         {
             try
             {
-                var consumeResult = consumer.Consume(stoppingToken);
-                await using var scope = serviceScopeFactory.CreateAsyncScope();
-                var dbContext = scope.ServiceProvider.GetRequiredService<TDbContext>();
+                var consumeResult = consumer.Consume(TimeSpan.FromMilliseconds(100));
+                if (consumeResult.xIsNotEmpty())
+                {
+                    await using var scope = serviceScopeFactory.CreateAsyncScope();
+                    var dbContext = scope.ServiceProvider.GetRequiredService<TDbContext>();
 
-                try
-                {
-                    await ConsumeAsync(dbContext, consumeResult, stoppingToken);
-                }
-                catch (Exception ex)
-                {
-                    await dbContext.Set<KafkaDeadLetter>()
-                        .AddAsync(new KafkaDeadLetter()
-                        {
-                            Topic = consumeResult.Topic,
-                            Partition = consumeResult.Partition,
-                            Offset = consumeResult.Offset,
-                            Key = consumeResult.Message.Key,
-                            Value = consumeResult.Message.Value,
-                            ErrorMessage = ex.Message
-                        }, stoppingToken);
-                    await dbContext.SaveChangesAsync(stoppingToken);
+                    try
+                    {
+                        await ConsumeAsync(scope.ServiceProvider, consumeResult, stoppingToken);
+                    }
+                    catch (Exception ex)
+                    {
+                        await dbContext.Set<KafkaDeadLetter>()
+                            .AddAsync(new KafkaDeadLetter()
+                            {
+                                Topic = consumeResult.Topic,
+                                Partition = consumeResult.Partition,
+                                Offset = consumeResult.Offset,
+                                Key = consumeResult.Message.Key,
+                                Value = consumeResult.Message.Value,
+                                ErrorMessage = ex.Message
+                            }, stoppingToken);
+                        await dbContext.SaveChangesAsync(stoppingToken);
                     
-                    logger.LogError(ex, "Kafka Consumer Inner Error");
+                        logger.LogError(ex, "Kafka Consumer Inner Error");
+                    }
                 }
-
-                consumer.Commit(consumeResult);
+                
+                if (consumeResult.xIsNotEmpty())
+                {
+                    logger.LogInformation("Consumed message '{Message}' at: '{Offset}'.",
+                        consumeResult.Message.Value, consumeResult.Offset);
+                    consumer.Commit(consumeResult);    
+                }
             }
             catch (Exception ex)
             {
@@ -73,5 +79,5 @@ public abstract class KafkaConsumerServiceBase<TService, TDbContext>(
         }
     }
 
-    protected abstract Task ConsumeAsync(TDbContext dbContext, ConsumeResult<string, string> consumeResult, CancellationToken cancellationToken);
+    protected abstract Task ConsumeAsync(IServiceProvider service, ConsumeResult<string, string> consumeResult, CancellationToken cancellationToken);
 }

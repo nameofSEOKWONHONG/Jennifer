@@ -1,5 +1,4 @@
-﻿using Jennifer.Infrastructure.Abstractions.DomainEvents;
-using Jennifer.SharedKernel;
+﻿using Jennifer.SharedKernel;
 using Mediator;
 using Microsoft.Extensions.Logging;
 

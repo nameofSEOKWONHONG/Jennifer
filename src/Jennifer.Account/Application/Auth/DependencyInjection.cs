@@ -1,6 +1,4 @@
-﻿using FluentValidation;
-using Jennifer.Account.Application.Auth.Contracts;
-using Jennifer.Account.Application.Auth.Services.Abstracts;
+﻿using Jennifer.Account.Application.Auth.Services.Abstracts;
 using Jennifer.Account.Application.Auth.Services.Implements;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -14,6 +12,5 @@ internal static class DependencyInjection
         services.AddScoped<IVerifyCodeSendEmailService, VerifyCodeSendEmailService>();
         services.AddScoped<IVerifyCodeConfirmService, VerifyCodeConfirmService>();
         // services.AddScoped<IConfigurationAddService, ConfigurationAddService>();
-        services.AddValidatorsFromAssemblyContaining<UserDtoValidator>(); // 자동 검증 필터 추가
     }
 }

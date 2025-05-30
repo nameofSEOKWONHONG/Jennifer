@@ -11,7 +11,7 @@ namespace Jennifer.Domain.Account.Contracts;
 /// This class is a smart enumeration that provides predefined values representing different email verification types.
 /// It utilizes the Ardalis.SmartEnum library to simplify working with constants and ensure type safety.
 /// </remarks>
-[JsonConverter(typeof(SmartEnumValueConverter<ENUM_EMAIL_VERIFY_TYPE, int>))]
+[JsonConverter(typeof(SmartEnumNameConverter<ENUM_EMAIL_VERIFY_TYPE, int>))]
 // ReSharper disable once InconsistentNaming
 public class ENUM_EMAIL_VERIFY_TYPE(string name, int value) : SmartEnum<ENUM_EMAIL_VERIFY_TYPE, int>(name, value)
 {
