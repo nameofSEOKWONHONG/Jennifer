@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Infrastructure;
 
-namespace  Jennifer.Domain.Common;
+namespace  Jennifer.Infrastructure.Database;
 
 
 public interface ITransactionDbContext

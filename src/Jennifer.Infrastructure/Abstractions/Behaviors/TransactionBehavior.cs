@@ -1,4 +1,5 @@
 ﻿using Jennifer.Domain.Common;
+using Jennifer.Infrastructure.Database;
 using Mediator;
 using Microsoft.Extensions.Logging;
 
