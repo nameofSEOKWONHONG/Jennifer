@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using eXtensionSharp;
 using Jennifer.Infrastructure.Session;
+using Jennifer.Infrastructure.Session.Abstracts;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Distributed;
 
@@ -13,13 +14,18 @@ public class SessionContextMiddleware
     public SessionContextMiddleware(RequestDelegate next) => _next = next;
 
     public async Task InvokeAsync(HttpContext context,
-        IDistributedCache cache)
+        ISessionContext session)
     {
         await _next(context);
         
         if (context.User.Identity?.IsAuthenticated == true)
         {
-            //something to do...
+            var emailConfirmed = context.User.FindFirstValue("emailConfirmed").xValue<bool>();
+            if(!emailConfirmed) throw new Exception("Email is not confirmed");
+
+            var cs = context.User.FindFirstValue("cs");
+            var user = await session.User.GetAsync();
+            if(cs != user.ConcurrencyStamp) throw new Exception("ConcurrencyStamp is not matched");
         }        
     }
 }

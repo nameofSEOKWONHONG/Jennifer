@@ -7,28 +7,29 @@ using Microsoft.Extensions.Caching.Hybrid;
 
 namespace Jennifer.Infrastructure.Session.Implements;
 
-public sealed class UserFetcher(IDistributedCache cache,
+public sealed class UserCacheProvider(IDistributedCache cache,
     HybridCache hybridCache,
-    JenniferReadOnlyDbContext dbContext) : IUserFetcher
+    JenniferReadOnlyDbContext dbContext) : IUserCacheProvider
 {
-    private UserFetchResult _cached;
-    public async Task<UserFetchResult> FetchAsync(string sid)
+    private UserCacheResult _cached;
+    public async Task<UserCacheResult> GetAsync(string sid)
     {
         if (_cached is not null) return _cached;
         
         var value = await cache.GetStringAsync(CachingConsts.SidCacheKey(sid));
-        async ValueTask<UserFetchResult> FetchUserFromDatabase(CancellationToken token) =>
+        async ValueTask<UserCacheResult> FetchFromDatabase(CancellationToken token) =>
             await dbContext.Users.Where(m => m.Id == Guid.Parse(value))
-                .Select(m => new UserFetchResult
+                .Select(m => new UserCacheResult
                 {
                     Id = m.Id,
                     UserName = m.UserName,
                     Email = m.Email,
-                    PhoneNumber = m.PhoneNumber
+                    PhoneNumber = m.PhoneNumber,
+                    ConcurrencyStamp = m.ConcurrencyStamp
                 })
                 .FirstAsync(cancellationToken: token);
         
-        _cached = await hybridCache.GetOrCreateAsync(CachingConsts.UserCacheKey(value), FetchUserFromDatabase);
+        _cached = await hybridCache.GetOrCreateAsync(CachingConsts.UserCacheKey(value), FetchFromDatabase);
         
         return _cached;
     }

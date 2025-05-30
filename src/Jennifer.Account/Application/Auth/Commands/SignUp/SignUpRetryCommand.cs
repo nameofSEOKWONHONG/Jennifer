@@ -19,8 +19,8 @@ public sealed class SignUpRetryCommandHandler(
         Result result = null;
         
         var builder = factory.Create();
-        await builder.Register<IVerifyCodeSendEmailService, VerifyCodeSendEmailRequest, Result>()
-            .Request(new VerifyCodeSendEmailRequest(command.Email, command.Email,
+        await builder.Register<IEmailConfirmSendService, EmailConfirmSendRequest, Result>()
+            .Request(new EmailConfirmSendRequest(command.Email, command.Email,
                 ENUM_EMAIL_VERIFY_TYPE.SIGN_UP_BEFORE))
             .Handle(r => result = r)
             .ExecuteAsync(cancellationToken);

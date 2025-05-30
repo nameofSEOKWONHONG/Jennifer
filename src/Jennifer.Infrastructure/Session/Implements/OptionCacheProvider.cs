@@ -7,18 +7,18 @@ using Microsoft.Extensions.Caching.Hybrid;
 
 namespace Jennifer.Infrastructure.Session.Implements;
 
-public sealed class OptionFetcher(
+public sealed class OptionCacheProvider(
     HybridCache hybridCache,
-    JenniferReadOnlyDbContext dbContext) : IOptionFetcher
+    JenniferReadOnlyDbContext dbContext) : IOptionCacheProvider
 {
-    private OptionFetchResult[] _cached;
-    public async Task<OptionFetchResult[]> FetchAsync(string sid)
+    private OptionCacheResult[] _cached;
+    public async Task<OptionCacheResult[]> GetAsync(string sid)
     {
         if (_cached is not null) return _cached;
         
-        async ValueTask<OptionFetchResult[]> FetchFromDatabase(CancellationToken token) =>
+        async ValueTask<OptionCacheResult[]> FetchFromDatabase(CancellationToken token) =>
             await dbContext.Options
-                .Select(m => new OptionFetchResult
+                .Select(m => new OptionCacheResult
                 {
                     Type = m.Type,
                     Value = m.Value

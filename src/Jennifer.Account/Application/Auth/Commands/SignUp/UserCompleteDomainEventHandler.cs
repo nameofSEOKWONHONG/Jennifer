@@ -18,8 +18,8 @@ public sealed class UserCompleteDomainEventHandler(ILogger<UserCompleteDomainEve
         
         Result result = null;
         var builder = factory.Create();
-        await builder.Register<IVerifyCodeSendEmailService, VerifyCodeSendEmailRequest, Result>()
-            .Request(new VerifyCodeSendEmailRequest(notification.User.Email, notification.User.UserName,
+        await builder.Register<IEmailConfirmSendService, EmailConfirmSendRequest, Result>()
+            .Request(new EmailConfirmSendRequest(notification.User.Email, notification.User.UserName,
                 ENUM_EMAIL_VERIFY_TYPE.SIGN_UP_BEFORE))
             .Handle(r => result = r)
             .ExecuteAsync(cancellationToken);

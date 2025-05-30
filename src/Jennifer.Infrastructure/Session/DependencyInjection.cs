@@ -10,14 +10,14 @@ public static class DependencyInjection
     public static void AddSessionService(this IServiceCollection services)
     {
         //add fetcher
-        services.AddScoped<IUserFetcher, UserFetcher>();
-        services.AddScoped<IOptionFetcher, OptionFetcher>();
-        services.AddScoped<IUserOptionFetcher, UserOptionFetcher>();
+        services.AddScoped<IUserCacheProvider, UserCacheProvider>();
+        services.AddScoped<IOptionCacheProvider, OptionCacheProvider>();
+        services.AddScoped<IUserOptionCacheProvider, UserOptionCacheProvider>();
         
         //add context
-        services.AddKeyedScoped<IUnifiedContext<UserFetchResult>, UserContext>(SessionContextKeyedServiceName.User);
-        services.AddKeyedScoped<IUnifiedContext<UserOptionFetchResult[]>, UserOptionContext>(SessionContextKeyedServiceName.UserOption);
-        services.AddKeyedScoped<IUnifiedContext<OptionFetchResult[]>, OptionContext>(SessionContextKeyedServiceName.Option);
+        services.AddKeyedScoped<IUnifiedContext<UserCacheResult>, UserContext>(SessionContextKeyedServiceName.User);
+        services.AddKeyedScoped<IUnifiedContext<UserOptionCacheResult[]>, UserOptionContext>(SessionContextKeyedServiceName.UserOption);
+        services.AddKeyedScoped<IUnifiedContext<OptionCacheResult[]>, OptionContext>(SessionContextKeyedServiceName.Option);
         
         services.AddScoped<ISessionContext, SessionContext>();
     }

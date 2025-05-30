@@ -10,12 +10,12 @@ namespace Jennifer.Account.Application.Auth.Commands.RefreshToken;
 
 public sealed class RefreshTokenCommandHandler(
     UserManager<User> userManager,
-    IJwtService jwtService,
+    ITokenService tokenService,
     ISender sender):ICommandHandler<RefreshTokenCommand, Result<TokenResponse>>
 {
     public async ValueTask<Result<TokenResponse>> Handle(RefreshTokenCommand command, CancellationToken cancellationToken)
     {
-        var refreshTokenObj = jwtService.TokenStringToObject(command.Token);
+        var refreshTokenObj = tokenService.TokenStringToObject(command.Token);
         if(refreshTokenObj is null) 
             return await Result<TokenResponse>.FailureAsync("not valid token.");
         

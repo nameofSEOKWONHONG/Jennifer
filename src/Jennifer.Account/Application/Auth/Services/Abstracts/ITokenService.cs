@@ -4,7 +4,7 @@ using Jennifer.Domain.Accounts;
 
 namespace Jennifer.Account.Application.Auth.Services.Abstracts;
 
-public interface IJwtService
+public interface ITokenService
 {
     /// <summary>
     /// Generates a JWT (JSON Web Token) based on the provided user, user-specific claims, and role-specific claims.

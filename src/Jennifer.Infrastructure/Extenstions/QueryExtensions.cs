@@ -1,4 +1,5 @@
 ﻿using eXtensionSharp;
+using Jennifer.Infrastructure.Session;
 using Jennifer.Infrastructure.Session.Abstracts;
 using Jennifer.SharedKernel;
 

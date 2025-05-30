@@ -4,37 +4,37 @@ using Jennifer.Infrastructure.Session.Abstracts;
 using Jennifer.Infrastructure.Session.Contracts;
 using Microsoft.AspNetCore.Http;
 
-namespace Jennifer.Infrastructure.Session.Implements;
+namespace Jennifer.Infrastructure.Session;
 
 public sealed class UserContext(IHttpContextAccessor httpContextAccessor,
-    IUserFetcher userFetcher) : IUnifiedContext<UserFetchResult>
+    IUserCacheProvider userCacheProvider) : IUnifiedContext<UserCacheResult>
 {
     public string Sid => httpContextAccessor.HttpContext.xGetClaim<string>(ClaimTypes.NameIdentifier);
-    public async Task<UserFetchResult> GetAsync()
-        => await userFetcher.FetchAsync(this.Sid);
+    public async Task<UserCacheResult> GetAsync()
+        => await userCacheProvider.GetAsync(this.Sid);
 
     public async Task ClearAsync()
-        => await userFetcher.ClearAsync(this.Sid);
+        => await userCacheProvider.ClearAsync(this.Sid);
 }
 
 public sealed class OptionContext(
     IHttpContextAccessor httpContextAccessor,
-    IOptionFetcher optionFetcher) : IUnifiedContext<OptionFetchResult[]>
+    IOptionCacheProvider optionProvider) : IUnifiedContext<OptionCacheResult[]>
 {
     public string Sid => httpContextAccessor.HttpContext.xGetClaim<string>(ClaimTypes.NameIdentifier);
-    public async Task<OptionFetchResult[]> GetAsync() => await optionFetcher.FetchAsync(this.Sid);
+    public async Task<OptionCacheResult[]> GetAsync() => await optionProvider.GetAsync(this.Sid);
 
-    public async Task ClearAsync() => await optionFetcher.ClearAsync(this.Sid);
+    public async Task ClearAsync() => await optionProvider.ClearAsync(this.Sid);
 }
 
 public sealed class UserOptionContext(
     IHttpContextAccessor httpContextAccessor,
-    IUserOptionFetcher userOptionFetcher) : IUnifiedContext<UserOptionFetchResult[]>
+    IUserOptionCacheProvider userOptionCacheProvider) : IUnifiedContext<UserOptionCacheResult[]>
 {
     public string Sid => httpContextAccessor.HttpContext.xGetClaim<string>(ClaimTypes.NameIdentifier);
-    public async Task<UserOptionFetchResult[]> GetAsync()
-        => await userOptionFetcher.FetchAsync(this.Sid);
+    public async Task<UserOptionCacheResult[]> GetAsync()
+        => await userOptionCacheProvider.GetAsync(this.Sid);
 
     public async Task ClearAsync()
-        => await userOptionFetcher.ClearAsync(this.Sid);
+        => await userOptionCacheProvider.ClearAsync(this.Sid);
 }

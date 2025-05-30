@@ -2,6 +2,7 @@
 using Jennifer.Domain.Accounts;
 using Jennifer.Domain.Accounts.Contracts;
 using Jennifer.Infrastructure.Database;
+using Jennifer.Infrastructure.Session;
 using Jennifer.Infrastructure.Session.Abstracts;
 using Jennifer.SharedKernel;
 using Mediator;

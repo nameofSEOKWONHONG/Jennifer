@@ -1,7 +1,7 @@
 ﻿namespace Jennifer.Infrastructure.Session.Abstracts;
 
-public interface IFetcher<TOut, in TIn>
+public interface ICacheProvider<TOut, in TIn>
 {
-    Task<TOut> FetchAsync(TIn sid);
+    Task<TOut> GetAsync(TIn sid);
     Task ClearAsync(TIn sid);
 }

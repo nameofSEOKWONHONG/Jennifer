@@ -3,7 +3,7 @@ using Jennifer.Infrastructure.Session.Contracts;
 using Jennifer.SharedKernel;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Jennifer.Infrastructure.Session.Implements;
+namespace Jennifer.Infrastructure.Session;
 
 public static class SessionContextKeyedServiceName
 {
@@ -14,16 +14,16 @@ public static class SessionContextKeyedServiceName
 
 public class SessionContext : ISessionContext
 {
-    public IUnifiedContext<UserFetchResult> User { get; }
-    public IUnifiedContext<UserOptionFetchResult[]> UserOption { get; }
-    public IUnifiedContext<OptionFetchResult[]> Option { get; }
+    public IUnifiedContext<UserCacheResult> User { get; }
+    public IUnifiedContext<UserOptionCacheResult[]> UserOption { get; }
+    public IUnifiedContext<OptionCacheResult[]> Option { get; }
     public IDomainEventPublisher DomainEventPublisher { get; }
     public bool IsAuthenticated => !string.IsNullOrEmpty(User?.Sid);
 
     public SessionContext(
-        [FromKeyedServices(SessionContextKeyedServiceName.User)] IUnifiedContext<UserFetchResult> user,
-        [FromKeyedServices(SessionContextKeyedServiceName.UserOption)] IUnifiedContext<UserOptionFetchResult[]> userOption,
-        [FromKeyedServices(SessionContextKeyedServiceName.Option)] IUnifiedContext<OptionFetchResult[]> option,
+        [FromKeyedServices(SessionContextKeyedServiceName.User)] IUnifiedContext<UserCacheResult> user,
+        [FromKeyedServices(SessionContextKeyedServiceName.UserOption)] IUnifiedContext<UserOptionCacheResult[]> userOption,
+        [FromKeyedServices(SessionContextKeyedServiceName.Option)] IUnifiedContext<OptionCacheResult[]> option,
         IDomainEventPublisher domainEventPublisher)
     {
         User = user;

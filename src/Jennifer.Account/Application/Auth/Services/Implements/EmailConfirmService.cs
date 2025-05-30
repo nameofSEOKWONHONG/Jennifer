@@ -8,10 +8,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Jennifer.Account.Application.Auth.Services.Implements;
 
-public sealed class VerifyCodeConfirmService(JenniferDbContext dbContext): 
-    ServiceBase<VerifyCodeRequest, Result>, IVerifyCodeConfirmService
+public sealed class EmailConfirmService(JenniferDbContext dbContext): 
+    ServiceBase<EmailConfirmRequest, Result>, IEmailConfirmService
 {
-    protected override async Task<Result> HandleAsync(VerifyCodeRequest request, CancellationToken cancellationToken)
+    protected override async Task<Result> HandleAsync(EmailConfirmRequest request, CancellationToken cancellationToken)
     {
         var verified = await dbContext.EmailVerificationCodes
             .Where(m => m.Email == request.Email

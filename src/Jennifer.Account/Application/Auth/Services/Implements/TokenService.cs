@@ -11,9 +11,9 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Jennifer.Account.Application.Auth.Services.Implements;
 
-public sealed class JwtService : IJwtService
+public sealed class TokenService : ITokenService
 {
-    public JwtService()
+    public TokenService()
     {
     }
     

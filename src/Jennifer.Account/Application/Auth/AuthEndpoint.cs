@@ -173,7 +173,7 @@ JWT 토큰과 갱신 토큰을 반환합니다.
 ");
         
         group.MapPost("/password/forgot/verify",
-                async (VerifyCodeRequest request, ISender sender,
+                async (EmailConfirmRequest request, ISender sender,
                         CancellationToken ct) =>
                     await sender.Send(new PasswordForgotVerifyCommand(request.Email, request.Code), ct))
             .WithName("PasswordForgotVerify")

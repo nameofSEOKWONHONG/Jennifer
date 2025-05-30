@@ -14,7 +14,7 @@ public sealed record TokenGenerateCommand(User User):ICommand<Result<TokenRespon
 public sealed class TokenGenerateCommandHandler(
     UserManager<User> userManager,
     RoleManager<Role> roleManager,
-    IJwtService jwtService,
+    ITokenService tokenService,
     IDistributedCache cache
     ):ICommandHandler<TokenGenerateCommand, Result<TokenResponse>>
 {
@@ -38,7 +38,7 @@ public sealed class TokenGenerateCommandHandler(
             }
         }
 
-        var refreshToken = jwtService.GenerateRefreshToken();
+        var refreshToken = tokenService.GenerateRefreshToken();
         var refreshTokenObj = new Services.Implements.RefreshToken(refreshToken, DateTime.UtcNow.AddDays(7), DateTime.UtcNow, command.User.Id.ToString());
         
         var result = await userManager.SetAuthenticationTokenAsync(command.User, loginProvider:"internal", tokenName:"refreshToken", tokenValue:refreshToken);
@@ -47,8 +47,8 @@ public sealed class TokenGenerateCommandHandler(
         if (!result.Succeeded) return await Result<TokenResponse>.FailureAsync(error);
 
         var sid = UlidGenerator.Instance.GenerateString();
-        var encodedRefreshToken = jwtService.ObjectToTokenString(refreshTokenObj);
-        var token = new TokenResponse(jwtService.GenerateJwtToken(sid, command.User, userClaims.ToList(), roleClaims), encodedRefreshToken, isTwoFactor:command.User.TwoFactorEnabled);
+        var encodedRefreshToken = tokenService.ObjectToTokenString(refreshTokenObj);
+        var token = new TokenResponse(tokenService.GenerateJwtToken(sid, command.User, userClaims.ToList(), roleClaims), encodedRefreshToken, isTwoFactor:command.User.TwoFactorEnabled);
 
         await cache.SetStringAsync(CachingConsts.SidCacheKey(sid), command.User.Id.ToString(), token: cancellationToken);
         

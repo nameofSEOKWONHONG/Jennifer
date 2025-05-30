@@ -15,8 +15,8 @@ public sealed class PasswordForgotVerifyCommandHandler(
     {
         Result result = null;
         var builder = factory.Create();
-        await builder.Register<IVerifyCodeConfirmService, VerifyCodeRequest, Result>()
-            .Request(new VerifyCodeRequest(command.Email, command.Code, ENUM_EMAIL_VERIFY_TYPE.PASSWORD_FORGOT))
+        await builder.Register<IEmailConfirmService, EmailConfirmRequest, Result>()
+            .Request(new EmailConfirmRequest(command.Email, command.Code, ENUM_EMAIL_VERIFY_TYPE.PASSWORD_FORGOT))
             .Handle(r => result = r)
             .ExecuteAsync(cancellationToken);
         

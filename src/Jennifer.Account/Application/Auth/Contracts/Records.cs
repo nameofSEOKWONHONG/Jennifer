@@ -86,9 +86,9 @@ public class RegisterAdminRequest
 /// Represents a request for verifying an email address using a verification code.
 /// </summary>
 /// <see cref="ENUM_EMAIL_VERIFY_TYPE"/>
-public class VerifyCodeRequest
+public class EmailConfirmRequest
 {
-    public VerifyCodeRequest(string email, string code, ENUM_EMAIL_VERIFY_TYPE type)
+    public EmailConfirmRequest(string email, string code, ENUM_EMAIL_VERIFY_TYPE type)
     {
         Email = email;
         Code = code;
@@ -112,6 +112,6 @@ public class VerifyCodeResponse
     public string Message { get; set; }   
 }
 
-public record VerifyCodeSendEmailRequest(string Email, string UserName, ENUM_EMAIL_VERIFY_TYPE Type);
+public record EmailConfirmSendRequest(string Email, string UserName, ENUM_EMAIL_VERIFY_TYPE Type);
 
 public record ExternalSignInRequest(string Provider, string AccessToken);

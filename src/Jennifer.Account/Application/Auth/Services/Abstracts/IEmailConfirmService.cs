@@ -4,7 +4,7 @@ using Jennifer.SharedKernel;
 
 namespace Jennifer.Account.Application.Auth.Services.Abstracts;
 
-public interface IVerifyCodeConfirmService: IServiceBase<VerifyCodeRequest, Result>
+public interface IEmailConfirmService: IServiceBase<EmailConfirmRequest, Result>
 {
     
 }

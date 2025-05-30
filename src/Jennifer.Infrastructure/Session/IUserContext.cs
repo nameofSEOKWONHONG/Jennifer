@@ -1,4 +1,4 @@
-﻿namespace Jennifer.Infrastructure.Session.Abstracts;
+﻿namespace Jennifer.Infrastructure.Session;
 
 public interface IUnifiedContext<TFetchResult>
 {

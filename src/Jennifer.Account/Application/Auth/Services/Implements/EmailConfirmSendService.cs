@@ -12,12 +12,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Jennifer.Account.Application.Auth.Services.Implements;
 
-public sealed class VerifyCodeSendEmailService(
+public sealed class EmailConfirmSendService(
     JenniferDbContext dbContext,
-    IProducer<string, string> producer) : ServiceBase<VerifyCodeSendEmailRequest, Result>, 
-    IVerifyCodeSendEmailService {
+    IProducer<string, string> producer) : ServiceBase<EmailConfirmSendRequest, Result>, 
+    IEmailConfirmSendService {
     
-    protected override async Task<Result> HandleAsync(VerifyCodeSendEmailRequest request, CancellationToken cancellationToken)
+    protected override async Task<Result> HandleAsync(EmailConfirmSendRequest request, CancellationToken cancellationToken)
     {
         var code = new Random().Next(100000, 999999).ToString();
         var emailSubject = "Jennifer 이메일 인증 코드 안내";

@@ -1,6 +1,7 @@
 ﻿using Jennifer.Account.Application.Auth.Contracts;
 using Jennifer.Account.Application.Users.Filters;
 using Jennifer.Infrastructure.Database;
+using Jennifer.Infrastructure.Session;
 using Jennifer.Infrastructure.Session.Abstracts;
 using Jennifer.SharedKernel;
 using LinqKit;

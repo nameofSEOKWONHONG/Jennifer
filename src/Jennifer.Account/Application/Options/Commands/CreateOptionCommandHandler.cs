@@ -1,6 +1,7 @@
 ﻿using eXtensionSharp;
 using Jennifer.Domain.Accounts;
 using Jennifer.Infrastructure.Database;
+using Jennifer.Infrastructure.Session;
 using Jennifer.Infrastructure.Session.Abstracts;
 using Jennifer.SharedKernel;
 using Mediator;

@@ -8,9 +8,9 @@ public static class DependencyInjection
 {
     public static void AddAuthService(this IServiceCollection services)
     {
-        services.AddScoped<IJwtService, JwtService>();
-        services.AddScoped<IVerifyCodeSendEmailService, VerifyCodeSendEmailService>();
-        services.AddScoped<IVerifyCodeConfirmService, VerifyCodeConfirmService>();
+        services.AddScoped<ITokenService, TokenService>();
+        services.AddScoped<IEmailConfirmSendService, EmailConfirmSendService>();
+        services.AddScoped<IEmailConfirmService, EmailConfirmService>();
         // services.AddScoped<IConfigurationAddService, ConfigurationAddService>();
     }
 }

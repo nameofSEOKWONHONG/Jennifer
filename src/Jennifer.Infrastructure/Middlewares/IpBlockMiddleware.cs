@@ -3,6 +3,7 @@ using eXtensionSharp.AspNet;
 using Jennifer.Infrastructure.Abstractions.Behaviors;
 using Jennifer.SharedKernel;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 namespace Jennifer.Infrastructure.Middlewares;
@@ -23,23 +24,37 @@ public class IpBlockMiddleware
 
     public async Task Invoke(HttpContext context)
     {
+        ProblemDetails problemDetails = null;
+        
         var ip = context.xGetRemoteIpAddress();
         if (ip.xIsEmpty())
         {
-            var result = await Result.FailureAsync("Unable to determine client ip");
-            context.Response.StatusCode = StatusCodes.Status400BadRequest;
-            context.Response.ContentType = "application/json";
-            await context.Response.WriteAsJsonAsync(result);
-            
-            return;       
+            problemDetails = new ProblemDetails
+            {
+                Title = "Unexpected error",
+                Detail = "Unable to determine client ip",
+                Status = StatusCodes.Status500InternalServerError,
+                Instance = context.Request.Path
+            };       
         }
+        
         var @checked = await _service.IsBlockedAsync(ip);
         if (@checked)
         {
-            var result = await Result.FailureAsync("IP is blocked");
-            context.Response.StatusCode = StatusCodes.Status400BadRequest;
-            context.Response.ContentType = "application/json";
-            await context.Response.WriteAsJsonAsync(result);
+            problemDetails = new ProblemDetails
+            {
+                Title = "Unexpected error",
+                Detail = "IP is blocked",
+                Status = StatusCodes.Status500InternalServerError,
+                Instance = context.Request.Path
+            };
+        }
+
+        if (problemDetails.xIsNotEmpty())
+        {
+            context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+            context.Response.ContentType = "application/problem+json";
+            await context.Response.WriteAsJsonAsync(problemDetails);
             
             return;
         }
