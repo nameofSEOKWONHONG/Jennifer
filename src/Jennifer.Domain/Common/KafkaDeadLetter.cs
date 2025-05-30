@@ -1,6 +1,9 @@
-﻿using Jennifer.SharedKernel;
+﻿using eXtensionSharp.Mongo;
+using Jennifer.SharedKernel;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace Jennifer.Domain.Common;
 
@@ -52,4 +55,27 @@ public class KafkaDeadLetterConfiguration: IEntityTypeConfiguration<KafkaDeadLet
             .HasDefaultValueSql("SYSUTCDATETIME()") // SQL Server 기준
             .ValueGeneratedOnAdd();
     }
+}
+
+[JMongoCollection("jennifer", "deadletters")]
+public class DeadLetterDocument
+{
+    [BsonId]
+    [BsonRepresentation(BsonType.ObjectId)]
+    [BsonElement("id")]
+    public String Id { get; set; }
+
+    [BsonElement("topic")] public string Topic { get; set; }
+
+    [BsonElement("partition")] public int Partition { get; set; }
+
+    [BsonElement("offset")] public long Offset { get; set; }
+
+    [BsonElement("key")] public string Key { get; set; }
+
+    [BsonElement("value")] public string Value { get; set; }
+
+    [BsonElement("errorMessage")] public string ErrorMessage { get; set; }
+
+    [BsonElement("createAt")] public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
 }

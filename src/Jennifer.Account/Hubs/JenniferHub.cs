@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace Jennifer.Account.Hubs;
 
-internal class JenniferHub: Hub
+public class JenniferHub: Hub
 {
     public JenniferHub()
     {
@@ -16,7 +16,7 @@ internal class JenniferHub: Hub
     }
 }
 
-internal class SubUserIdProvider : IUserIdProvider
+public class SubUserIdProvider : IUserIdProvider
 {
     public string GetUserId(HubConnectionContext connection)
     {

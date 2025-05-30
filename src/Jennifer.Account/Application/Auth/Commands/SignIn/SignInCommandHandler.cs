@@ -1,12 +1,12 @@
 ﻿using Jennifer.Account.Application.Auth.Contracts;
-using Jennifer.Domain.Account;
+using Jennifer.Domain.Accounts;
 using Jennifer.SharedKernel;
 using Mediator;
 using Microsoft.AspNetCore.Identity;
 
 namespace Jennifer.Account.Application.Auth.Commands.SignIn;
 
-internal sealed class SignInCommandHandler(        
+public sealed class SignInCommandHandler(        
     UserManager<User> userManager,
     ISender sender): ICommandHandler<SignInCommand, Result<TokenResponse>>
 {

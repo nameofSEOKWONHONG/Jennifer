@@ -2,7 +2,7 @@
 
 namespace Jennifer.Account.Application.Auth.Commands.SignUp;
 
-internal sealed class SignUpAdminCommandValidator : AbstractValidator<SignUpAdminCommand>
+public sealed class SignUpAdminCommandValidator : AbstractValidator<SignUpAdminCommand>
 {
     public SignUpAdminCommandValidator()
     {

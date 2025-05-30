@@ -1,10 +1,10 @@
 ﻿using System.Security.Claims;
 using Jennifer.Account.Application.Auth.Services.Implements;
-using Jennifer.Domain.Account;
+using Jennifer.Domain.Accounts;
 
 namespace Jennifer.Account.Application.Auth.Services.Abstracts;
 
-internal interface IJwtService
+public interface IJwtService
 {
     /// <summary>
     /// Generates a JWT (JSON Web Token) based on the provided user, user-specific claims, and role-specific claims.

@@ -1,6 +1,6 @@
 ﻿using eXtensionSharp;
 using FluentValidation;
-using Jennifer.Domain.Account;
+using Jennifer.Domain.Accounts;
 using Jennifer.Infrastructure.Database;
 using Jennifer.Infrastructure.Extenstions;
 using Jennifer.Infrastructure.Session.Abstracts;
@@ -10,10 +10,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Jennifer.Account.Application.Users.Commands;
 
-internal sealed record ModifyUserRequest(Guid UserId, string UserName, string PhoneNumber);
-internal sealed record ModifyUserCommand(Guid UserId, string UserName, string PhoneNumber): ICommand<Result>;
+public sealed record ModifyUserRequest(Guid UserId, string UserName, string PhoneNumber);
+public sealed record ModifyUserCommand(Guid UserId, string UserName, string PhoneNumber): ICommand<Result>;
 
-internal sealed class ModifyUserCommandHandler(
+public sealed class ModifyUserCommandHandler(
     ISessionContext session,
     JenniferDbContext dbContext): ICommandHandler<ModifyUserCommand, Result>
 {
@@ -35,7 +35,7 @@ internal sealed class ModifyUserCommandHandler(
     }
 }
 
-internal sealed class ModifyUserCommandValidator : AbstractValidator<ModifyUserCommand>
+public sealed class ModifyUserCommandValidator : AbstractValidator<ModifyUserCommand>
 {
     public ModifyUserCommandValidator()
     {
@@ -45,8 +45,8 @@ internal sealed class ModifyUserCommandValidator : AbstractValidator<ModifyUserC
     }
 }
 
-internal sealed record AddOrUpdateUserRoleCommand(Guid UserId, Guid RoleId): ICommand<Result>;
-internal sealed class AddOrUpdateUserRoleCommandHandler(JenniferDbContext dbContext): ICommandHandler<AddOrUpdateUserRoleCommand, Result>
+public sealed record AddOrUpdateUserRoleCommand(Guid UserId, Guid RoleId): ICommand<Result>;
+public sealed class AddOrUpdateUserRoleCommandHandler(JenniferDbContext dbContext): ICommandHandler<AddOrUpdateUserRoleCommand, Result>
 {
     public async ValueTask<Result> Handle(AddOrUpdateUserRoleCommand command, CancellationToken cancellationToken)
     {
@@ -72,7 +72,7 @@ internal sealed class AddOrUpdateUserRoleCommandHandler(JenniferDbContext dbCont
     }
 }
 
-internal sealed class AddOrUpdateUserRoleCommandValidator : AbstractValidator<AddOrUpdateUserRoleCommand>
+public sealed class AddOrUpdateUserRoleCommandValidator : AbstractValidator<AddOrUpdateUserRoleCommand>
 {
     public AddOrUpdateUserRoleCommandValidator()
     {

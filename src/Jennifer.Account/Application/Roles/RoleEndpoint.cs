@@ -10,7 +10,7 @@ namespace Jennifer.Account.Application.Roles;
 
 public static class RoleEndpoint
 {
-    internal static void MapRoleEndpoint(this IEndpointRouteBuilder endpoint)
+    public static void MapRoleEndpoint(this IEndpointRouteBuilder endpoint)
     {
         var apiVersionSet = endpoint.NewApiVersionSet()
             .HasApiVersion(new ApiVersion(1))

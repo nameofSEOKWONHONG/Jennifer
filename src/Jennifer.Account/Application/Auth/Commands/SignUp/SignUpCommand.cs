@@ -1,4 +1,4 @@
-﻿using Jennifer.Domain.Account.Contracts;
+﻿using Jennifer.Domain.Accounts.Contracts;
 using Jennifer.SharedKernel;
 using Mediator;
 

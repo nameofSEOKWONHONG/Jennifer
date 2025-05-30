@@ -1,7 +1,6 @@
 ﻿using eXtensionSharp;
 using Jennifer.Account.Application.Auth.Contracts;
 using Jennifer.Account.Application.Auth.Services.Abstracts;
-using Jennifer.Domain.Account;
 using Jennifer.Infrastructure.Abstractions.ServiceCore;
 using Jennifer.Infrastructure.Database;
 using Jennifer.SharedKernel;
@@ -9,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Jennifer.Account.Application.Auth.Services.Implements;
 
-internal sealed class VerifyCodeConfirmService(JenniferDbContext dbContext): 
+public sealed class VerifyCodeConfirmService(JenniferDbContext dbContext): 
     ServiceBase<VerifyCodeRequest, Result>, IVerifyCodeConfirmService
 {
     protected override async Task<Result> HandleAsync(VerifyCodeRequest request, CancellationToken cancellationToken)

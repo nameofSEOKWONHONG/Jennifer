@@ -1,13 +1,13 @@
 ﻿using Jennifer.Account.Application.Auth.Contracts;
 using Jennifer.Account.Application.Auth.Services.Abstracts;
-using Jennifer.Domain.Account.Contracts;
+using Jennifer.Domain.Accounts.Contracts;
 using Jennifer.Infrastructure.Abstractions.ServiceCore;
 using Jennifer.SharedKernel;
 using Mediator;
 
 namespace Jennifer.Account.Application.Auth.Commands.Password;
 
-internal sealed class PasswordForgotVerifyCommandHandler(
+public sealed class PasswordForgotVerifyCommandHandler(
     IServiceExecutionBuilderFactory factory
 ):ICommandHandler<PasswordForgotVerifyCommand, Result>
 {

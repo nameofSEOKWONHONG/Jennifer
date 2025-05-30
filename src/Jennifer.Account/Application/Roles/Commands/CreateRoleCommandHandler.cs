@@ -1,11 +1,11 @@
-﻿using Jennifer.Domain.Account;
+﻿using Jennifer.Domain.Accounts;
 using Jennifer.Infrastructure.Database;
 using Jennifer.SharedKernel;
 using Mediator;
 
 namespace Jennifer.Account.Application.Roles.Commands;
 
-internal sealed class CreateRoleCommandHandler(JenniferDbContext dbContext) : ICommandHandler<CreateRoleCommand, Result<Guid>>
+public sealed class CreateRoleCommandHandler(JenniferDbContext dbContext) : ICommandHandler<CreateRoleCommand, Result<Guid>>
 {
     public async ValueTask<Result<Guid>> Handle(CreateRoleCommand command, CancellationToken cancellationToken)
     {

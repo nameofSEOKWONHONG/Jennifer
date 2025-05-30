@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 using eXtensionSharp;
-using Jennifer.Domain.Account;
+using Jennifer.Domain.Accounts;
 using Jennifer.SharedKernel;
 using Mediator;
 using Microsoft.AspNetCore.Http;
@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Jennifer.Account.Application.Auth.Commands.Password;
 
-internal sealed class PasswordChangeCommandHandler(
+public sealed class PasswordChangeCommandHandler(
     UserManager<User> userManager, 
     IHttpContextAccessor accessor     
 ): ICommandHandler<PasswordChangeCommand, Result<bool>>

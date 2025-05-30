@@ -4,4 +4,4 @@ using Mediator;
 
 namespace Jennifer.Account.Application.Auth.Commands.ExternalOAuth;
 
-internal sealed record ExternalOAuthCommand(string Provider, string AccessToken):ICommand<Result<TokenResponse>>;
+public sealed record ExternalOAuthCommand(string Provider, string AccessToken):ICommand<Result<TokenResponse>>;

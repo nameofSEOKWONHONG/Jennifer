@@ -22,7 +22,7 @@ namespace Jennifer.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Jennifer.Domain.Account.EmailVerificationCode", b =>
+            modelBuilder.Entity("Jennifer.Domain.Accounts.EmailConfirmCode", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -58,10 +58,10 @@ namespace Jennifer.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("EmailVerificationCodes", "account");
+                    b.ToTable("EmailConfirmCodes", "account");
                 });
 
-            modelBuilder.Entity("Jennifer.Domain.Account.Option", b =>
+            modelBuilder.Entity("Jennifer.Domain.Accounts.Option", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -100,7 +100,7 @@ namespace Jennifer.Infrastructure.Migrations
                     b.ToTable("Options", "account");
                 });
 
-            modelBuilder.Entity("Jennifer.Domain.Account.Role", b =>
+            modelBuilder.Entity("Jennifer.Domain.Accounts.Role", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -128,7 +128,7 @@ namespace Jennifer.Infrastructure.Migrations
                     b.ToTable("Roles", "account");
                 });
 
-            modelBuilder.Entity("Jennifer.Domain.Account.RoleClaim", b =>
+            modelBuilder.Entity("Jennifer.Domain.Accounts.RoleClaim", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -152,7 +152,7 @@ namespace Jennifer.Infrastructure.Migrations
                     b.ToTable("RoleClaims", "account");
                 });
 
-            modelBuilder.Entity("Jennifer.Domain.Account.User", b =>
+            modelBuilder.Entity("Jennifer.Domain.Accounts.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -245,7 +245,7 @@ namespace Jennifer.Infrastructure.Migrations
                     b.ToTable("Users", "account");
                 });
 
-            modelBuilder.Entity("Jennifer.Domain.Account.UserClaim", b =>
+            modelBuilder.Entity("Jennifer.Domain.Accounts.UserClaim", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -272,7 +272,7 @@ namespace Jennifer.Infrastructure.Migrations
                     b.ToTable("UserClaims", "account");
                 });
 
-            modelBuilder.Entity("Jennifer.Domain.Account.UserLogin", b =>
+            modelBuilder.Entity("Jennifer.Domain.Accounts.UserLogin", b =>
                 {
                     b.Property<string>("LoginProvider")
                         .HasColumnType("nvarchar(450)");
@@ -294,7 +294,7 @@ namespace Jennifer.Infrastructure.Migrations
                     b.ToTable("UserLogins", "account");
                 });
 
-            modelBuilder.Entity("Jennifer.Domain.Account.UserOption", b =>
+            modelBuilder.Entity("Jennifer.Domain.Accounts.UserOption", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -332,7 +332,7 @@ namespace Jennifer.Infrastructure.Migrations
                     b.ToTable("UserOptions", "account");
                 });
 
-            modelBuilder.Entity("Jennifer.Domain.Account.UserRole", b =>
+            modelBuilder.Entity("Jennifer.Domain.Accounts.UserRole", b =>
                 {
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -347,7 +347,7 @@ namespace Jennifer.Infrastructure.Migrations
                     b.ToTable("UserRoles", "account");
                 });
 
-            modelBuilder.Entity("Jennifer.Domain.Account.UserToken", b =>
+            modelBuilder.Entity("Jennifer.Domain.Accounts.UserToken", b =>
                 {
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -446,9 +446,59 @@ namespace Jennifer.Infrastructure.Migrations
                     b.ToTable("KafkaDeadLetters", "account");
                 });
 
-            modelBuilder.Entity("Jennifer.Domain.Account.RoleClaim", b =>
+            modelBuilder.Entity("Jennifer.Domain.Todos.TodoItem", b =>
                 {
-                    b.HasOne("Jennifer.Domain.Account.Role", "Role")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("CompletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)");
+
+                    b.Property<DateTimeOffset>("CreatedOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetimeoffset")
+                        .HasDefaultValueSql("SYSDATETIMEOFFSET()");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
+
+                    b.Property<DateTime?>("DueDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsCompleted")
+                        .HasColumnType("bit");
+
+                    b.PrimitiveCollection<string>("Labels")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)");
+
+                    b.Property<DateTimeOffset?>("ModifiedOn")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("Priority")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TodoItems", "account");
+                });
+
+            modelBuilder.Entity("Jennifer.Domain.Accounts.RoleClaim", b =>
+                {
+                    b.HasOne("Jennifer.Domain.Accounts.Role", "Role")
                         .WithMany("RoleClaims")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -457,9 +507,9 @@ namespace Jennifer.Infrastructure.Migrations
                     b.Navigation("Role");
                 });
 
-            modelBuilder.Entity("Jennifer.Domain.Account.UserClaim", b =>
+            modelBuilder.Entity("Jennifer.Domain.Accounts.UserClaim", b =>
                 {
-                    b.HasOne("Jennifer.Domain.Account.User", "User")
+                    b.HasOne("Jennifer.Domain.Accounts.User", "User")
                         .WithMany("UserClaims")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -468,9 +518,9 @@ namespace Jennifer.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Jennifer.Domain.Account.UserLogin", b =>
+            modelBuilder.Entity("Jennifer.Domain.Accounts.UserLogin", b =>
                 {
-                    b.HasOne("Jennifer.Domain.Account.User", "User")
+                    b.HasOne("Jennifer.Domain.Accounts.User", "User")
                         .WithMany("Logins")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -479,9 +529,9 @@ namespace Jennifer.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Jennifer.Domain.Account.UserOption", b =>
+            modelBuilder.Entity("Jennifer.Domain.Accounts.UserOption", b =>
                 {
-                    b.HasOne("Jennifer.Domain.Account.User", "User")
+                    b.HasOne("Jennifer.Domain.Accounts.User", "User")
                         .WithMany("UserOptions")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -490,15 +540,15 @@ namespace Jennifer.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Jennifer.Domain.Account.UserRole", b =>
+            modelBuilder.Entity("Jennifer.Domain.Accounts.UserRole", b =>
                 {
-                    b.HasOne("Jennifer.Domain.Account.Role", "Role")
+                    b.HasOne("Jennifer.Domain.Accounts.Role", "Role")
                         .WithMany("UserRoles")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Jennifer.Domain.Account.User", "User")
+                    b.HasOne("Jennifer.Domain.Accounts.User", "User")
                         .WithMany("UserRoles")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -509,9 +559,9 @@ namespace Jennifer.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Jennifer.Domain.Account.UserToken", b =>
+            modelBuilder.Entity("Jennifer.Domain.Accounts.UserToken", b =>
                 {
-                    b.HasOne("Jennifer.Domain.Account.User", "User")
+                    b.HasOne("Jennifer.Domain.Accounts.User", "User")
                         .WithMany("Tokens")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -520,14 +570,14 @@ namespace Jennifer.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Jennifer.Domain.Account.Role", b =>
+            modelBuilder.Entity("Jennifer.Domain.Accounts.Role", b =>
                 {
                     b.Navigation("RoleClaims");
 
                     b.Navigation("UserRoles");
                 });
 
-            modelBuilder.Entity("Jennifer.Domain.Account.User", b =>
+            modelBuilder.Entity("Jennifer.Domain.Accounts.User", b =>
                 {
                     b.Navigation("Logins");
 

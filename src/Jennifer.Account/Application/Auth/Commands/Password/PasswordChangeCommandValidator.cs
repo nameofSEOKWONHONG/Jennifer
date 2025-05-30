@@ -2,7 +2,7 @@
 
 namespace Jennifer.Account.Application.Auth.Commands.Password;
 
-internal sealed class PasswordChangeCommandValidator : AbstractValidator<PasswordChangeCommand>
+public sealed class PasswordChangeCommandValidator : AbstractValidator<PasswordChangeCommand>
 {
     public PasswordChangeCommandValidator()
     {

@@ -24,10 +24,6 @@
         <PackageReference Include="QRCoder"/>
         <PackageReference Include="RabbitMQ.Client"/>
         <PackageReference Include="Mediator.Abstractions"/>
-        <PackageReference Include="Mediator.SourceGenerator">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
         <PackageReference Include="ZLinq"/>
         <PackageReference Include="ZString"/>
     </ItemGroup>

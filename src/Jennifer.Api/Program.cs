@@ -1,8 +1,15 @@
 using eXtensionSharp;
+using FluentValidation;
 using Jennifer.Api;
 using Jennifer.Account;
+using Jennifer.Account.Application.Auth.Commands.SignUp;
 using Jennifer.Domain.Common;
+using Jennifer.Infrastructure.Abstractions.Behaviors;
+using Jennifer.Infrastructure.Abstractions.DomainEvents;
+using Jennifer.Infrastructure.Middlewares;
 using Jennifer.SharedKernel;
+using Jennifer.Todo;
+using Mediator;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
 using Scalar.AspNetCore;
@@ -45,6 +52,25 @@ var options = new JenniferOptions("account",
     jwtOptions,
     smtpOptions);
 
+#region [setting mediator]
+
+builder.Services.AddMediator(options =>
+{
+    options.ServiceLifetime = ServiceLifetime.Scoped;
+    options.Assemblies = [
+        typeof(Jennifer.Account.DependencyInjection).Assembly,
+        typeof(Jennifer.Todo.DependencyInjection).Assembly,
+    ];
+});
+//Registered behaviors are executed in order (e.g., IpBlockBehavior, DomainEventBehavior, ValidationBehavior, TransactionBehavior)
+builder.Services.AddScoped(typeof(IPipelineBehavior<,>), typeof(DomainEventBehavior<,>));
+builder.Services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+builder.Services.AddScoped(typeof(IPipelineBehavior<,>), typeof(TransactionBehavior<,>));
+builder.Services.AddValidatorsFromAssemblyContaining<SignUpAdminCommandValidator>();
+builder.Services.AddScoped<IDomainEventPublisher, DomainEventPublisher>();
+builder.Services.AddSingleton<IIpBlockService, IpBlockService>();
+#endregion
+
 // Add jennifer account manager
 builder.Services.AddJennifer(options,
         (provider, optionsBuilder) =>
@@ -77,6 +103,8 @@ builder.Services.AddJennifer(options,
     // Add jennifer email
     .WithJenniferMailService(builder.Configuration["KAFKA_CONNECTION"]);
 
+builder.Services.AddTodo();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -97,5 +125,6 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseJennifer();
+app.UseTodo();
 
 app.Run();

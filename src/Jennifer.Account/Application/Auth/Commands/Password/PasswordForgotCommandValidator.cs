@@ -2,7 +2,7 @@
 
 namespace Jennifer.Account.Application.Auth.Commands.Password;
 
-internal sealed class PasswordForgotCommandValidator : AbstractValidator<PasswordForgotCommand>
+public sealed class PasswordForgotCommandValidator : AbstractValidator<PasswordForgotCommand>
 {
     public PasswordForgotCommandValidator()
     {

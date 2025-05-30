@@ -1,5 +1,6 @@
-﻿using Jennifer.Domain.Account;
+﻿using Jennifer.Domain.Accounts;
 using Jennifer.Domain.Common;
+using Jennifer.Domain.Todos;
 using Jennifer.SharedKernel;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -14,11 +15,13 @@ public class JenniferDbContext : IdentityDbContext<User, Role, Guid,
     RoleClaim,
     UserToken>, ITransactionDbContext
 {  
-    public DbSet<EmailVerificationCode> EmailVerificationCodes { get; set; }
+    public DbSet<EmailConfirmCode> EmailVerificationCodes { get; set; }
     public DbSet<Option> Options { get; set; }
     public DbSet<Audit> Audits { get; set; }
     public DbSet<KafkaDeadLetter> KafkaDeadLetters { get; set; }
     public DbSet<UserOption> UserOptions { get; set; }
+    
+    public DbSet<TodoItem> TodoItems { get; set; }
 
     public JenniferDbContext(DbContextOptions<JenniferDbContext> options): base(options)
     {
@@ -45,6 +48,8 @@ public class JenniferDbContext : IdentityDbContext<User, Role, Guid,
         modelBuilder.ApplyConfiguration(new AuditEntityConfiguration());
         modelBuilder.ApplyConfiguration(new KafkaDeadLetterConfiguration());
         modelBuilder.ApplyConfiguration(new UserOptionEntityConfiguration());
+        
+        modelBuilder.ApplyConfiguration(new TodoItemEntityConfiguration());
     }
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())

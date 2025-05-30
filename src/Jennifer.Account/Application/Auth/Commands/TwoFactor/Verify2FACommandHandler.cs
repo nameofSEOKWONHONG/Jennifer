@@ -1,14 +1,14 @@
 ﻿using eXtensionSharp;
 using Jennifer.Account.Application.Auth.Commands.SignIn;
 using Jennifer.Account.Application.Auth.Contracts;
-using Jennifer.Domain.Account;
+using Jennifer.Domain.Accounts;
 using Jennifer.SharedKernel;
 using Mediator;
 using Microsoft.AspNetCore.Identity;
 
 namespace Jennifer.Account.Application.Auth.Commands.TwoFactor;
 
-internal sealed class Verify2FaCommandHandler(
+public sealed class Verify2FaCommandHandler(
     UserManager<User> userManager,
     ISender sender
 ) : ICommandHandler<Verify2FaCommand, Result<TokenResponse>>

@@ -1,7 +1,7 @@
 ﻿using Confluent.Kafka;
 using eXtensionSharp;
-using Jennifer.Domain.Account;
-using Jennifer.Domain.Account.Contracts;
+using Jennifer.Domain.Accounts;
+using Jennifer.Domain.Accounts.Contracts;
 using Jennifer.Infrastructure.Database;
 using Jennifer.Infrastructure.Email;
 using Jennifer.SharedKernel;
@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Jennifer.Account.Application.Auth.Commands.SignUp;
 
-internal sealed record SignUpVerifyCodeSendCommand(string Email, string UserName, ENUM_EMAIL_VERIFY_TYPE Type):ICommand<Result>;
-internal sealed class SignUpVerifyCodeSendCommandHandler(
+public sealed record SignUpVerifyCodeSendCommand(string Email, string UserName, ENUM_EMAIL_VERIFY_TYPE Type):ICommand<Result>;
+public sealed class SignUpVerifyCodeSendCommandHandler(
     JenniferDbContext dbContext,
     IProducer<string, string> producer):ICommandHandler<SignUpVerifyCodeSendCommand, Result>
 {
@@ -43,7 +43,7 @@ Jennifer";
         if (templateSubject.xIsNotEmpty()) emailSubject = templateSubject.Value;
         if (templateFormat.xIsNotEmpty()) emailFormat = templateFormat.Value;
 
-        await dbContext.EmailVerificationCodes.AddAsync(new EmailVerificationCode()
+        await dbContext.EmailVerificationCodes.AddAsync(new EmailConfirmCode()
         {
             Email = command.Email,
             Type = command.Type,

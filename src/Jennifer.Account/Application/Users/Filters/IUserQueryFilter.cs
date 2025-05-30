@@ -1,11 +1,11 @@
 ﻿using System.Linq.Expressions;
 using Jennifer.Account.Application.Auth.Contracts;
 using Jennifer.Account.Application.Users.Commands;
-using Jennifer.Domain.Account;
+using Jennifer.Domain.Accounts;
 
 namespace Jennifer.Account.Application.Users.Filters;
 
-internal interface IUserQueryFilter
+public interface IUserQueryFilter
 {
     Expression<Func<User, bool>> Where(GetsUserQuery query);
     Expression<Func<User, bool>> Where(GetUserQuery query);

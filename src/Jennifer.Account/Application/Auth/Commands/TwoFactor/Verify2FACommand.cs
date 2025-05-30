@@ -4,4 +4,4 @@ using Mediator;
 
 namespace Jennifer.Account.Application.Auth.Commands.TwoFactor;
 
-internal sealed record Verify2FaCommand(Guid UserId, string Code) : ICommand<Result<TokenResponse>>;
+public sealed record Verify2FaCommand(Guid UserId, string Code) : ICommand<Result<TokenResponse>>;

@@ -1,14 +1,14 @@
 ﻿using Jennifer.Account.Application.Auth.Commands.SignIn;
 using Jennifer.Account.Application.Auth.Contracts;
 using Jennifer.Account.Application.Auth.Services.Abstracts;
-using Jennifer.Domain.Account;
+using Jennifer.Domain.Accounts;
 using Jennifer.SharedKernel;
 using Mediator;
 using Microsoft.AspNetCore.Identity;
 
 namespace Jennifer.Account.Application.Auth.Commands.RefreshToken;
 
-internal sealed class RefreshTokenCommandHandler(
+public sealed class RefreshTokenCommandHandler(
     UserManager<User> userManager,
     IJwtService jwtService,
     ISender sender):ICommandHandler<RefreshTokenCommand, Result<TokenResponse>>

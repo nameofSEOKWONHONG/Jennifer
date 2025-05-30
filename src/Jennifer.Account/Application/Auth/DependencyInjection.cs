@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Jennifer.Account.Application.Auth;
 
-internal static class DependencyInjection
+public static class DependencyInjection
 {
     public static void AddAuthService(this IServiceCollection services)
     {

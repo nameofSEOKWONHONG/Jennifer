@@ -2,12 +2,12 @@
 using eXtensionSharp;
 using Jennifer.Account.Application.Auth.Contracts;
 using Jennifer.Account.Application.Users.Commands;
-using Jennifer.Domain.Account;
+using Jennifer.Domain.Accounts;
 using LinqKit;
 
 namespace Jennifer.Account.Application.Users.Filters;
 
-internal sealed class UserQueryFilter : IUserQueryFilter
+public sealed class UserQueryFilter : IUserQueryFilter
 {
     public Expression<Func<User, bool>> Where(GetsUserQuery query)
     {

@@ -2,9 +2,9 @@
 
 namespace Jennifer.Account.Application.Roles;
 
-internal static class DependencyInjection
+public static class DependencyInjection
 {
-    internal static void AddRoleService(this IServiceCollection services)
+    public static void AddRoleService(this IServiceCollection services)
     {
         
     }

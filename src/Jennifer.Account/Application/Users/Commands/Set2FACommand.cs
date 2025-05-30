@@ -1,14 +1,14 @@
 ﻿using eXtensionSharp;
-using Jennifer.Domain.Account;
+using Jennifer.Domain.Accounts;
 using Jennifer.SharedKernel;
 using Mediator;
 using Microsoft.AspNetCore.Identity;
 
 namespace Jennifer.Account.Application.Users.Commands;
 
-internal sealed record Set2FACommand(Guid UserId, bool enable) : ICommand<Result>;
+public sealed record Set2FACommand(Guid UserId, bool enable) : ICommand<Result>;
 
-internal class Set2FACommandCommandHandler(UserManager<User> userManager): ICommandHandler<Set2FACommand, Result>
+public class Set2FACommandCommandHandler(UserManager<User> userManager): ICommandHandler<Set2FACommand, Result>
 {
     public async ValueTask<Result> Handle(Set2FACommand command, CancellationToken cancellationToken)
     {

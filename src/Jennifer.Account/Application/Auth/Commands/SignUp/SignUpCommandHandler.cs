@@ -1,6 +1,6 @@
 ﻿using eXtensionSharp;
-using Jennifer.Domain.Account;
-using Jennifer.Domain.Account.Contracts;
+using Jennifer.Domain.Accounts;
+using Jennifer.Domain.Accounts.Contracts;
 using Jennifer.Infrastructure.Database;
 using Jennifer.Infrastructure.Session.Abstracts;
 using Jennifer.SharedKernel;
@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Jennifer.Account.Application.Auth.Commands.SignUp;
 
-internal sealed class SignUpCommandHandler(
+public sealed class SignUpCommandHandler(
     ISessionContext session,
     JenniferDbContext dbContext,
     IPasswordHasher<User> passwordHasher) : ICommandHandler<SignUpCommand, Result<Guid>>

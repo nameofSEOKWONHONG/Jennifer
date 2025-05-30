@@ -3,4 +3,4 @@ using Mediator;
 
 namespace Jennifer.Account.Application.Users.Commands;
 
-internal sealed record RemoveUserCommand(Guid UserId) : ICommand<Result>;
+public sealed record RemoveUserCommand(Guid UserId) : ICommand<Result>;

@@ -1,7 +1,6 @@
 ﻿using Asp.Versioning;
 using eXtensionSharp;
 using FluentValidation;
-using Jennifer.Domain.Account;
 using Jennifer.Infrastructure.Abstractions.ServiceCore;
 using Jennifer.Infrastructure.Database;
 using Jennifer.SharedKernel;
@@ -12,9 +11,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Jennifer.Account.Application.Tests;
 
-internal static class TestEndpoint
+public static class TestEndpoint
 {
-    internal static void MapTestEndpoint(this IEndpointRouteBuilder endpoint)
+    public static void MapTestEndpoint(this IEndpointRouteBuilder endpoint)
     {
         var apiVersionSet = endpoint.NewApiVersionSet()
             .HasApiVersion(new ApiVersion(1))

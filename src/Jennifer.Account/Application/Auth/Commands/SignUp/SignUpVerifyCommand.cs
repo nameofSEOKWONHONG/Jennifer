@@ -1,8 +1,7 @@
 ﻿using FluentValidation;
 using Jennifer.Account.Application.Auth.Contracts;
 using Jennifer.Account.Application.Auth.Services.Abstracts;
-using Jennifer.Domain.Account;
-using Jennifer.Domain.Account.Contracts;
+using Jennifer.Domain.Accounts.Contracts;
 using Jennifer.Infrastructure.Abstractions.ServiceCore;
 using Jennifer.Infrastructure.Database;
 using Jennifer.SharedKernel;
@@ -15,7 +14,7 @@ public sealed record SignUpVerifyRequest(Guid UserId, string Code);
 
 public sealed record SignUpVerifyCommand(Guid UserId, string Code):ICommand<Result>;
 
-internal sealed class SignUpVerifyCommandHandler(
+public sealed class SignUpVerifyCommandHandler(
     JenniferDbContext dbContext,
     IServiceExecutionBuilderFactory factory): ICommandHandler<SignUpVerifyCommand, Result>
 {

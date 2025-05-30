@@ -1,4 +1,4 @@
-﻿using Jennifer.Domain.Account.Contracts;
+﻿using Jennifer.Domain.Accounts.Contracts;
 
 namespace Jennifer.Account.Application.Auth.Contracts;
 

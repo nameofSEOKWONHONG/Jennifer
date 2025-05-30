@@ -1,5 +1,4 @@
 ﻿using Jennifer.Account.Application.Roles.Contracts;
-using Jennifer.Domain.Account;
 using Jennifer.Infrastructure.Database;
 using Jennifer.SharedKernel;
 using Mediator;
@@ -7,9 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Jennifer.Account.Application.Roles.Commands;
 
-internal sealed class GetsRoleQueryHandler(JenniferDbContext dbContext) : IQueryHandler<GetsRoleQuery, PaginatedResult<IEnumerable<RoleDto>>>
+public sealed class GetsRoleQueryHandler(JenniferDbContext dbContext) : IQueryHandler<GetsRoleQuery, PaginatedResult<RoleDto>>
 {
-    public async ValueTask<PaginatedResult<IEnumerable<RoleDto>>> Handle(GetsRoleQuery query, CancellationToken cancellationToken)
+    public async ValueTask<PaginatedResult<RoleDto>> Handle(GetsRoleQuery query, CancellationToken cancellationToken)
     {
         var queryable = dbContext.Roles.AsNoTracking()
             .Where(m => m.NormalizedName == query.RoleName.ToUpper());
@@ -25,6 +24,6 @@ internal sealed class GetsRoleQueryHandler(JenniferDbContext dbContext) : IQuery
             .Take(query.PageSize)       
             .ToArrayAsync(cancellationToken);
         
-        return await PaginatedResult<IEnumerable<RoleDto>>.SuccessAsync(total, result, query.PageNo, query.PageSize);
+        return await PaginatedResult<RoleDto>.SuccessAsync(total, result, query.PageNo, query.PageSize);
     }
 }

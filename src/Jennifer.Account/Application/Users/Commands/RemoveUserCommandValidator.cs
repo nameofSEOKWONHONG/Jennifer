@@ -2,7 +2,7 @@
 
 namespace Jennifer.Account.Application.Users.Commands;
 
-internal sealed class RemoveUserCommandValidator : AbstractValidator<RemoveUserCommand>
+public sealed class RemoveUserCommandValidator : AbstractValidator<RemoveUserCommand>
 {
     public RemoveUserCommandValidator()
     {

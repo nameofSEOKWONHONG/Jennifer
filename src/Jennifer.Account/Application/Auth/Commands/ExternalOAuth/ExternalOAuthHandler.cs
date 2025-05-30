@@ -1,7 +1,7 @@
 ﻿using eXtensionSharp;
 using Jennifer.Account.Application.Auth.Commands.SignIn;
 using Jennifer.Account.Application.Auth.Contracts;
-using Jennifer.Domain.Account;
+using Jennifer.Domain.Accounts;
 using Jennifer.External.OAuth.Abstracts;
 using Jennifer.SharedKernel;
 using Mediator;
@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Jennifer.Account.Application.Auth.Commands.ExternalOAuth;
 
-internal sealed class ExternalOAuthHandler(
+public sealed class ExternalOAuthHandler(
     UserManager<User> userManager,
     IExternalOAuthHandlerFactory externalOAuthHandlerFactory,
     ISender sender): ICommandHandler<ExternalOAuthCommand, Result<TokenResponse>>

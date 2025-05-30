@@ -1,0 +1,34 @@
+﻿using eXtensionSharp;
+using Jennifer.Domain.Todos;
+using Jennifer.Infrastructure.Database;
+using Jennifer.Infrastructure.Session.Abstracts;
+using Jennifer.SharedKernel;
+using Jennifer.Todo.Application.Todo.Contracts;
+using Mediator;
+
+namespace Jennifer.Todo.Application.Todo.Commands;
+
+public sealed record CreateTodoCommand(TodoItemDto Item): ICommand<Result<Guid>>;
+public sealed class CreateTodoCommandHandler(
+    JenniferDbContext dbContext,
+    ISessionContext session
+    ): ICommandHandler<CreateTodoCommand, Result<Guid>>
+{
+    public async ValueTask<Result<Guid>> Handle(CreateTodoCommand command, CancellationToken cancellationToken)
+    {
+        var user = await session.User.GetAsync();
+        var exists = dbContext.TodoItems.Any(m => m.Id == command.Item.Id && m.UserId == user.Id);
+        if(exists.xIsNotEmpty()) return await Result<Guid>.FailureAsync("already exists");
+        
+        var newTodoItem = TodoItem.Create(user.Id, 
+            command.Item.Description, 
+            command.Item.DueDate, 
+            command.Item.Labels, 
+            command.Item.IsCompleted, 
+            command.Item.CompletedAt, 
+            command.Item.Priority);
+        await dbContext.TodoItems.AddAsync(newTodoItem, cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken);
+        return await Result<Guid>.SuccessAsync(newTodoItem.Id);       
+    }
+}

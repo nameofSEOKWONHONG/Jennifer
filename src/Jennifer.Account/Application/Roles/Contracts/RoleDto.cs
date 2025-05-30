@@ -1,6 +1,6 @@
 ﻿namespace Jennifer.Account.Application.Roles.Contracts;
 
-internal sealed class RoleDto
+public sealed class RoleDto
 {
     public Guid Id { get; set; } 
     public string Name { get; set; } 
@@ -8,7 +8,7 @@ internal sealed class RoleDto
     public IEnumerable<RoleClaimDto> RoleClaims { get; set; }
 }
 
-internal sealed class RoleClaimDto
+public sealed class RoleClaimDto
 {
     public int Id { get; set; } 
     public string ClaimType { get; set; } 

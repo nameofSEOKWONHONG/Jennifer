@@ -1,6 +1,5 @@
 ﻿using Jennifer.Account.Application.Auth.Contracts;
 using Jennifer.Account.Application.Users.Filters;
-using Jennifer.Domain.Account;
 using Jennifer.Infrastructure.Database;
 using Jennifer.Infrastructure.Session.Abstracts;
 using Jennifer.SharedKernel;
@@ -10,12 +9,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Jennifer.Account.Application.Users.Commands;
 
-internal sealed class GetsUserQueryHandler(
+public sealed class GetsUserQueryHandler(
     ISessionContext session,
     IUserQueryFilter queryFilter,
-    JenniferDbContext dbContext) : IQueryHandler<GetsUserQuery, PaginatedResult<UserDto[]>>
+    JenniferDbContext dbContext) : IQueryHandler<GetsUserQuery, PaginatedResult<UserDto>>
 {
-    public async ValueTask<PaginatedResult<UserDto[]>> Handle(GetsUserQuery query, CancellationToken cancellationToken)
+    public async ValueTask<PaginatedResult<UserDto>> Handle(GetsUserQuery query, CancellationToken cancellationToken)
     {
         var options = await session.Option.GetAsync();
         var userOptions = await session.UserOption.GetAsync();
@@ -35,6 +34,6 @@ internal sealed class GetsUserQueryHandler(
             .Select(queryFilter.Selector)
             .ToArrayAsync(cancellationToken: cancellationToken);
         
-        return await PaginatedResult<UserDto[]>.SuccessAsync(total, result, query.PageNo, query.PageSize);
+        return await PaginatedResult<UserDto>.SuccessAsync(total, result, query.PageNo, query.PageSize);
     }
 }

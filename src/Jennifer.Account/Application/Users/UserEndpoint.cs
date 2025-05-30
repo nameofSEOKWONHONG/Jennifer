@@ -8,9 +8,9 @@ using Microsoft.AspNetCore.Routing;
 
 namespace Jennifer.Account.Application.Users;
 
-internal static class UserEndpoint
+public static class UserEndpoint
 {
-    internal static void MapUserEndpoint(this IEndpointRouteBuilder endpoint)
+    public static void MapUserEndpoint(this IEndpointRouteBuilder endpoint)
     {
         var apiVersionSet = endpoint.NewApiVersionSet()
             .HasApiVersion(new ApiVersion(1))

@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using Jennifer.Account.Application.Auth.Contracts;
 using Jennifer.Account.Application.Auth.Services.Abstracts;
-using Jennifer.Domain.Account;
+using Jennifer.Domain.Accounts;
 using Jennifer.Infrastructure.Session;
 using Jennifer.SharedKernel;
 using Mediator;
@@ -10,8 +10,8 @@ using Microsoft.Extensions.Caching.Distributed;
 
 namespace Jennifer.Account.Application.Auth.Commands.SignIn;
 
-internal sealed record TokenGenerateCommand(User User):ICommand<Result<TokenResponse>>;
-internal sealed class TokenGenerateCommandHandler(
+public sealed record TokenGenerateCommand(User User):ICommand<Result<TokenResponse>>;
+public sealed class TokenGenerateCommandHandler(
     UserManager<User> userManager,
     RoleManager<Role> roleManager,
     IJwtService jwtService,

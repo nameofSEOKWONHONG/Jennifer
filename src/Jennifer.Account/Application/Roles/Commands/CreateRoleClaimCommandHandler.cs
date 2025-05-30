@@ -1,4 +1,4 @@
-﻿using Jennifer.Domain.Account;
+﻿using Jennifer.Domain.Accounts;
 using Jennifer.Infrastructure.Database;
 using Jennifer.SharedKernel;
 using Mediator;
@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Jennifer.Account.Application.Roles.Commands;
 
-internal sealed class CreateRoleClaimCommandHandler(JenniferDbContext dbContext) : ICommandHandler<CreateRoleClaimCommand, Result>
+public sealed class CreateRoleClaimCommandHandler(JenniferDbContext dbContext) : ICommandHandler<CreateRoleClaimCommand, Result>
 {
     public async ValueTask<Result> Handle(CreateRoleClaimCommand command, CancellationToken cancellationToken)
     {

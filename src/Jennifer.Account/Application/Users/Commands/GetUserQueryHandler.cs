@@ -1,6 +1,5 @@
 ﻿using Jennifer.Account.Application.Auth.Contracts;
 using Jennifer.Account.Application.Users.Filters;
-using Jennifer.Domain.Account;
 using Jennifer.Infrastructure.Database;
 using Jennifer.SharedKernel;
 using LinqKit;
@@ -9,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Jennifer.Account.Application.Users.Commands;
 
-internal sealed class GetUserQueryHandler(
+public sealed class GetUserQueryHandler(
     IUserQueryFilter queryFilter,
     JenniferDbContext dbContext): IQueryHandler<GetUserQuery, Result<UserDto>>
 {

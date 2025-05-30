@@ -10,5 +10,5 @@ public class GetsUserRequest : PagingRequest
     public string UserName { get; set; }
 }
 
-internal sealed record GetsUserQuery(string Email, string UserName, int PageNo = 1, int PageSize = 10)
-    : IQuery<PaginatedResult<UserDto[]>>;
+public sealed record GetsUserQuery(string Email, string UserName, int PageNo = 1, int PageSize = 10)
+    : IQuery<PaginatedResult<UserDto>>;

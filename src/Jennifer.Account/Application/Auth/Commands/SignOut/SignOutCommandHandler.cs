@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 using eXtensionSharp;
-using Jennifer.Domain.Account;
+using Jennifer.Domain.Accounts;
 using Jennifer.Infrastructure.Session;
 using Jennifer.Infrastructure.Session.Abstracts;
 using Jennifer.SharedKernel;
@@ -11,7 +11,7 @@ using Microsoft.Extensions.Caching.Hybrid;
 
 namespace Jennifer.Account.Application.Auth.Commands.SignOut;
 
-internal sealed class SignOutCommandHandler(
+public sealed class SignOutCommandHandler(
     UserManager<User> userManager,
     ISessionContext session
 ): ICommandHandler<SignOutCommand, Result>

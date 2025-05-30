@@ -1,6 +1,6 @@
 ﻿using Jennifer.Account.Application.Auth.Contracts;
 using Jennifer.Account.Application.Auth.Services.Abstracts;
-using Jennifer.Domain.Account.Contracts;
+using Jennifer.Domain.Accounts.Contracts;
 using Jennifer.Infrastructure.Abstractions.ServiceCore;
 using Jennifer.SharedKernel;
 using Mediator;
@@ -10,7 +10,7 @@ namespace Jennifer.Account.Application.Auth.Commands.SignUp;
 
 public sealed record SignUpRetryCommand(string Email):ICommand<Result>;
 
-internal sealed class SignUpRetryCommandHandler(
+public sealed class SignUpRetryCommandHandler(
     IServiceExecutionBuilderFactory factory)
     : ICommandHandler<SignUpRetryCommand, Result>
 {

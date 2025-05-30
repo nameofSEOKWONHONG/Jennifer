@@ -2,8 +2,8 @@
 using eXtensionSharp;
 using Jennifer.Account.Application.Auth.Contracts;
 using Jennifer.Account.Application.Auth.Services.Abstracts;
-using Jennifer.Domain.Account;
-using Jennifer.Domain.Account.Contracts;
+using Jennifer.Domain.Accounts;
+using Jennifer.Domain.Accounts.Contracts;
 using Jennifer.Infrastructure.Abstractions.ServiceCore;
 using Jennifer.Infrastructure.Database;
 using Jennifer.Infrastructure.Email;
@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Jennifer.Account.Application.Auth.Services.Implements;
 
-internal sealed class VerifyCodeSendEmailService(
+public sealed class VerifyCodeSendEmailService(
     JenniferDbContext dbContext,
     IProducer<string, string> producer) : ServiceBase<VerifyCodeSendEmailRequest, Result>, 
     IVerifyCodeSendEmailService {
@@ -45,7 +45,7 @@ Jennifer";
         if (templateSubject.xIsNotEmpty()) emailSubject = templateSubject.Value;
         if (templateFormat.xIsNotEmpty()) emailFormat = templateFormat.Value;
 
-        await dbContext.EmailVerificationCodes.AddAsync(new EmailVerificationCode()
+        await dbContext.EmailVerificationCodes.AddAsync(new EmailConfirmCode()
         {
             Email = request.Email,
             Type = request.Type,

@@ -1,6 +1,6 @@
 ﻿using eXtensionSharp;
-using Jennifer.Domain.Account;
-using Jennifer.Domain.Account.Contracts;
+using Jennifer.Domain.Accounts;
+using Jennifer.Domain.Accounts.Contracts;
 using Jennifer.Infrastructure.Database;
 using Jennifer.SharedKernel;
 using Mediator;
@@ -15,7 +15,7 @@ namespace Jennifer.Account.Application.Auth.Commands.TwoFactor;
 /// for a user. This command generates a secret key and a corresponding QR code that can be scanned
 /// by an authenticator application to enable 2FA for the user.
 /// </summary>
-internal sealed class Setup2FaCommandHandler(UserManager<User> userManager,
+public sealed class Setup2FaCommandHandler(UserManager<User> userManager,
     JenniferDbContext dbContext) : ICommandHandler<Setup2FaCommand, Result<Setup2FaResult>>
 {
     public async ValueTask<Result<Setup2FaResult>> Handle(Setup2FaCommand command, CancellationToken cancellationToken)

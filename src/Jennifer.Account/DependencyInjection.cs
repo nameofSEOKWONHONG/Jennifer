@@ -13,7 +13,7 @@ using Jennifer.Account.Application.Options;
 using Jennifer.Account.Application.Roles;
 using Jennifer.Account.Application.Tests;
 using Jennifer.Account.Application.Users;
-using Jennifer.Domain.Account;
+using Jennifer.Domain.Accounts;
 using Jennifer.Domain.Common;
 using Jennifer.External.OAuth.Contracts;
 using Jennifer.Infrastructure.Abstractions;
@@ -35,7 +35,7 @@ using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using StackExchange.Redis;
-using Role = Jennifer.Domain.Account.Role;
+using Role = Jennifer.Domain.Accounts.Role;
 
 namespace Jennifer.Account;
 
@@ -180,21 +180,6 @@ public static class DependencyInjection
         });
         #endif
 
-        #region [setting mediator]
-
-        services.AddMediator(options =>
-        {
-            options.ServiceLifetime = ServiceLifetime.Scoped;
-        });
-        //Registered behaviors are executed in order (e.g., IpBlockBehavior, DomainEventBehavior, ValidationBehavior, TransactionBehavior)
-        services.AddScoped(typeof(IPipelineBehavior<,>), typeof(DomainEventBehavior<,>));
-        services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
-        services.AddScoped(typeof(IPipelineBehavior<,>), typeof(TransactionBehavior<,>));
-        services.AddValidatorsFromAssemblyContaining<SignUpAdminCommandValidator>();
-        services.AddScoped<IDomainEventPublisher, DomainEventPublisher>();
-        services.AddSingleton<IIpBlockService, IpBlockService>();
-        #endregion
-
         services.AddScoped<ISlimSender, SlimSender>();
         
         return services;
@@ -282,15 +267,15 @@ public static class DependencyInjection
     }
 
     /// <summary>
-    /// Adds the Jennifer.Mail services to the dependency injection container.
+    /// Configures and adds Jennifer mail service components to the specified dependency injection container.
     /// </summary>
-    /// <param name="services">The service collection to which the Jennifer.Mail services will be added.
-    /// This includes a singleton registration for email queuing and a hosted service for email sending operations.</param>
+    /// <param name="services">The service collection to which Jennifer mail service components will be added.</param>
+    /// <param name="kafkaConnectionString">The Kafka connection string used to configure producer and consumer for mailing services.</param>
     public static void WithJenniferMailService(this IServiceCollection services, string kafkaConnectionString)
     {
         // services.AddSingleton<IEmailQueue, EmailQueue>();
         // services.AddHostedService<EmailSendService>();
-        services.AddHostedService<EmailConsumerService>();
+        services.AddHostedService<EmailConsumerProcessor>();
         services.AddSingleton<IProducer<string, string>>(sp =>
         {
             var config = new ProducerConfig

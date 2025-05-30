@@ -1,4 +1,4 @@
-﻿using Jennifer.Domain.Account;
+﻿using Jennifer.Domain.Accounts;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SmartEnum.EFCore;
@@ -20,7 +20,7 @@ public class JenniferReadOnlyDbContext: IdentityDbContext<User, Role, Guid,
     RoleClaim,
     UserToken>
 {       
-    public DbSet<EmailVerificationCode> EmailVerificationCodes { get; set; }
+    public DbSet<EmailConfirmCode> EmailVerificationCodes { get; set; }
     public DbSet<Option> Options { get; set; }
     public DbSet<UserOption> UserOptions { get; set; }
 

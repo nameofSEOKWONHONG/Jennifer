@@ -3,7 +3,16 @@
     <PropertyGroup>
         <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
+        <Nullable>disable</Nullable>
     </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Asp.Versioning.Http"/>
+        <PackageReference Include="Mediator.Abstractions"/>
+        
+      <ProjectReference Include="..\Jennifer.Domain\Jennifer.Domain.csproj" />
+      <ProjectReference Include="..\Jennifer.Infrastructure\Jennifer.Infrastructure.csproj" />
+      <ProjectReference Include="..\Jennifer.SharedKernel\Jennifer.SharedKernel.csproj" />
+    </ItemGroup>
 
 </Project>

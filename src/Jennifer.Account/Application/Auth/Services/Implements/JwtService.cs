@@ -4,14 +4,14 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using Jennifer.Account.Application.Auth.Services.Abstracts;
-using Jennifer.Domain.Account;
+using Jennifer.Domain.Accounts;
 using Jennifer.Domain.Converters;
 using Jennifer.SharedKernel;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Jennifer.Account.Application.Auth.Services.Implements;
 
-internal sealed class JwtService : IJwtService
+public sealed class JwtService : IJwtService
 {
     public JwtService()
     {

@@ -1,4 +1,4 @@
-﻿using Jennifer.Domain.Account;
+﻿using Jennifer.Domain.Accounts;
 using Jennifer.Infrastructure.Database;
 using Jennifer.SharedKernel;
 using Mediator;
@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Jennifer.Account.Application.Auth.Commands.SignUp;
 
-internal sealed class SignUpAdminCommandHandler(JenniferDbContext context, IPasswordHasher<User> passwordHasher)
+public sealed class SignUpAdminCommandHandler(JenniferDbContext context, IPasswordHasher<User> passwordHasher)
     : ICommandHandler<SignUpAdminCommand, Result<Guid>>
 {
     public async ValueTask<Result<Guid>> Handle(SignUpAdminCommand command, CancellationToken cancellationToken)

@@ -35,6 +35,8 @@ public class Result<T>: Result, IResult
 
 public class PaginatedResult<T> : Result<T>, IResult
 {
+    public new IEnumerable<T> Data { get; set; }
+    
     public int PageNo { get; set; }
 
     public int TotalPages { get; set; }
@@ -46,7 +48,7 @@ public class PaginatedResult<T> : Result<T>, IResult
 
     public bool HasNextPage => PageNo < TotalPages;
     
-    public static Task<PaginatedResult<T>> SuccessAsync(int totalCount, T data, int pageNo, int pageSize) =>
+    public static Task<PaginatedResult<T>> SuccessAsync(int totalCount, T[] data, int pageNo, int pageSize) =>
         Task.FromResult(new PaginatedResult<T>
         {
             IsSuccess = true,

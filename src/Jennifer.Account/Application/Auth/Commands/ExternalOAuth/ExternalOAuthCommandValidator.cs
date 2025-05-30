@@ -2,7 +2,7 @@
 
 namespace Jennifer.Account.Application.Auth.Commands.ExternalOAuth;
 
-internal sealed class ExternalOAuthCommandValidator : AbstractValidator<ExternalOAuthCommand>
+public sealed class ExternalOAuthCommandValidator : AbstractValidator<ExternalOAuthCommand>
 {
     public ExternalOAuthCommandValidator()
     {

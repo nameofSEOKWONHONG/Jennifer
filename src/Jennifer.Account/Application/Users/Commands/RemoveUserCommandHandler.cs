@@ -1,5 +1,4 @@
 ﻿using Jennifer.Account.Application.Users.Filters;
-using Jennifer.Domain.Account;
 using Jennifer.Infrastructure.Database;
 using Jennifer.Infrastructure.Extenstions;
 using Jennifer.Infrastructure.Session.Abstracts;
@@ -9,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Jennifer.Account.Application.Users.Commands;
 
-internal sealed class RemoveUserCommandHandler(
+public sealed class RemoveUserCommandHandler(
     ISessionContext session,
     IUserQueryFilter queryFilter,
     JenniferDbContext dbContext): ICommandHandler<RemoveUserCommand, Result>
