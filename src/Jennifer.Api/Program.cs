@@ -62,7 +62,9 @@ builder.Services.AddMediator(options =>
         typeof(Jennifer.Todo.DependencyInjection).Assembly,
     ];
 });
-//Registered behaviors are executed in order (e.g., IpBlockBehavior, DomainEventBehavior, ValidationBehavior, TransactionBehavior)
+//Registered behaviors are executed in order
+//(e.g., DomainEventBehavior -> ValidationBehavior -> TransactionBehavior)
+//(e.g., TransactionBehavior -> ValidationBehavior -> DomainEventBehavior)
 builder.Services.AddScoped(typeof(IPipelineBehavior<,>), typeof(DomainEventBehavior<,>));
 builder.Services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 builder.Services.AddScoped(typeof(IPipelineBehavior<,>), typeof(TransactionBehavior<,>));

@@ -10,6 +10,7 @@ using Jennifer.Account.Application.Auth.Contracts;
 using Mediator;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 
 namespace Jennifer.Account.Application.Auth;
@@ -146,9 +147,9 @@ JWT 토큰과 갱신 토큰을 반환합니다.
             .RequireAuthorization();
 
         group.MapPost("/refreshtoken",
-                async (string refreshToken, ISender sender,
+                async ([FromBody]RefreshTokenRequest request, ISender sender,
                         CancellationToken ct) =>
-                    await sender.Send(new RefreshTokenCommand(refreshToken), ct))
+                    await sender.Send(new RefreshTokenCommand(request.Token), ct))
             .WithName("RefreshToken")
             .Produces<TokenResponse>(StatusCodes.Status200OK)
             .WithDescription("유효한 갱신 토큰을 사용하여 새로운 JWT 토큰을 생성합니다.");
