@@ -31,26 +31,6 @@ builder.Host.UseSerilog((context, services, config) =>
         .ReadFrom.Configuration(context.Configuration);
 });
 
-var cryptoOptions = new CryptoOptions(
-    builder.Configuration["AES_KEY"],
-    builder.Configuration["AES_IV"]);
-var jwtOptions = new JwtOptions(builder.Configuration["JWT_KEY"],
-    builder.Configuration["JWT_ISSUER"],
-    builder.Configuration["JWT_AUDIANCE"],
-    builder.Configuration["JWT_EXPIRYMINUTES"].xValue<int>(),
-    builder.Configuration["JWT_REFRESHEXPIRYMINUTES"].xValue<int>());
-var smtpOptions = new EmailSmtpOptions(
-    builder.Configuration["SMTP_HOST"],
-    builder.Configuration["SMTP_PORT"].xValue<int>(),
-    builder.Configuration["SMTP_USERNAME"],
-    builder.Configuration["SMTP_PASSWORD"]
-);
-
-var options = new JenniferOptions("account",
-    cryptoOptions, 
-    jwtOptions,
-    smtpOptions);
-
 #region [setting mediator]
 //builder.Services.AddScoped<INotificationPublisher, DomainEventPublisher>();
 builder.Services.AddScoped<DomainEventDispatcher>();
@@ -80,8 +60,28 @@ builder.Services.AddMediator(options =>
 
 #endregion
 
+var cryptoOptions = new CryptoOptions(
+    builder.Configuration["AES_KEY"],
+    builder.Configuration["AES_IV"]);
+var jwtOptions = new JwtOptions(builder.Configuration["JWT_KEY"],
+    builder.Configuration["JWT_ISSUER"],
+    builder.Configuration["JWT_AUDIANCE"],
+    builder.Configuration["JWT_EXPIRYMINUTES"].xValue<int>(),
+    builder.Configuration["JWT_REFRESHEXPIRYMINUTES"].xValue<int>());
+var smtpOptions = new EmailSmtpOptions(
+    builder.Configuration["SMTP_HOST"],
+    builder.Configuration["SMTP_PORT"].xValue<int>(),
+    builder.Configuration["SMTP_USERNAME"],
+    builder.Configuration["SMTP_PASSWORD"]
+);
+
+var jenniferOptions = new JenniferOptions("account",
+    cryptoOptions, 
+    jwtOptions,
+    smtpOptions);
+
 // Add jennifer account manager
-builder.Services.AddJennifer(options,
+builder.Services.AddJennifer(jenniferOptions,
         (provider, optionsBuilder) =>
         {
             optionsBuilder.UseNpgsql(builder.Configuration["SQLSERVER_CONNECTION"])
