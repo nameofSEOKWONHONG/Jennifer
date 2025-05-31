@@ -1,5 +1,4 @@
 ﻿using eXtensionSharp;
-using Jennifer.Account.Application.Auth.DomainEvents.SignUp;
 using Jennifer.Domain.Accounts;
 using Jennifer.Domain.Accounts.Contracts;
 using Jennifer.Infrastructure.Database;

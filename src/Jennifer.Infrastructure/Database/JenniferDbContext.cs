@@ -23,6 +23,7 @@ public class JenniferDbContext : IdentityDbContext<User, Role, Guid,
     public DbSet<UserOption> UserOptions { get; set; }
     
     public DbSet<TodoItem> TodoItems { get; set; }
+    public DbSet<TodoItemShare> TodoItemShares { get; set; }
 
     public JenniferDbContext(DbContextOptions<JenniferDbContext> options, DomainEventDispatcher dispatcher): base(options)
     {
@@ -52,6 +53,7 @@ public class JenniferDbContext : IdentityDbContext<User, Role, Guid,
         modelBuilder.ApplyConfiguration(new UserOptionEntityConfiguration());
         
         modelBuilder.ApplyConfiguration(new TodoItemEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new TodoItemShareEntityConfiguration());
     }
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())

@@ -39,13 +39,13 @@ public static class Endpoint
             .WithDescription("Gets a specific todo item by ID");
         
         group.MapPost("/", async ([FromBody]TodoItemDto dto, ISender sender, CancellationToken cancellationToken) =>
-            await sender.Send(new CreateTodoCommand(dto), cancellationToken))
+            await sender.Send(new CreateTodoItemCommand(dto), cancellationToken))
             .MapToApiVersion(1)
             .WithName("CreateTodo") 
             .WithDescription("Creates a new todo item");
         
         group.MapPut("/", async ([FromBody]TodoItemDto dto, ISender sender, CancellationToken cancellationToken) =>
-            await sender.Send(new UpdateTodoCommand(dto), cancellationToken))
+            await sender.Send(new UpdateTodoItemCommand(dto), cancellationToken))
             .MapToApiVersion(1)
             .WithName("UpdateTodo")
             .WithDescription("Updates an existing todo item");

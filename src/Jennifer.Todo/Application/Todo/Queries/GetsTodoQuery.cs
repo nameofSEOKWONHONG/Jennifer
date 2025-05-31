@@ -20,7 +20,18 @@ public sealed class GetsTodoQueryHandler(
         var queryable = dbContext.TodoItems.AsNoTracking().Where(m => m.UserId == user.Id);
         var total = await queryable.CountAsync(cancellationToken: cancellationToken);
         var items = await queryable
-            .Select(m => new TodoItemDto(m.Id, m.UserId, m.Description, m.DueDate, m.Labels, m.IsCompleted, m.CompletedAt, m.Priority))
+            .Select(m => new TodoItemDto()
+            {
+                Id = m.Id, 
+                UserId = m.UserId, 
+                Description = m.Description, 
+                DueDate = m.DueDate, 
+                Labels = m.Labels, 
+                IsCompleted = m.IsCompleted, 
+                CompletedAt = m.CompletedAt, 
+                Priority = m.Priority,
+                SharedUsers = m.TodoItemShares.Select(mm => mm.ShareUserId).ToList()
+            })
             .Skip((query.PageNo - 1) * query.PageSize)
             .Take(query.PageSize)
             .ToArrayAsync(cancellationToken: cancellationToken);

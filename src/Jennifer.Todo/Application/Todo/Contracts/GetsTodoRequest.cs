@@ -15,4 +15,15 @@ public sealed record GetTodoRequest(Guid Id);
 /// <summary>
 /// DTO model representing a todo item with all its properties
 /// </summary>
-public sealed record TodoItemDto(Guid Id, Guid UserId, string Description, DateTime? DueDate, List<string> Labels, bool IsCompleted, DateTime? CompletedAt, Priority Priority);
+public sealed class TodoItemDto
+{
+    public Guid Id { get; set; }
+    public     Guid UserId{ get; set; }
+    public string Description{ get; set; }
+    public     DateTime? DueDate{ get; set; }
+    public List<string> Labels{ get; set; }
+    public bool IsCompleted{ get; set; }
+    public     DateTime? CompletedAt{ get; set; }
+    public Priority Priority { get; set; }
+    public List<Guid> SharedUsers { get; set; } = new();
+}

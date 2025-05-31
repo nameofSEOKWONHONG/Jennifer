@@ -20,7 +20,18 @@ public sealed class GetTodoQueryHandler(
         var user = await session.User.GetAsync();
         var exists = await dbContext.TodoItems.AsNoTracking()
             .Where(m => m.Id == query.Id && m.UserId == user.Id)
-            .Select(m => new TodoItemDto(m.Id, m.UserId, m.Description, m.DueDate, m.Labels, m.IsCompleted, m.CompletedAt,  m.Priority))
+            .Select(m => new TodoItemDto()
+            {
+                Id = m.Id, 
+                UserId = m.UserId, 
+                Description = m.Description, 
+                DueDate = m.DueDate, 
+                Labels = m.Labels, 
+                IsCompleted = m.IsCompleted, 
+                CompletedAt = m.CompletedAt, 
+                Priority = m.Priority,
+                SharedUsers = m.TodoItemShares.Select(mm => mm.ShareUserId).ToList()
+            })
             .FirstAsync(cancellationToken: cancellationToken);
         return await Result<TodoItemDto>.SuccessAsync(exists);        
     }

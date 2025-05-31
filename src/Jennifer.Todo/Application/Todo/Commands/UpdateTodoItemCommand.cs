@@ -12,34 +12,34 @@ namespace Jennifer.Todo.Application.Todo.Commands;
 /// <summary>
 /// Command to update an existing todo item
 /// </summary>
-public sealed record UpdateTodoCommand(TodoItemDto Item): ICommand<Result>;
+public sealed record UpdateTodoItemCommand(TodoItemDto Item): ICommand<Result>;
 
 /// <summary>
 /// Handler for processing UpdateTodoCommand
 /// </summary>
-public sealed class UpdateTodoCommandHandler(
+public sealed class UpdateTodoItemCommandHandler(
     JenniferDbContext dbContext,
     ISessionContext session
-): ICommandHandler<UpdateTodoCommand, Result>
+): ICommandHandler<UpdateTodoItemCommand, Result>
 {
     /// <summary>
     /// Updates an existing todo item with new values from the command
     /// </summary>
-    /// <param name="command">Command containing updated todo item details</param>
+    /// <param name="itemCommand">Command containing updated todo item details</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Success result if update successful, Failure if item not found</returns>
-    public async ValueTask<Result> Handle(UpdateTodoCommand command, CancellationToken cancellationToken)
+    public async ValueTask<Result> Handle(UpdateTodoItemCommand itemCommand, CancellationToken cancellationToken)
     {
         var user = await session.User.GetAsync();
-        var exists = await dbContext.TodoItems.FirstOrDefaultAsync(m => m.Id == command.Item.Id && m.UserId == user.Id, cancellationToken);
+        var exists = await dbContext.TodoItems.FirstOrDefaultAsync(m => m.Id == itemCommand.Item.Id && m.UserId == user.Id, cancellationToken);
         if(exists.xIsEmpty()) return await Result.FailureAsync("not found");
 
-        exists.Description = command.Item.Description; 
-        exists.DueDate = command.Item.DueDate;  
-        exists.Labels = command.Item.Labels;  
-        exists.IsCompleted = command.Item.IsCompleted;  
-        exists.CompletedAt = command.Item.CompletedAt;  
-        exists.Priority = command.Item.Priority;
+        exists.Description = itemCommand.Item.Description; 
+        exists.DueDate = itemCommand.Item.DueDate;  
+        exists.Labels = itemCommand.Item.Labels;  
+        exists.IsCompleted = itemCommand.Item.IsCompleted;  
+        exists.CompletedAt = itemCommand.Item.CompletedAt;  
+        exists.Priority = itemCommand.Item.Priority;
         
         await dbContext.SaveChangesAsync(cancellationToken);
         return await Result.SuccessAsync();       

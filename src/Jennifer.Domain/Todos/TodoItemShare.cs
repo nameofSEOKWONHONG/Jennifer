@@ -13,6 +13,9 @@ public class TodoItemShare : Entry
     
     public Guid TodoItemId { get; set; }
     public TodoItem TodoItem { get; set; }
+    
+    public DateTimeOffset? CompletedAt { get; set; }
+    public bool IsCompleted { get; set; }
 
     public static TodoItemShare Create(Guid userId, Guid shareUserId, Guid todoItemId)
     {
