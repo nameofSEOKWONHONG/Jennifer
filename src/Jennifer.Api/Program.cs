@@ -5,11 +5,10 @@ using Jennifer.Account;
 using Jennifer.Account.Application.Auth.Commands.SignUp;
 using Jennifer.Domain.Common;
 using Jennifer.Infrastructure.Abstractions.Behaviors;
-using Jennifer.Infrastructure.Abstractions.DomainEvents;
+using Jennifer.Infrastructure.Database;
 using Jennifer.Infrastructure.Middlewares;
 using Jennifer.SharedKernel;
 using Jennifer.Todo;
-using Mediator;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
 using Scalar.AspNetCore;
@@ -53,16 +52,18 @@ var options = new JenniferOptions("account",
     smtpOptions);
 
 #region [setting mediator]
-builder.Services.AddScoped<INotificationPublisher, DomainEventPublisher>();
+//builder.Services.AddScoped<INotificationPublisher, DomainEventPublisher>();
+builder.Services.AddScoped<DomainEventDispatcher>();
 builder.Services.AddValidatorsFromAssemblyContaining<SignUpAdminCommandValidator>();
 builder.Services.AddSingleton<IIpBlockService, IpBlockService>();
 builder.Services.AddMediator(options =>
 {
     options.ServiceLifetime = ServiceLifetime.Scoped;
-    options.NotificationPublisherType = typeof(DomainEventPublisher);
+    //options.NotificationPublisherType = typeof(DomainEventPublisher);
     options.Assemblies = [
         typeof(Jennifer.Account.DependencyInjection).Assembly,
         typeof(Jennifer.Todo.DependencyInjection).Assembly,
+        typeof(Jennifer.Domain.Accounts.UserCompleteDomainEvent).Assembly
     ];
     options.PipelineBehaviors =
     [

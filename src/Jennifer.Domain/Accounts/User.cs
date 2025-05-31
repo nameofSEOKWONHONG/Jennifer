@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Jennifer.Domain.Accounts;
 
-public class User : IdentityUser<Guid>, IAuditable
+public class User : IdentityUser<Guid>, IAuditable, IHasDomainEvents
 {
     public string AuthenticatorKey { get; set; }
     public ENUM_USER_TYPE Type { get; set; }
@@ -26,7 +26,7 @@ public class User : IdentityUser<Guid>, IAuditable
 
     public static User Create(string email, string username, string phoneNumber, ENUM_USER_TYPE type)
     {
-        return new User()
+        var user = new User()
         {
             Email = email,
             NormalizedEmail = email.ToUpper(),
@@ -44,7 +44,14 @@ public class User : IdentityUser<Guid>, IAuditable
             IsDelete = false,
             CreatedBy = "SYSTEM"
         };
+        user.AddDomainEvent(new UserCompleteDomainEvent(user));
+        return user;
     }
+
+    public List<INotification> DomainEvents { get; } = new();
+
+    public void AddDomainEvent(INotification @event) => DomainEvents.Add(@event);
+    public void ClearDomainEvents() => DomainEvents.Clear();
 }
 
 public class UserEntityConfiguration : IEntityTypeConfiguration<User>

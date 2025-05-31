@@ -1,4 +1,5 @@
-﻿using Jennifer.Infrastructure.Session.Contracts;
+﻿using Jennifer.Infrastructure.Abstractions.Behaviors;
+using Jennifer.Infrastructure.Session.Contracts;
 using Jennifer.SharedKernel;
 using Mediator;
 
@@ -9,6 +10,5 @@ public interface ISessionContext
     IUnifiedContext<UserCacheResult> User { get; }
     IUnifiedContext<UserOptionCacheResult[]> UserOption { get; }
     IUnifiedContext<OptionCacheResult[]> Option { get; }
-    IPublisher  DomainEventPublisher { get; }
     bool IsAuthenticated { get; }
 }

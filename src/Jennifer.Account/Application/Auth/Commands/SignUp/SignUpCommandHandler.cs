@@ -1,4 +1,5 @@
 ﻿using eXtensionSharp;
+using Jennifer.Account.Application.Auth.DomainEvents.SignUp;
 using Jennifer.Domain.Accounts;
 using Jennifer.Domain.Accounts.Contracts;
 using Jennifer.Infrastructure.Database;
@@ -21,14 +22,8 @@ public sealed class SignUpCommandHandler(
         var exists = await dbContext.Users.FirstOrDefaultAsync(m => m.NormalizedEmail == command.Email.ToUpper(), cancellationToken: cancellationToken);
         if (exists.xIsNotEmpty())
         {
-            switch (exists.EmailConfirmed)
-            {
-                case true:
-                    return await Result<Guid>.FailureAsync("Email already exists.");
-                case false:
-                    await session.DomainEventPublisher.Publish(new UserCompleteDomainEvent(exists), cancellationToken);
-                    return await Result<Guid>.SuccessAsync(exists.Id);
-            }
+            if(!exists.EmailConfirmed)
+                return await Result<Guid>.FailureAsync("Email already exists.");
         }
         
         var user = User.Create(command.Email, command.UserName, command.PhoneNumber, ENUM_USER_TYPE.CUSTOMER);
@@ -36,8 +31,6 @@ public sealed class SignUpCommandHandler(
         
         await dbContext.Users.AddAsync(user, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
-        
-        await session.DomainEventPublisher.Publish(new UserCompleteDomainEvent(user), cancellationToken);
 
         return await Result<Guid>.SuccessAsync(user.Id);
     }

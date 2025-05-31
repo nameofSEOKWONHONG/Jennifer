@@ -7,7 +7,7 @@ using Jennifer.SharedKernel;
 using Mediator;
 using Microsoft.Extensions.Logging;
 
-namespace Jennifer.Account.Application.Auth.Commands.SignUp;
+namespace Jennifer.Account.Application.Auth.DomainEvents.SignUp;
 
 public sealed class UserCompleteDomainEventHandler(ILogger<UserCompleteDomainEventHandler> logger,
     IServiceExecutionBuilderFactory factory): INotificationHandler<UserCompleteDomainEvent>

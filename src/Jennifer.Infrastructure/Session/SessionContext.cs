@@ -1,4 +1,5 @@
-﻿using Jennifer.Infrastructure.Session.Abstracts;
+﻿using Jennifer.Infrastructure.Abstractions.Behaviors;
+using Jennifer.Infrastructure.Session.Abstracts;
 using Jennifer.Infrastructure.Session.Contracts;
 using Jennifer.SharedKernel;
 using Mediator;
@@ -18,18 +19,15 @@ public class SessionContext : ISessionContext
     public IUnifiedContext<UserCacheResult> User { get; }
     public IUnifiedContext<UserOptionCacheResult[]> UserOption { get; }
     public IUnifiedContext<OptionCacheResult[]> Option { get; }
-    public IPublisher  DomainEventPublisher { get; }
     public bool IsAuthenticated => !string.IsNullOrEmpty(User?.Sid);
 
     public SessionContext(
         [FromKeyedServices(SessionContextKeyedServiceName.User)] IUnifiedContext<UserCacheResult> user,
         [FromKeyedServices(SessionContextKeyedServiceName.UserOption)] IUnifiedContext<UserOptionCacheResult[]> userOption,
-        [FromKeyedServices(SessionContextKeyedServiceName.Option)] IUnifiedContext<OptionCacheResult[]> option,
-        IPublisher  domainEventPublisher)
+        [FromKeyedServices(SessionContextKeyedServiceName.Option)] IUnifiedContext<OptionCacheResult[]> option)
     {
         User = user;
         Option = option;
         UserOption = userOption;
-        DomainEventPublisher = domainEventPublisher;
     }
 }

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Jennifer.Domain.Todos;
 
-public sealed class TodoItem : IAuditable
+public class TodoItem : Entry
 {
     public Guid Id { get; set; }
     public Guid UserId { get; set; }
@@ -15,14 +15,12 @@ public sealed class TodoItem : IAuditable
     public bool IsCompleted { get; set; }
     public DateTime? CompletedAt { get; set; }
     public Priority Priority { get; set; }
-    public DateTimeOffset CreatedOn { get; set; }
-    public string CreatedBy { get; set; }
-    public DateTimeOffset? ModifiedOn { get; set; }
-    public string ModifiedBy { get; set; }
+    
+    public virtual ICollection<TodoItemShare> TodoItemShares { get; set; }
 
     public static TodoItem Create(Guid userId, string description, DateTime? dueDate, List<string> labels,  bool isCompleted, DateTime? completedAt, Priority priority)
     {
-        return new TodoItem()
+        var newItem = new TodoItem()
         {
             UserId = userId,
             Description = description,
@@ -34,6 +32,8 @@ public sealed class TodoItem : IAuditable
             CreatedOn = DateTimeOffset.UtcNow,
             CreatedBy = userId.ToString(),
         };
+
+        return newItem;
     }
 }
 
@@ -42,7 +42,7 @@ public class TodoItemEntityConfiguration : IEntityTypeConfiguration<TodoItem>
     public void Configure(EntityTypeBuilder<TodoItem> builder)
     {
         builder.ToTable("TodoItems", JenniferOptionSingleton.Instance.Options.Schema);
-        builder.HasKey(m => m.Id);
+        builder.HasKey(m => new {m.Id, m.UserId});
         builder.Property(m => m.Id)
             .ValueGeneratedOnAdd()
             .HasValueGenerator<GuidV7ValueGenerator>();
@@ -56,5 +56,10 @@ public class TodoItemEntityConfiguration : IEntityTypeConfiguration<TodoItem>
             .HasDefaultValueSql("CURRENT_TIMESTAMP AT TIME ZONE 'UTC'");
         builder.Property(m => m.ModifiedBy)
             .HasMaxLength(36);
+        
+        builder.HasMany(m => m.TodoItemShares)
+            .WithOne(m => m.TodoItem)
+            .HasForeignKey(m => new {m.TodoItemId, m.UserId})
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

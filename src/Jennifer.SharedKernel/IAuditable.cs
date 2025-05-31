@@ -1,4 +1,13 @@
-﻿namespace Jennifer.SharedKernel;
+﻿using Mediator;
+
+namespace Jennifer.SharedKernel;
+
+public interface IHasDomainEvents
+{
+    List<INotification> DomainEvents { get; }
+    void ClearDomainEvents();
+}
+
 
 public interface IAuditable
 {

@@ -14,7 +14,8 @@ public class JenniferDbContext : IdentityDbContext<User, Role, Guid,
     UserLogin, 
     RoleClaim,
     UserToken>, ITransactionDbContext
-{  
+{
+    private readonly DomainEventDispatcher _dispatcher;
     public DbSet<EmailConfirmCode> EmailVerificationCodes { get; set; }
     public DbSet<Option> Options { get; set; }
     public DbSet<Audit> Audits { get; set; }
@@ -23,8 +24,9 @@ public class JenniferDbContext : IdentityDbContext<User, Role, Guid,
     
     public DbSet<TodoItem> TodoItems { get; set; }
 
-    public JenniferDbContext(DbContextOptions<JenniferDbContext> options): base(options)
+    public JenniferDbContext(DbContextOptions<JenniferDbContext> options, DomainEventDispatcher dispatcher): base(options)
     {
+        _dispatcher = dispatcher;
     }
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
@@ -67,7 +69,20 @@ public class JenniferDbContext : IdentityDbContext<User, Role, Guid,
             }
         }
         
+        // 트랜잭션 이전 이벤트 수집
+        var domainEntities = ChangeTracker.Entries<IHasDomainEvents>()
+            .Where(e =>
+                e.State is EntityState.Added or EntityState.Modified or EntityState.Deleted &&
+                e.Entity.DomainEvents.Any())
+            .Select(e => e.Entity)
+            .ToList();
+
         var result = await base.SaveChangesAsync(cancellationToken);
+
+        // 트랜잭션 이후 퍼블리시
+        if (_dispatcher is not null)
+            await _dispatcher.DispatchAsync(domainEntities);
+        
         return result;
     }
 }
