@@ -2,18 +2,18 @@
 
 namespace Jennifer.External.OAuth.Abstracts;
 
-public abstract class ExternalOAuthHandler: IExternalOAuthHandler
+public abstract class ExternalOAuthProvider: IExternalOAuthProvider
 {
     public string Provider { get; private set; }
     protected readonly IHttpClientFactory httpClientFactory;
     protected readonly IJMongoFactory mongoFactory;
-    protected ExternalOAuthHandler(IHttpClientFactory httpClientFactory, string provider)
+    protected ExternalOAuthProvider(IHttpClientFactory httpClientFactory, string provider)
     {
         this.httpClientFactory = httpClientFactory;   
         this.Provider = provider;       
     }
 
-    protected ExternalOAuthHandler(IHttpClientFactory httpClientFactory, IJMongoFactory factory, string provider) :
+    protected ExternalOAuthProvider(IHttpClientFactory httpClientFactory, IJMongoFactory factory, string provider) :
         this(httpClientFactory, provider)
     {
         this.httpClientFactory = httpClientFactory;
@@ -22,5 +22,5 @@ public abstract class ExternalOAuthHandler: IExternalOAuthHandler
     }
 
     
-    public abstract Task<IExternalOAuthResult> Verify(string providerToken, CancellationToken ct);
+    public abstract Task<IExternalOAuthResult> AuthenticateAsync(string providerToken, CancellationToken ct);
 }

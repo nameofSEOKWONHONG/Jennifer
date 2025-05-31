@@ -6,9 +6,9 @@ using Jennifer.External.OAuth.Contracts;
 
 namespace Jennifer.External.OAuth.Implements;
 
-public class KakaoOAuthHandler(IHttpClientFactory httpClientFactory, IJMongoFactory factory) : ExternalOAuthHandler(httpClientFactory, factory, "kakao")
+public class KakaoOAuthProvider(IHttpClientFactory httpClientFactory, IJMongoFactory factory) : ExternalOAuthProvider(httpClientFactory, factory, "kakao")
 {
-    public override async Task<IExternalOAuthResult> Verify(string providerToken, CancellationToken ct)
+    public override async Task<IExternalOAuthResult> AuthenticateAsync(string providerToken, CancellationToken ct)
     {
         var client = httpClientFactory.CreateClient(this.Provider);
         client.DefaultRequestHeaders.Clear();

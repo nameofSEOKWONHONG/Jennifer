@@ -6,13 +6,13 @@ using Jennifer.External.OAuth.Contracts;
 
 namespace Jennifer.External.OAuth.Implements;
 
-public class FacebookOAuthHandler: ExternalOAuthHandler
+public class FacebookOAuthProvider: ExternalOAuthProvider
 {
-    public FacebookOAuthHandler(IHttpClientFactory httpClientFactory, IJMongoFactory factory) : base(httpClientFactory, factory, "facebook")
+    public FacebookOAuthProvider(IHttpClientFactory httpClientFactory, IJMongoFactory factory) : base(httpClientFactory, factory, "facebook")
     {
     }
 
-    public override async Task<IExternalOAuthResult> Verify(string providerToken, CancellationToken ct)
+    public override async Task<IExternalOAuthResult> AuthenticateAsync(string providerToken, CancellationToken ct)
     {
         var client = httpClientFactory.CreateClient(this.Provider);
         client.DefaultRequestHeaders.Clear();

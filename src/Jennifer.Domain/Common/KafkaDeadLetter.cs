@@ -52,7 +52,7 @@ public class KafkaDeadLetterConfiguration: IEntityTypeConfiguration<KafkaDeadLet
         builder.Property(e => e.ErrorMessage);
 
         builder.Property(e => e.CreatedAt)
-            .HasDefaultValueSql("SYSUTCDATETIME()") // SQL Server 기준
+            .HasDefaultValueSql("CURRENT_TIMESTAMP AT TIME ZONE 'UTC'")
             .ValueGeneratedOnAdd();
     }
 }

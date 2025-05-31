@@ -26,16 +26,18 @@ public sealed class SignUpCommandHandler(
                 case true:
                     return await Result<Guid>.FailureAsync("Email already exists.");
                 case false:
-                    session.DomainEventPublisher.Enqueue(new UserCompleteDomainEvent(exists));
+                    await session.DomainEventPublisher.Publish(new UserCompleteDomainEvent(exists), cancellationToken);
                     return await Result<Guid>.SuccessAsync(exists.Id);
             }
         }
         
-        var user = User.Create(session.DomainEventPublisher, command.Email, command.UserName, command.PhoneNumber, ENUM_USER_TYPE.CUSTOMER);
+        var user = User.Create(command.Email, command.UserName, command.PhoneNumber, ENUM_USER_TYPE.CUSTOMER);
         user.PasswordHash = passwordHasher.HashPassword(user, command.Password);
         
         await dbContext.Users.AddAsync(user, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
+        
+        await session.DomainEventPublisher.Publish(new UserCompleteDomainEvent(user), cancellationToken);
 
         return await Result<Guid>.SuccessAsync(user.Id);
     }

@@ -2,14 +2,14 @@
 
 namespace Jennifer.External.OAuth;
 
-public class ExternalOAuthHandlerFactory: IExternalOAuthHandlerFactory
+public class ExternalOAuthProviderFactory: IExternalOAuthProviderFactory
 {
-    private readonly Dictionary<string, IExternalOAuthHandler> _handlers;
+    private readonly Dictionary<string, IExternalOAuthProvider> _handlers;
 
-    public ExternalOAuthHandlerFactory(IEnumerable<IExternalOAuthHandler> handlers)
+    public ExternalOAuthProviderFactory(IEnumerable<IExternalOAuthProvider> handlers)
     {
         var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        _handlers = new Dictionary<string, IExternalOAuthHandler>(StringComparer.OrdinalIgnoreCase);
+        _handlers = new Dictionary<string, IExternalOAuthProvider>(StringComparer.OrdinalIgnoreCase);
 
         foreach (var handler in handlers)
         {
@@ -23,9 +23,9 @@ public class ExternalOAuthHandlerFactory: IExternalOAuthHandlerFactory
         }
     }
 
-    public IExternalOAuthHandler Resolve(string providerName)
+    public IExternalOAuthProvider Resolve(string providerName)
     {
-        if (string.IsNullOrWhiteSpace(providerName)) return null;
+        ArgumentNullException.ThrowIfNull(providerName);
 
         _handlers.TryGetValue(providerName.ToLower(), out var handler);
         return handler;

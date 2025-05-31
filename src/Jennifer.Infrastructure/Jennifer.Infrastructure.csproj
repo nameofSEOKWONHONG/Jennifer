@@ -17,6 +17,7 @@
         <PackageReference Include="eXtensionSharp.Mongo"/>
         <PackageReference Include="Mediator.Abstractions"/>
         <PackageReference Include="Microsoft.Data.SqlClient"/>
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
         <PackageReference Include="NUlid" />
         <PackageReference Include="RabbitMQ.Client"/>
         <PackageReference Include="MailKit"/>        
@@ -32,6 +33,7 @@
         <PackageReference Include="FluentValidation.DependencyInjectionExtensions"/>
         <PackageReference Include="StackExchange.Redis"/>
         <PackageReference Include="ZLinq"/>
+        <PackageReference Include="Mediator.Abstractions" />
     </ItemGroup>
 
     <ItemGroup>

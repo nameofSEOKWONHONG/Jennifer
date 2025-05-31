@@ -10,7 +10,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Jennifer.Todo.Application.Todo.Commands;
 
+/// <summary>
+/// Command to create a new todo item
+/// </summary>
 public sealed record CreateTodoCommand(TodoItemDto Item): ICommand<Result<Guid>>;
+
+/// <summary>
+/// Handler for creating todo items.
+/// Validates that the item doesn't already exist and creates a new one if valid.
+/// </summary>
 public sealed class CreateTodoCommandHandler(
     JenniferDbContext dbContext,
     ISessionContext session

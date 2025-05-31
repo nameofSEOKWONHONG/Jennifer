@@ -53,10 +53,7 @@ public class TodoItemEntityConfiguration : IEntityTypeConfiguration<TodoItem>
             .HasMaxLength(36)
             .IsRequired();
         builder.Property(m => m.CreatedOn)
-            .HasColumnType("datetimeoffset")
-            .HasDefaultValueSql("SYSDATETIMEOFFSET()");
-        builder.Property(m => m.ModifiedOn)
-            .HasColumnType("datetimeoffset");
+            .HasDefaultValueSql("CURRENT_TIMESTAMP AT TIME ZONE 'UTC'");
         builder.Property(m => m.ModifiedBy)
             .HasMaxLength(36);
     }

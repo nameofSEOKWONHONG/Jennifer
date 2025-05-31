@@ -30,30 +30,30 @@ public static class Endpoint
                     cancellationToken))
                 .MapToApiVersion(1)
             .WithName("GetsTodo")
-            .WithDescription("");
+            .WithDescription("Gets a paginated list of todo items optionally filtered by description");
         
         group.MapGet("/{id}", async ([AsParameters]GetTodoRequest request, ISender sender, CancellationToken cancellationToken) =>
             await sender.Send(new GetTodoQuery(request.Id), cancellationToken))
             .MapToApiVersion(1)
             .WithName("GetTodo")
-            .WithDescription("");
+            .WithDescription("Gets a specific todo item by ID");
         
         group.MapPost("/", async ([FromBody]TodoItemDto dto, ISender sender, CancellationToken cancellationToken) =>
             await sender.Send(new CreateTodoCommand(dto), cancellationToken))
             .MapToApiVersion(1)
-            .WithName("CreateTodo")
-            .WithDescription("");
+            .WithName("CreateTodo") 
+            .WithDescription("Creates a new todo item");
         
         group.MapPut("/", async ([FromBody]TodoItemDto dto, ISender sender, CancellationToken cancellationToken) =>
             await sender.Send(new UpdateTodoCommand(dto), cancellationToken))
             .MapToApiVersion(1)
             .WithName("UpdateTodo")
-            .WithDescription("");
+            .WithDescription("Updates an existing todo item");
         
         group.MapDelete("/{id}", async (Guid id, ISender sender, CancellationToken cancellationToken) =>
             await sender.Send(new RemoveTodoItemCommand(id), cancellationToken))
             .MapToApiVersion(1)
             .WithName("RemoveTodo")
-            .WithDescription("");
+            .WithDescription("Removes a todo item by ID");
     }
 }

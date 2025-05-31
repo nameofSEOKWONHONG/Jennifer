@@ -1,32 +1,27 @@
 ﻿using Jennifer.SharedKernel;
 using Mediator;
+using Microsoft.Extensions.Logging;
 
 namespace Jennifer.Infrastructure.Abstractions.DomainEvents;
 
 
-public class DomainEventPublisher : IDomainEventPublisher
+public class DomainEventPublisher : INotificationPublisher
 {
-    private readonly List<IDomainEvent> _events = new();
-    private readonly IPublisher _publisher;
+    private readonly ILogger<DomainEventPublisher> _logger;
 
-    public DomainEventPublisher(IPublisher publisher)
+    public DomainEventPublisher(ILogger<DomainEventPublisher> logger)
     {
-        _publisher = publisher;
+        _logger = logger;
     }
 
-    public void Enqueue(IDomainEvent domainEvent)
+    public async ValueTask Publish<TNotification>(NotificationHandlers<TNotification> handlers, TNotification notification,
+        CancellationToken cancellationToken) where TNotification : INotification
     {
-        _events.Add(domainEvent);
-    }
-    
-    public bool IsEmpty() => _events.Count == 0;
+        _logger.LogInformation("🔥 DomainEventPublisher invoked: {Event}", typeof(TNotification).Name);
 
-    public async Task PublishEnqueuedAsync(CancellationToken cancellationToken = default)
-    {
-        foreach (var e in _events)
+        foreach (var notificationHandler in handlers)
         {
-            await _publisher.Publish(e, cancellationToken);
+            await notificationHandler.Handle(notification, cancellationToken);
         }
-        _events.Clear();
     }
 }

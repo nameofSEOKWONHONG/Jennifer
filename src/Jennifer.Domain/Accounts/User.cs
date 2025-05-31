@@ -2,6 +2,7 @@
 using Jennifer.Domain.Accounts.Contracts;
 using Jennifer.Domain.Converters;
 using Jennifer.SharedKernel;
+using Mediator;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -23,9 +24,9 @@ public class User : IdentityUser<Guid>, IAuditable
     public virtual ICollection<UserToken> Tokens { get; set; }
     public virtual ICollection<UserOption> UserOptions { get; set; }
 
-    public static User Create(IDomainEventPublisher publisher, string email, string username, string phoneNumber, ENUM_USER_TYPE type)
+    public static User Create(string email, string username, string phoneNumber, ENUM_USER_TYPE type)
     {
-        var user = new User()
+        return new User()
         {
             Email = email,
             NormalizedEmail = email.ToUpper(),
@@ -43,10 +44,6 @@ public class User : IdentityUser<Guid>, IAuditable
             IsDelete = false,
             CreatedBy = "SYSTEM"
         };
-        
-        publisher.Enqueue(new UserCompleteDomainEvent(user));
-
-        return user;
     }
 }
 
@@ -79,10 +76,8 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<User>
             .HasMaxLength(36)
             .IsRequired();
         builder.Property(m => m.CreatedOn)
-            .HasColumnType("datetimeoffset")
-            .HasDefaultValueSql("SYSDATETIMEOFFSET()");
-        builder.Property(m => m.ModifiedOn)
-            .HasColumnType("datetimeoffset");
+            .HasDefaultValueSql("CURRENT_TIMESTAMP AT TIME ZONE 'UTC'");
+
         builder.Property(m => m.ModifiedBy)
             .HasMaxLength(36);
         

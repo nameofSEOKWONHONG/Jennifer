@@ -10,13 +10,13 @@ using MongoDB.Driver;
 
 namespace Jennifer.External.OAuth.Implements;
 
-public class AppleOAuthHandler : ExternalOAuthHandler
+public class AppleOAuthProvider : ExternalOAuthProvider
 {
-    public AppleOAuthHandler(IHttpClientFactory httpClientFactory, IJMongoFactory factory) : base(httpClientFactory, factory, "apple")
+    public AppleOAuthProvider(IHttpClientFactory httpClientFactory, IJMongoFactory factory) : base(httpClientFactory, factory, "apple")
     {
     }
 
-    public override async Task<IExternalOAuthResult> Verify(string providerToken, CancellationToken ct)
+    public override async Task<IExternalOAuthResult> AuthenticateAsync(string providerToken, CancellationToken ct)
     {
         var client = httpClientFactory.CreateClient(this.Provider);
         var json = await client.GetStringAsync("/auth/keys", ct);
@@ -26,7 +26,7 @@ public class AppleOAuthHandler : ExternalOAuthHandler
         var validationParameters = new TokenValidationParameters
         {
             ValidIssuer = "https://appleid.apple.com",
-            ValidAudience = "com.your.bundle.id", // ← Apple Developer에서 등록한 Client ID
+            ValidAudience = ExternalOAuthOption.Instance.Options["AppleClientId"], //"com.your.bundle.id", // ← Apple Developer에서 등록한 Client ID
             IssuerSigningKeys = jwks.Keys, // JWKS에서 가져온 키
             ValidateIssuerSigningKey = true,
             ValidateIssuer = true,

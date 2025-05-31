@@ -53,17 +53,19 @@ var options = new JenniferOptions("account",
     smtpOptions);
 
 #region [setting mediator]
-
+builder.Services.AddScoped<INotificationPublisher, DomainEventPublisher>();
+builder.Services.AddValidatorsFromAssemblyContaining<SignUpAdminCommandValidator>();
+builder.Services.AddSingleton<IIpBlockService, IpBlockService>();
 builder.Services.AddMediator(options =>
 {
     options.ServiceLifetime = ServiceLifetime.Scoped;
+    options.NotificationPublisherType = typeof(DomainEventPublisher);
     options.Assemblies = [
         typeof(Jennifer.Account.DependencyInjection).Assembly,
         typeof(Jennifer.Todo.DependencyInjection).Assembly,
     ];
     options.PipelineBehaviors =
     [
-        typeof(DomainEventBehavior<,>),
         typeof(TransactionBehavior<,>),
         typeof(ValidationBehavior<,>)
     ];
@@ -75,16 +77,14 @@ builder.Services.AddMediator(options =>
 // builder.Services.AddScoped(typeof(IPipelineBehavior<,>), typeof(TransactionBehavior<,>));
 // builder.Services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
-builder.Services.AddValidatorsFromAssemblyContaining<SignUpAdminCommandValidator>();
-builder.Services.AddScoped<IDomainEventPublisher, DomainEventPublisher>();
-builder.Services.AddSingleton<IIpBlockService, IpBlockService>();
 #endregion
 
 // Add jennifer account manager
 builder.Services.AddJennifer(options,
         (provider, optionsBuilder) =>
         {
-            optionsBuilder.UseSqlServer(builder.Configuration["SQLSERVER_CONNECTION"])
+            optionsBuilder.UseNpgsql(builder.Configuration["SQLSERVER_CONNECTION"])
+            //optionsBuilder.UseSqlServer(builder.Configuration["SQLSERVER_CONNECTION"])
                 .AddInterceptors(new AuditInterceptor());
             if (builder.Environment.IsDevelopment())
             {

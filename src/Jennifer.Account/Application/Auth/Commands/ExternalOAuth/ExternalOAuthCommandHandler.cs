@@ -9,17 +9,29 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Jennifer.Account.Application.Auth.Commands.ExternalOAuth;
 
-public sealed class ExternalOAuthHandler(
+/// <summary>
+/// Handles external OAuth authentication flow by verifying external tokens,
+/// finding or creating local user accounts, and linking external login providers.
+/// </summary>
+public sealed class ExternalOAuthCommandHandler(
     UserManager<User> userManager,
-    IExternalOAuthHandlerFactory externalOAuthHandlerFactory,
+    IExternalOAuthProviderFactory externalOAuthProviderFactory,
     ISender sender): ICommandHandler<ExternalOAuthCommand, Result<TokenResponse>>
 {
-
+    /// <summary>
+    /// Handles external OAuth authentication by:
+    /// 1. Verifying access token with external provider
+    /// 2. Getting provider-specific user ID
+    /// 3. Finding existing linked user
+    /// 4. Creating new user if needed
+    /// 5. Linking external login to user
+    /// 6. Generating authentication token
+    /// </summary>
     public async ValueTask<Result<TokenResponse>> Handle(ExternalOAuthCommand command, CancellationToken cancellationToken)
     {
         // 1. 외부 서비스에 access_token을 전달하여 사용자 정보 확인
-        var instance = externalOAuthHandlerFactory.Resolve(command.Provider);
-        var verified = await instance.Verify(command.AccessToken, cancellationToken);
+        var instance = externalOAuthProviderFactory.Resolve(command.Provider);
+        var verified = await instance.AuthenticateAsync(command.AccessToken, cancellationToken);
         if (!verified.IsSuccess)
             return await Result<TokenResponse>.FailureAsync("Verify failed.");
 

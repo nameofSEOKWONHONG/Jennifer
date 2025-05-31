@@ -8,12 +8,25 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Jennifer.Todo.Application.Todo.Commands;
 
+/// <summary>
+/// Command to remove a todo item
+/// </summary>
 public sealed record RemoveTodoItemCommand(Guid Id):ICommand<Result>;
+
+/// <summary>
+/// Handler for removing todo items
+/// </summary>
 public sealed class RemoveTodoItemCommandHandler(
     JenniferDbContext dbContext,
     ISessionContext session
 ):ICommandHandler<RemoveTodoItemCommand, Result>
 {
+    /// <summary>
+    /// Handles the removal of a todo item
+    /// </summary>
+    /// <param name="command">Command containing the todo item ID to remove</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>Success result if item was removed, Failure if not found</returns>
     public async ValueTask<Result> Handle(RemoveTodoItemCommand command, CancellationToken cancellationToken)
     {
         var user = await session.User.GetAsync();

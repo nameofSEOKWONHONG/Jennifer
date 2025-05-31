@@ -8,7 +8,7 @@ namespace Jennifer.Domain.Accounts;
 public class UserToken : IdentityUserToken<Guid>
 {
     public User User { get; set; }
-    public DateTime CreatedOn { get; set; } = DateTime.UtcNow;
+    public DateTimeOffset CreatedOn { get; set; } = DateTimeOffset.UtcNow;
 }
 
 
@@ -21,7 +21,7 @@ public class  UserTokenEntityConfiguration : IEntityTypeConfiguration<UserToken>
         builder.HasKey(t => new { t.UserId, t.LoginProvider, t.Name }); // Identity 기본 키
 
         builder.Property(t => t.CreatedOn)
-            .HasDefaultValueSql("getutcdate()"); // SQL Server 기준
+            .HasDefaultValueSql("CURRENT_TIMESTAMP AT TIME ZONE 'UTC'");
 
         builder.HasOne(t => t.User)
             .WithMany(u => u.Tokens)
