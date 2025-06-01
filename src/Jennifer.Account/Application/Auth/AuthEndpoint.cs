@@ -6,6 +6,7 @@ using Jennifer.Account.Application.Auth.Commands.SignIn;
 using Jennifer.Account.Application.Auth.Commands.SignOut;
 using Jennifer.Account.Application.Auth.Commands.SignUp;
 using Jennifer.Account.Application.Auth.Commands.TwoFactor;
+using Jennifer.Account.Application.Auth.Commands.Withdraw;
 using Jennifer.Account.Application.Auth.Contracts;
 using Mediator;
 using Microsoft.AspNetCore.Builder;
@@ -234,5 +235,11 @@ JWT 토큰과 갱신 토큰을 반환합니다.
             확인이 성공하면 계정에 대해 2FA가 활성화됩니다.
             확인이 성공하면 성공을, 코드가 유효하지 않으면 실패를 반환합니다.
             ");
+
+        group.MapPost("/withdraw", async (ISender sender, CancellationToken ct) =>
+                await sender.Send(new WithdrawCommand(), ct))
+            .RequireAuthorization()
+            .WithName("Withdraw")
+            .WithDescription("");
     }
 }

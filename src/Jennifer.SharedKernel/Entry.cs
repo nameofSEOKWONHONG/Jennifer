@@ -1,9 +1,11 @@
-﻿using Mediator;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using Mediator;
 
 namespace Jennifer.SharedKernel;
 
 public abstract class Entry : IHasDomainEvents, IAuditable
 {
+    [NotMapped]
     public List<INotification> DomainEvents { get; } = new();
     public void ClearDomainEvents()
     {

@@ -48,9 +48,31 @@ public class User : IdentityUser<Guid>, IAuditable, IHasDomainEvents
         return user;
     }
 
+    public void Update(string email, string username, string phoneNumber, ENUM_USER_TYPE type, string modifiedBy)
+    {
+        Email = email;
+        NormalizedEmail = email.ToUpper();
+        UserName = username;
+        NormalizedUserName = username.ToUpper();
+        PhoneNumber = phoneNumber;
+        PhoneNumberConfirmed = true;
+        Type = type;
+        ModifiedBy = modifiedBy;
+        ModifiedOn = DateTimeOffset.UtcNow;
+    }
+
+    public void Delete(string modifiedBy)
+    {
+        IsDelete = true;
+        ModifiedBy = modifiedBy;
+        ModifiedOn = DateTimeOffset.UtcNow;
+        //TODO : 회원 탈퇴 안내 메세지 전송 및 정책 전달.
+        this.AddDomainEvent(new UserWithdrawDomainEvent(this));
+    }
+
     public List<INotification> DomainEvents { get; } = new();
 
-    public void AddDomainEvent(INotification @event) => DomainEvents.Add(@event);
+    private void AddDomainEvent(INotification @event) => DomainEvents.Add(@event);
     public void ClearDomainEvents() => DomainEvents.Clear();
 }
 
@@ -58,7 +80,7 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<User>
 {
     public void Configure(EntityTypeBuilder<User> builder)
     {
-        builder.ToTable($"{nameof(User)}s", "accounts");
+        builder.ToTable($"{nameof(User)}s", "account");
         builder.HasKey(m => m.Id );
         builder.Property(e => e.Id)
             .HasValueGenerator<GuidV7ValueGenerator>()
@@ -87,6 +109,8 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<User>
 
         builder.Property(m => m.ModifiedBy)
             .HasMaxLength(36);
+
+        builder.Ignore(m => m.DomainEvents);
         
         builder.HasMany(m => m.UserRoles)
             .WithOne(ur => ur.User)

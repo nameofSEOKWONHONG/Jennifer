@@ -74,8 +74,10 @@ public static class DependencyInjection
         ArgumentNullException.ThrowIfNull(dbContextSetup);
         ArgumentNullException.ThrowIfNull(identitySetup);
 
+        //read, write
         services.AddDbContext<JenniferDbContext>(dbContextSetup);
-        services.AddDbContext<JenniferReadOnlyDbContext>(dbContextSetup);
+        //readonly
+        services.AddDbContextPool<JenniferReadOnlyDbContext>(dbContextSetup);
         services.AddScoped<ITransactionDbContext, JenniferDbContext>();
         
         services.AddIdentity<User, Role>(identitySetup)

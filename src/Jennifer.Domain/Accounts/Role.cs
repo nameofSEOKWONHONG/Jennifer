@@ -25,7 +25,7 @@ public class RoleEntityConfiguration : IEntityTypeConfiguration<Role>
 {
     public void Configure(EntityTypeBuilder<Role> builder)
     {
-        builder.ToTable($"{nameof(Role)}s", "accounts");
+        builder.ToTable($"{nameof(Role)}s", "account");
         builder.HasKey(m => m.Id);
         builder.Property(m => m.Id)
             .HasValueGenerator<GuidV7ValueGenerator>()

@@ -21,7 +21,7 @@ public class RoleClaimEntityConfiguration : IEntityTypeConfiguration<RoleClaim>
 {
     public void Configure(EntityTypeBuilder<RoleClaim> builder)
     {
-        builder.ToTable($"{nameof(RoleClaim)}s", "accounts");
+        builder.ToTable($"{nameof(RoleClaim)}s", "account");
         builder.HasKey(m => m.Id);
         builder.Property(m => m.Id)
             .ValueGeneratedOnAdd();                

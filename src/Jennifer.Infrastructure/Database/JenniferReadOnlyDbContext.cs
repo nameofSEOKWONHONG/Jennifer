@@ -19,8 +19,7 @@ public class JenniferReadOnlyDbContext: IdentityDbContext<User, Role, Guid,
     UserLogin, 
     RoleClaim,
     UserToken>
-{       
-    public DbSet<EmailConfirmCode> EmailVerificationCodes { get; set; }
+{
     public DbSet<Option> Options { get; set; }
     public DbSet<UserOption> UserOptions { get; set; }
 
@@ -51,7 +50,6 @@ public class JenniferReadOnlyDbContext: IdentityDbContext<User, Role, Guid,
         modelBuilder.ApplyConfiguration(new UserTokenEntityConfiguration());
         modelBuilder.ApplyConfiguration(new RoleEntityConfiguration());
         modelBuilder.ApplyConfiguration(new RoleClaimEntityConfiguration());
-        modelBuilder.ApplyConfiguration(new EmailVerificationCodeEntityConfiguration());
         modelBuilder.ApplyConfiguration(new OptionEntityConfiguration());
         modelBuilder.ApplyConfiguration(new UserOptionEntityConfiguration());
     }

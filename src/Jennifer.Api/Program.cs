@@ -11,6 +11,9 @@ using Jennifer.SharedKernel;
 using Jennifer.Todo;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
+using Npgsql;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using Scalar.AspNetCore;
 using Serilog;
 using JwtOptions = Jennifer.SharedKernel.JwtOptions;
@@ -114,6 +117,25 @@ builder.Services.AddJennifer(jenniferOptions,
     .WithJenniferMailService(builder.Configuration["KAFKA_CONNECTION"]);
 
 builder.Services.AddTodo();
+
+builder.Services
+    .AddOpenTelemetry()
+    .ConfigureResource(res => res.AddService("jennifer-api"))
+    .WithTracing(tracing =>
+    {
+        tracing
+            .AddAspNetCoreInstrumentation()
+            .AddHttpClientInstrumentation()
+            .AddEntityFrameworkCoreInstrumentation()
+            .AddRedisInstrumentation()
+            .AddNpgsql()
+            ;
+
+        tracing.AddOtlpExporter(options =>
+        {
+            options.Endpoint = new Uri(builder.Configuration["OTEL_EXPORTER_ENDPOINT"]);
+        });
+    });
 
 var app = builder.Build();
 

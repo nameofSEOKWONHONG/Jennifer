@@ -41,7 +41,7 @@ public class TodoItemEntityConfiguration : IEntityTypeConfiguration<TodoItem>
 {
     public void Configure(EntityTypeBuilder<TodoItem> builder)
     {
-        builder.ToTable("TodoItems", "todos");
+        builder.ToTable("TodoItems", "todo");
         builder.HasKey(m => new {m.Id, m.UserId});
         builder.Property(m => m.Id)
             .ValueGeneratedOnAdd()

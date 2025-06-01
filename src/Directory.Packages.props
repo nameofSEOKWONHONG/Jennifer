@@ -4,8 +4,7 @@
   </PropertyGroup>
   <!--.NET 9 packages. Most of them will work on .NET 8. If you need to, make the updates here individually.-->
   <ItemGroup> 
-    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="9.0.5" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.5" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="9.0.5" />    
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.5" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.5">
       <PrivateAssets>all</PrivateAssets>
@@ -19,7 +18,7 @@
     <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.5" />
     <PackageVersion Include="Microsoft.Data.SqlClient" Version="6.0.2" />
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="9.0.5" />
-    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
+    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4"/>
     <PackageVersion Include="EFCore.BulkExtensions" Version="9.0.1" />
     <PackageVersion Include="LinqKit.Microsoft.EntityFrameworkCore" Version="9.0.8" />
     <PackageVersion Include="NUlid" Version="1.7.3" />
@@ -54,5 +53,13 @@
     <PackageVersion Include="StackExchange.Redis" Version="2.8.37" />
     <PackageVersion Include="Scalar.AspNetCore" Version="2.4.4" />
     <PackageVersion Include="Asp.Versioning.Http" Version="8.1.0" />
+    
+    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.12.0"/>
+    <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.12.0"/>
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.12.0"/>
+    <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore"  Version="1.12.0"/>
+    <PackageVersion Include="OpenTelemetry.Instrumentation.EntityFrameworkCore" Version="1.12.0-beta.1"/>
+    <PackageVersion Include="OpenTelemetry.Instrumentation.StackExchangeRedis" Version="1.12.0-beta.1"/>
+    <PackageVersion Include="Npgsql.OpenTelemetry" Version="9.0.3"/>
   </ItemGroup>
 </Project>
