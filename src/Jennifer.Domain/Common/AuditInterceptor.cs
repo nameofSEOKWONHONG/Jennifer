@@ -20,18 +20,20 @@ public class AuditInterceptor : SaveChangesInterceptor
         var auditEntries = new List<AuditEntry>();
         foreach (var entry in eventData.Context.ChangeTracker.Entries())
         {
-            if (entry.Entity is not IAuditable)
+            if (entry.Entity is not IAuditable entity)
                 continue;
-            if (entry.Entity is not IAuditable && entry.State == EntityState.Detached)
-                continue;
-            if (entry.Entity is not IAuditable && entry.State == EntityState.Unchanged)
-                continue;
+            
+            switch (entry.State)
+            {
+                case EntityState.Detached:
+                case EntityState.Unchanged:
+                    continue;
+            }
 
-            var entity = entry.Entity.xAs<IAuditable>();
             var auditEntry = new AuditEntry(entry)
             {
-                TableName = entry.Entity.GetType().Name,
-                UserId = entity.CreatedBy.xValue<string>("Unknown"),
+                TableName = entity.GetType().Name,
+                UserId = entity.CreatedBy
             };
             auditEntries.Add(auditEntry);
             foreach (var property in entry.Properties)
@@ -75,10 +77,10 @@ public class AuditInterceptor : SaveChangesInterceptor
         }
 
         var auditItems = auditEntries
-            .Where(m => !m.HasTemporaryProperties && m.AuditType.xIsNotEmpty())
+            .Where(m => !m.HasTemporaryProperties && !string.IsNullOrWhiteSpace(m.AuditType))
             .ToArray();
         
-        if (auditItems.xIsNotEmpty())
+        if (auditItems is {Length: > 0})
         {
             _auditEntries.AddRange(auditItems);    
         }
@@ -89,7 +91,7 @@ public class AuditInterceptor : SaveChangesInterceptor
     public override async ValueTask<int> SavedChangesAsync(SaveChangesCompletedEventData eventData, int result,
         CancellationToken cancellationToken = new CancellationToken())
     {
-        if (_auditEntries.xIsNotEmpty())
+        if (_auditEntries is {Count: > 0})
         {
             eventData.Context.Set<Audit>().AddRange(_auditEntries.Select(m => m.ToAudit()));
             _auditEntries.Clear();

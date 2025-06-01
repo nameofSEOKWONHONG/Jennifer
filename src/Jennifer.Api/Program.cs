@@ -43,7 +43,7 @@ builder.Services.AddMediator(options =>
     options.Assemblies = [
         typeof(Jennifer.Account.DependencyInjection).Assembly,
         typeof(Jennifer.Todo.DependencyInjection).Assembly,
-        typeof(Jennifer.Domain.Accounts.UserCompleteDomainEvent).Assembly
+        typeof(Jennifer.Domain.DependencyInjection).Assembly
     ];
     options.PipelineBehaviors =
     [

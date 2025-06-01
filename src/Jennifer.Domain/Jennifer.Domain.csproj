@@ -14,14 +14,9 @@
         <PackageReference Include="Ardalis.SmartEnum"/>
         <PackageReference Include="Ardalis.SmartEnum.EFCore"/>
         <PackageReference Include="Ardalis.SmartEnum.SystemTextJson"/>
-        <PackageReference Include="eXtensionSharp"/>
     </ItemGroup>
 
     <ItemGroup>      
       <ProjectReference Include="..\Jennifer.SharedKernel\Jennifer.SharedKernel.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Content Remove="C:\Users\h2091\.nuget\packages\extensionsharp\1.0.2\contentFiles\any\net9.0\README.md" />
     </ItemGroup>
 </Project>

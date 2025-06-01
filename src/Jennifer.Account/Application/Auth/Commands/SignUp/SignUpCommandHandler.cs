@@ -12,7 +12,6 @@ using Microsoft.EntityFrameworkCore;
 namespace Jennifer.Account.Application.Auth.Commands.SignUp;
 
 public sealed class SignUpCommandHandler(
-    ISessionContext session,
     JenniferDbContext dbContext,
     IPasswordHasher<User> passwordHasher) : ICommandHandler<SignUpCommand, Result<Guid>>
 {

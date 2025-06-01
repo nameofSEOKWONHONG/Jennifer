@@ -33,7 +33,6 @@
         <PackageReference Include="FluentValidation.DependencyInjectionExtensions"/>
         <PackageReference Include="StackExchange.Redis"/>
         <PackageReference Include="ZLinq"/>
-        <PackageReference Include="Mediator.Abstractions" />
     </ItemGroup>
 
     <ItemGroup>

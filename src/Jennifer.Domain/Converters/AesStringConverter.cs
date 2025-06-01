@@ -1,5 +1,4 @@
-﻿using eXtensionSharp;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Jennifer.Domain.Converters;
 
@@ -14,7 +13,7 @@ namespace Jennifer.Domain.Converters;
 public class AesStringConverter: ValueConverter<string, string>
 {
     public AesStringConverter() : base(
-        v => v.xIsEmpty() ? null : v.ToAesEncrypt(),
-        v => v.xIsEmpty() ? null : v.ToAesDecrypt())
+        v => string.IsNullOrWhiteSpace(v) ? null : v.ToAesEncrypt(),
+        v => string.IsNullOrWhiteSpace(v) ? null : v.ToAesDecrypt())
     { }
 }

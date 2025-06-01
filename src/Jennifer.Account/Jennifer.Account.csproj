@@ -8,8 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Asp.Versioning.Http"/>
-        <PackageReference Include="Dapper"/>
+        <PackageReference Include="Asp.Versioning.Http"/>        
         <PackageReference Include="EFCore.BulkExtensions"/>
         <PackageReference Include="eXtensionSharp.AspNet"/>
         <PackageReference Include="eXtensionSharp.Mongo"/>
