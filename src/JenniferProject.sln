@@ -20,7 +20,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jennifer.Todo", "Jennifer.T
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jennifer.Domain", "Jennifer.Domain\Jennifer.Domain.csproj", "{CA51776B-FFF9-46AE-A5BF-756DCD168F4E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jennifer.Mcp", "Jennifer.Mcp\Jennifer.Mcp.csproj", "{2C8286BF-795F-4171-9E04-79D031771339}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jennifer.McpServer", "Jennifer.McpServer\Jennifer.McpServer.csproj", "{2D78A2A4-C38B-47AC-845F-82AA05E0F27C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -56,10 +56,10 @@ Global
 		{CA51776B-FFF9-46AE-A5BF-756DCD168F4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CA51776B-FFF9-46AE-A5BF-756DCD168F4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CA51776B-FFF9-46AE-A5BF-756DCD168F4E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2C8286BF-795F-4171-9E04-79D031771339}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2C8286BF-795F-4171-9E04-79D031771339}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2C8286BF-795F-4171-9E04-79D031771339}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2C8286BF-795F-4171-9E04-79D031771339}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D78A2A4-C38B-47AC-845F-82AA05E0F27C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D78A2A4-C38B-47AC-845F-82AA05E0F27C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D78A2A4-C38B-47AC-845F-82AA05E0F27C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D78A2A4-C38B-47AC-845F-82AA05E0F27C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection
