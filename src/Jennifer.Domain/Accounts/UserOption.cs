@@ -30,7 +30,7 @@ public class UserOptionEntityConfiguration: IEntityTypeConfiguration<UserOption>
 {
     public void Configure(EntityTypeBuilder<UserOption> builder)
     {
-        builder.ToTable("UserOptions", JenniferOptionSingleton.Instance.Options.Schema);
+        builder.ToTable("UserOptions", "accounts");
         builder.HasKey(m => m.Id);
         builder.Property(m => m.Id)
             .ValueGeneratedOnAdd()

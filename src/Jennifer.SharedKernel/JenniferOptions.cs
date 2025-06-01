@@ -58,24 +58,19 @@ public class EmailSmtpOptions
 
 public class JenniferOptions
 {
-    public string Schema { get;  }
     public JwtOptions Jwt { get;  }
     public CryptoOptions Crypto { get;  }
     
     public EmailSmtpOptions EmailSmtp { get;  }
 
-    public JenniferOptions(string schema,
+    public JenniferOptions(
         CryptoOptions cryptoOptions, 
         JwtOptions jwtOptions,
         EmailSmtpOptions emailSmtpOptions)
     {
-        ArgumentNullException.ThrowIfNull(schema);
-        
         ArgumentNullException.ThrowIfNull(cryptoOptions);
         ArgumentNullException.ThrowIfNull(jwtOptions);
         ArgumentNullException.ThrowIfNull(emailSmtpOptions);
-        
-        this.Schema = schema;
         
         this.Jwt = jwtOptions;
         this.Crypto = cryptoOptions;

@@ -30,7 +30,7 @@ public class KafkaDeadLetterConfiguration: IEntityTypeConfiguration<KafkaDeadLet
 {
     public void Configure(EntityTypeBuilder<KafkaDeadLetter> builder)
     {
-        builder.ToTable("KafkaDeadLetters", JenniferOptionSingleton.Instance.Options.Schema);
+        builder.ToTable("KafkaDeadLetters", "audits");
 
         builder.HasKey(e => e.Id);
 

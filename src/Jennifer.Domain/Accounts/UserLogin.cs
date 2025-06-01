@@ -14,7 +14,7 @@ public class UserLoginEntityConfiguration : IEntityTypeConfiguration<UserLogin>
 {
     public void Configure(EntityTypeBuilder<UserLogin> builder)
     {
-        builder.ToTable($"{nameof(UserLogin)}s", JenniferOptionSingleton.Instance.Options.Schema);
+        builder.ToTable($"{nameof(UserLogin)}s", "accounts");
 
         builder.HasKey(l => new { l.LoginProvider, l.ProviderKey }); // Identity 기본 키
 

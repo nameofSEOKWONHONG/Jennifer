@@ -75,7 +75,7 @@ var smtpOptions = new EmailSmtpOptions(
     builder.Configuration["SMTP_PASSWORD"]
 );
 
-var jenniferOptions = new JenniferOptions("account",
+var jenniferOptions = new JenniferOptions(
     cryptoOptions, 
     jwtOptions,
     smtpOptions);

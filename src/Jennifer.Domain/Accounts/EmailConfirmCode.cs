@@ -27,7 +27,7 @@ public class EmailVerificationCodeEntityConfiguration: IEntityTypeConfiguration<
 {
     public void Configure(EntityTypeBuilder<EmailConfirmCode> builder)
     {
-        builder.ToTable($"{nameof(EmailConfirmCode)}s", JenniferOptionSingleton.Instance.Options.Schema);
+        builder.ToTable($"{nameof(EmailConfirmCode)}s", "accounts");
         builder.HasKey(m => m.Id);
         builder.Property(m => m.Id)
             .ValueGeneratedOnAdd()

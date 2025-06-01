@@ -21,7 +21,7 @@ public class AuditEntityConfiguration : IEntityTypeConfiguration<Audit>
 {
     public void Configure(EntityTypeBuilder<Audit> builder)
     {
-        builder.ToTable("Audits", JenniferOptionSingleton.Instance.Options.Schema);
+        builder.ToTable("Audits", "audits");
         builder.HasKey(m => m.Id);
         builder.Property(m => m.Id)
             .ValueGeneratedOnAdd();

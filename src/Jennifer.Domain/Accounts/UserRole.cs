@@ -15,7 +15,7 @@ public class UserRoleEntityConfiguration : IEntityTypeConfiguration<UserRole>
 {
     public void Configure(EntityTypeBuilder<UserRole> builder)
     {
-        builder.ToTable($"{nameof(UserRole)}s", JenniferOptionSingleton.Instance.Options.Schema);
+        builder.ToTable($"{nameof(UserRole)}s", "accounts");
         builder.HasKey(m => new { m.UserId, m.RoleId });
 
         builder.HasOne(ur => ur.User)

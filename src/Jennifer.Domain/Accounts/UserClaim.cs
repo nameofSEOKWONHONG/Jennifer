@@ -15,7 +15,7 @@ public class UserClaimEntityConfiguration : IEntityTypeConfiguration<UserClaim>
 {
     public void Configure(EntityTypeBuilder<UserClaim> builder)
     {
-        builder.ToTable($"{nameof(UserClaim)}s", JenniferOptionSingleton.Instance.Options.Schema);
+        builder.ToTable($"{nameof(UserClaim)}s", "accounts");
         builder.HasKey(m => m.Id);
         builder.Property(m => m.Id)
             .ValueGeneratedOnAdd();

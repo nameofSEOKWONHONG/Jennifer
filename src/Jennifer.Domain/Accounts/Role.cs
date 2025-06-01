@@ -25,7 +25,7 @@ public class RoleEntityConfiguration : IEntityTypeConfiguration<Role>
 {
     public void Configure(EntityTypeBuilder<Role> builder)
     {
-        builder.ToTable($"{nameof(Role)}s", JenniferOptionSingleton.Instance.Options.Schema);
+        builder.ToTable($"{nameof(Role)}s", "accounts");
         builder.HasKey(m => m.Id);
         builder.Property(m => m.Id)
             .HasValueGenerator<GuidV7ValueGenerator>()

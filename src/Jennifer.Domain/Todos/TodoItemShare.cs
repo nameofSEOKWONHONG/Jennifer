@@ -36,7 +36,7 @@ public class TodoItemShareEntityConfiguration: IEntityTypeConfiguration<TodoItem
 {
     public void Configure(EntityTypeBuilder<TodoItemShare> builder)
     {
-        builder.ToTable("TodoItemShares", JenniferOptionSingleton.Instance.Options.Schema);
+        builder.ToTable("TodoItemShares", "todos");
         builder.HasKey(m => new {m.Id, m.UserId, m.ShareUserId});
         builder.Property(m => m.Id)
             .ValueGeneratedOnAdd()

@@ -58,7 +58,7 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<User>
 {
     public void Configure(EntityTypeBuilder<User> builder)
     {
-        builder.ToTable($"{nameof(User)}s", JenniferOptionSingleton.Instance.Options.Schema);
+        builder.ToTable($"{nameof(User)}s", "accounts");
         builder.HasKey(m => m.Id );
         builder.Property(e => e.Id)
             .HasValueGenerator<GuidV7ValueGenerator>()

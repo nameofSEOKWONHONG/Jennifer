@@ -31,7 +31,7 @@ public class OptionEntityConfiguration: IEntityTypeConfiguration<Option>
 {
     public void Configure(EntityTypeBuilder<Option> builder)
     {
-        builder.ToTable($"{nameof(Option)}s", JenniferOptionSingleton.Instance.Options.Schema);
+        builder.ToTable($"{nameof(Option)}s", "accounts");
         builder.HasKey(m => m.Id);
         builder.Property(m => m.Id)
             .ValueGeneratedOnAdd();
