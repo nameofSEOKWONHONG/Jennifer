@@ -8,12 +8,23 @@
 
     <ItemGroup>
         <PackageReference Include="Asp.Versioning.Http"/>
+        <PackageReference Include="Google.Protobuf" />
+        <PackageReference Include="Grpc.Net.Client" />
+        <PackageReference Include="Grpc.Net.ClientFactory" />
+        <PackageReference Include="Grpc.Tools">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>        
         <PackageReference Include="LinqKit.Core" />
         <PackageReference Include="Mediator.Abstractions"/>
         
       <ProjectReference Include="..\Jennifer.Domain\Jennifer.Domain.csproj" />
       <ProjectReference Include="..\Jennifer.Infrastructure\Jennifer.Infrastructure.csproj" />
       <ProjectReference Include="..\Jennifer.SharedKernel\Jennifer.SharedKernel.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Protobuf Include="Protos\account.proto" GrpcServices="Client" />
     </ItemGroup>
 
 </Project>

@@ -13,6 +13,7 @@ using Jennifer.Account.Application.Options;
 using Jennifer.Account.Application.Roles;
 using Jennifer.Account.Application.Tests;
 using Jennifer.Account.Application.Users;
+using Jennifer.Account.GrpcServices;
 using Jennifer.Domain.Accounts;
 using Jennifer.Domain.Common;
 using Jennifer.External.OAuth.Contracts;
@@ -183,6 +184,10 @@ public static class DependencyInjection
         #endif
 
         services.AddScoped<ISlimSender, SlimSender>();
+
+
+        services.AddGrpc();
+
         
         return services;
     }
@@ -343,12 +348,16 @@ public static class DependencyInjection
         app.UseMiddleware<IpBlockMiddleware>();
         app.UseMiddleware<ProblemDetailsMiddleware>();
         app.UseMiddleware<SessionMiddleware>();
+        
+        app.MapGrpcService<AccountServiceImpl>();
 
         app.MapHub<JenniferHub>("/jenniferHub");
         
         using var scope = app.Services.CreateScope();
         var service = scope.ServiceProvider.GetRequiredService<IIpBlockService>();
         service.SubscribeToUpdates();
+        
+        
 
         app.UseJMongoDbAsync();
     }

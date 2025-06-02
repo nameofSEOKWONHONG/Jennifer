@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using eXtensionSharp;
 using Jennifer.Domain.Accounts;
 using Jennifer.Domain.Todos;
 using Jennifer.Infrastructure.Session;
@@ -10,6 +11,7 @@ namespace Jennifer.Todo.Application.Todo.Queries;
 public interface ITodoQueryFilter
 {
     Expression<Func<TodoItem, bool>> Where(GetTodoQuery query, Guid userId);
+    Expression<Func<TodoItem, bool>> Where(GetsTodoQuery query, Guid userId);
     Expression<Func<TodoItem, TodoItemDto>> Selector { get; }
 }
 
@@ -21,6 +23,18 @@ public class TodoQueryFilter: ITodoQueryFilter
         var predicate = PredicateBuilder.New<TodoItem>(true);
         predicate = predicate.And(m => m.UserId == userId);
         predicate = predicate.And(m => m.Id == query.Id);
+        return predicate;
+    }
+    
+    public Expression<Func<TodoItem, bool>> Where(GetsTodoQuery query, Guid userId)
+    {
+        var predicate = PredicateBuilder.New<TodoItem>(true);
+        predicate = predicate.And(m => m.UserId == userId);
+        if (query.Description.xIsNotEmpty())
+        {
+            predicate = predicate.And(m => m.Description.Contains(query.Description));     
+        }
+        
         return predicate;
     }
     
