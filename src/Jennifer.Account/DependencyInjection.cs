@@ -77,7 +77,7 @@ public static class DependencyInjection
         //read, write
         services.AddDbContext<JenniferDbContext>(dbContextSetup);
         //readonly
-        services.AddDbContextPool<JenniferReadOnlyDbContext>(dbContextSetup);
+        services.AddDbContext<JenniferReadOnlyDbContext>(dbContextSetup);
         services.AddScoped<ITransactionDbContext, JenniferDbContext>();
         
         services.AddIdentity<User, Role>(identitySetup)

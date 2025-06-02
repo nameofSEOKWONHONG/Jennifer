@@ -15,17 +15,17 @@ public class SessionContextMiddleware
 
     public async Task InvokeAsync(HttpContext context,
         ISessionContext session)
-    {
-        await _next(context);
-        
+    {   
         if (context.User.Identity?.IsAuthenticated == true)
         {
             var emailConfirmed = context.User.FindFirstValue("emailConfirmed").xValue<bool>();
             if(!emailConfirmed) throw new Exception("Email is not confirmed");
-
-            var cs = context.User.FindFirstValue("cs");
-            var user = await session.User.GetAsync();
-            if(cs != user.ConcurrencyStamp) throw new Exception("ConcurrencyStamp is not matched");
-        }        
+            
+            // var cs = context.User.FindFirstValue("cs");
+            // var user = await session.User.GetAsync();
+            // if(cs != user.ConcurrencyStamp) throw new Exception("ConcurrencyStamp is not matched");
+        }
+        
+        await _next(context);
     }
 }
