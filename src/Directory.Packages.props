@@ -54,7 +54,7 @@
     <PackageVersion Include="FluentValidation" Version="12.0.0" />
     <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="12.0.0" />
     <PackageVersion Include="StackExchange.Redis" Version="2.8.37" />
-    <PackageVersion Include="Scalar.AspNetCore" Version="2.4.4" />
+    <PackageVersion Include="Scalar.AspNetCore" Version="2.4.7" />
     <PackageVersion Include="Asp.Versioning.Http" Version="8.1.0" />
     <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.12.0" />
     <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.12.0" />
