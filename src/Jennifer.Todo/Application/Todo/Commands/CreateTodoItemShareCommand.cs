@@ -16,7 +16,7 @@ public sealed class CreateTodoItemShareCommandHandler(
 {
     public async ValueTask<Result> Handle(CreateTodoItemShareCommand command, CancellationToken cancellationToken)
     {
-        var user = await session.User.GetAsync();
+        var user = await session.User.Current.GetAsync();
         var exists = await dbContext.TodoItems.AsNoTracking()
             .FirstOrDefaultAsync(m => m.Id == command.TodoItemId && m.UserId == user.Id, cancellationToken);
         if(exists.xIsEmpty()) return await Result.FailureAsync("not found");

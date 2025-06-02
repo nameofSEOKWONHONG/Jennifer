@@ -3,7 +3,7 @@ using Jennifer.Account.Application.Auth.Contracts;
 using Jennifer.Account.Application.Users.Commands;
 using Jennifer.Domain.Accounts;
 
-namespace Jennifer.Account.Application.Users.Filters;
+namespace Jennifer.Account.Application.Users.Queries;
 
 public interface IUserQueryFilter
 {

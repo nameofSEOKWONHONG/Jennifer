@@ -6,7 +6,7 @@ using LinqKit;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 
-namespace Jennifer.Account.Application.Options.Commands;
+namespace Jennifer.Account.Application.Options.Queries;
 
 public sealed class GetsOptionQueryHandler(JenniferDbContext dbContext)
     : IQueryHandler<GetsOptionQuery, PaginatedResult<Option>>

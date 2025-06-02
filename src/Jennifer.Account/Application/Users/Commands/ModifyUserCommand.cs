@@ -32,6 +32,8 @@ public sealed class ModifyUserCommandHandler(
         
         await dbContext.SaveChangesAsync(cancellationToken);
 
+        await session.User.ClearAsync();
+
         return await Result.SuccessAsync();
     }
 }

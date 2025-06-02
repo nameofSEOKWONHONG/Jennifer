@@ -7,8 +7,7 @@ namespace Jennifer.Infrastructure.Session;
 
 public interface ISessionContext
 {
-    IUnifiedContext<UserCacheResult> User { get; }
-    IUnifiedContext<UserOptionCacheResult[]> UserOption { get; }
-    IUnifiedContext<OptionCacheResult[]> Option { get; }
+    IUserContext User { get; }
+    IUnifiedCacheProvider<OptionCacheResult[]> Option { get; }
     bool IsAuthenticated { get; }
 }

@@ -7,11 +7,11 @@ using Microsoft.Extensions.Caching.Distributed;
 
 namespace Jennifer.Infrastructure.Middlewares;
 
-public class SessionContextMiddleware
+public class SessionMiddleware
 {
     private readonly RequestDelegate _next;
 
-    public SessionContextMiddleware(RequestDelegate next) => _next = next;
+    public SessionMiddleware(RequestDelegate next) => _next = next;
 
     public async Task InvokeAsync(HttpContext context,
         ISessionContext session)
@@ -21,9 +21,10 @@ public class SessionContextMiddleware
             var emailConfirmed = context.User.FindFirstValue("emailConfirmed").xValue<bool>();
             if(!emailConfirmed) throw new Exception("Email is not confirmed");
             
-            // var cs = context.User.FindFirstValue("cs");
-            // var user = await session.User.GetAsync();
-            // if(cs != user.ConcurrencyStamp) throw new Exception("ConcurrencyStamp is not matched");
+            //TODO: HERE IS ERROR... first succeed, but second fail.
+            var cs = context.User.FindFirstValue("cs");
+            var user = await session.User.Current.GetAsync();
+            if(cs != user.ConcurrencyStamp) throw new Exception("ConcurrencyStamp is not matched");
         }
         
         await _next(context);

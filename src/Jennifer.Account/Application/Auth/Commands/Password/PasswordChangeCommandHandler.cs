@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using eXtensionSharp;
 using Jennifer.Domain.Accounts;
+using Jennifer.Infrastructure.Session;
 using Jennifer.SharedKernel;
 using Mediator;
 using Microsoft.AspNetCore.Http;
@@ -10,7 +11,8 @@ namespace Jennifer.Account.Application.Auth.Commands.Password;
 
 public sealed class PasswordChangeCommandHandler(
     UserManager<User> userManager, 
-    IHttpContextAccessor accessor     
+    IHttpContextAccessor accessor,
+    ISessionContext session
 ): ICommandHandler<PasswordChangeCommand, Result<bool>>
 {
     public async ValueTask<Result<bool>> Handle(PasswordChangeCommand command, CancellationToken cancellationToken)
@@ -24,6 +26,8 @@ public sealed class PasswordChangeCommandHandler(
         var result = await userManager.ChangePasswordAsync(user, command.OldPassword, command.NewPassword);
         if (!result.Succeeded) 
             return await Result<bool>.FailureAsync(result.Errors.Select(m => m.Description).First());
+
+        await session.User.ClearAsync();
 
         return await Result<bool>.SuccessAsync(true);
     }

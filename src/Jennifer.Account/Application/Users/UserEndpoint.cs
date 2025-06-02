@@ -1,5 +1,6 @@
 ﻿using Asp.Versioning;
 using Jennifer.Account.Application.Users.Commands;
+using Jennifer.Account.Application.Users.Queries;
 using Jennifer.Infrastructure.Abstractions;
 using Mediator;
 using Microsoft.AspNetCore.Builder;

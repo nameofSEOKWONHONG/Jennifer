@@ -29,7 +29,7 @@ public sealed class RemoveTodoItemCommandHandler(
     /// <returns>Success result if item was removed, Failure if not found</returns>
     public async ValueTask<Result> Handle(RemoveTodoItemCommand command, CancellationToken cancellationToken)
     {
-        var user = await session.User.GetAsync();
+        var user = await session.User.Current.GetAsync();
         var exists = await dbContext.TodoItems.FirstOrDefaultAsync(m => m.Id == command.Id && m.UserId == user.Id, cancellationToken);
         if(exists.xIsEmpty()) return await Result.FailureAsync("not found");
         

@@ -2,6 +2,6 @@
 using Jennifer.SharedKernel;
 using Mediator;
 
-namespace Jennifer.Account.Application.Users.Commands;
+namespace Jennifer.Account.Application.Users.Queries;
 
 public sealed record GetUserQuery(Guid UserId) : IQuery<Result<UserDto>>;

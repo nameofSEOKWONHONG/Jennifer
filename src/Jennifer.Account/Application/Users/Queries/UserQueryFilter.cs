@@ -5,7 +5,7 @@ using Jennifer.Account.Application.Users.Commands;
 using Jennifer.Domain.Accounts;
 using LinqKit;
 
-namespace Jennifer.Account.Application.Users.Filters;
+namespace Jennifer.Account.Application.Users.Queries;
 
 public sealed class UserQueryFilter : IUserQueryFilter
 {
@@ -40,6 +40,7 @@ public sealed class UserQueryFilter : IUserQueryFilter
         Email = user.Email,
         PhoneNumber = user.PhoneNumber,
         UserName = user.UserName,
+        TwoFactorEnabled = user.TwoFactorEnabled,
         IsDelete = user.IsDelete,
         RoleNames = user.UserRoles.Select(x => x.Role.Name).ToArray(),
         UserClaims = user.UserClaims.Select(x => new UserClaimDto()

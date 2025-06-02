@@ -1,6 +1,6 @@
 ﻿namespace Jennifer.Infrastructure.Session;
 
-public interface IUnifiedContext<TFetchResult>
+public interface IUnifiedCacheProvider<TFetchResult>
 {
     string Sid { get; }
     Task<TFetchResult> GetAsync();

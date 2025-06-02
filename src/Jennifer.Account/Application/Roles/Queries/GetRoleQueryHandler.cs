@@ -4,7 +4,7 @@ using Jennifer.SharedKernel;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 
-namespace Jennifer.Account.Application.Roles.Commands;
+namespace Jennifer.Account.Application.Roles.Queries;
 
 public sealed class GetRoleQueryHandler(JenniferDbContext dbContext): IQueryHandler<GetRoleQuery, Result<RoleDto>>
 {

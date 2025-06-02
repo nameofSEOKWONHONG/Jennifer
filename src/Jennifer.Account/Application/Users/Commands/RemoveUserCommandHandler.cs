@@ -1,4 +1,4 @@
-﻿using Jennifer.Account.Application.Users.Filters;
+﻿using Jennifer.Account.Application.Users.Queries;
 using Jennifer.Infrastructure.Database;
 using Jennifer.Infrastructure.Extenstions;
 using Jennifer.Infrastructure.Session;
@@ -26,6 +26,8 @@ public sealed class RemoveUserCommandHandler(
         user.IsDelete = true;
 
         await dbContext.SaveChangesAsync(cancellationToken);
+        
+        await session.User.ClearAsync();
 
         return await Result.SuccessAsync();
     }

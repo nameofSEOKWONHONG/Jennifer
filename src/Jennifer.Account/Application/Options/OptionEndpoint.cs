@@ -1,5 +1,6 @@
 ﻿using Asp.Versioning;
 using Jennifer.Account.Application.Options.Commands;
+using Jennifer.Account.Application.Options.Queries;
 using Jennifer.Domain.Accounts.Contracts;
 using Mediator;
 using Microsoft.AspNetCore.Builder;

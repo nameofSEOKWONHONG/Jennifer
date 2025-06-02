@@ -1,12 +1,14 @@
 ﻿using Jennifer.Domain.Accounts;
 using Jennifer.Infrastructure.Database;
+using Jennifer.Infrastructure.Session;
 using Jennifer.SharedKernel;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 
 namespace Jennifer.Account.Application.Roles.Commands;
 
-public sealed class CreateRoleClaimCommandHandler(JenniferDbContext dbContext) : ICommandHandler<CreateRoleClaimCommand, Result>
+public sealed class CreateRoleClaimCommandHandler(JenniferDbContext dbContext,
+    ISessionContext session) : ICommandHandler<CreateRoleClaimCommand, Result>
 {
     public async ValueTask<Result> Handle(CreateRoleClaimCommand command, CancellationToken cancellationToken)
     {
@@ -22,6 +24,8 @@ public sealed class CreateRoleClaimCommandHandler(JenniferDbContext dbContext) :
 
         await dbContext.RoleClaims.AddRangeAsync(list, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
+
+        await session.User.ClearAsync();
         
         return await Result.SuccessAsync();
     }

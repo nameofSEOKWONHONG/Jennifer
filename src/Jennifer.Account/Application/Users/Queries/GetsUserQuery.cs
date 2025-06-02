@@ -2,7 +2,7 @@
 using Jennifer.SharedKernel;
 using Mediator;
 
-namespace Jennifer.Account.Application.Users.Commands;
+namespace Jennifer.Account.Application.Users.Queries;
 
 public class GetsUserRequest : PagingRequest
 {

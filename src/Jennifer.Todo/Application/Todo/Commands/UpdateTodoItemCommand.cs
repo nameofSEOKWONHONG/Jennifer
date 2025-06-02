@@ -30,7 +30,7 @@ public sealed class UpdateTodoItemCommandHandler(
     /// <returns>Success result if update successful, Failure if item not found</returns>
     public async ValueTask<Result> Handle(UpdateTodoItemCommand itemCommand, CancellationToken cancellationToken)
     {
-        var user = await session.User.GetAsync();
+        var user = await session.User.Current.GetAsync();
         var exists = await dbContext.TodoItems.FirstOrDefaultAsync(m => m.Id == itemCommand.Item.Id && m.UserId == user.Id, cancellationToken);
         if(exists.xIsEmpty()) return await Result.FailureAsync("not found");
 

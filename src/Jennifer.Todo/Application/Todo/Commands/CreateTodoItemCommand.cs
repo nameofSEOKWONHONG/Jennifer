@@ -26,7 +26,7 @@ public sealed class CreateTodoItemCommandHandler(
 {
     public async ValueTask<Result<Guid>> Handle(CreateTodoItemCommand itemCommand, CancellationToken cancellationToken)
     {
-        var user = await session.User.GetAsync();
+        var user = await session.User.Current.GetAsync();
         var exists = await dbContext.TodoItems.AnyAsync(m => m.Id == itemCommand.Item.Id && m.UserId == user.Id, cancellationToken: cancellationToken);
         if(exists == true) return await Result<Guid>.FailureAsync("already exists");
         

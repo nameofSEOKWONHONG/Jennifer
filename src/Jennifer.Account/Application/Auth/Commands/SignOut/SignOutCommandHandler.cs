@@ -18,7 +18,7 @@ public sealed class SignOutCommandHandler(
 {
     public async ValueTask<Result> Handle(SignOutCommand command, CancellationToken cancellationToken)
     {
-        var user = await session.User.GetAsync(); 
+        var user = await session.User.Current.GetAsync();
         if (user.xIsEmpty()) 
             return await Result.FailureAsync("not found user");
         

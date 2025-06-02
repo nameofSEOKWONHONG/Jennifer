@@ -8,6 +8,7 @@
 
     <ItemGroup>
         <PackageReference Include="Asp.Versioning.Http"/>
+        <PackageReference Include="LinqKit.Core" />
         <PackageReference Include="Mediator.Abstractions"/>
         
       <ProjectReference Include="..\Jennifer.Domain\Jennifer.Domain.csproj" />

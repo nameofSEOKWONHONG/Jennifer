@@ -342,7 +342,7 @@ public static class DependencyInjection
 
         app.UseMiddleware<IpBlockMiddleware>();
         app.UseMiddleware<ProblemDetailsMiddleware>();
-        app.UseMiddleware<SessionContextMiddleware>();
+        app.UseMiddleware<SessionMiddleware>();
 
         app.MapHub<JenniferHub>("/jenniferHub");
         

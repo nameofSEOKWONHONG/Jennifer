@@ -18,7 +18,7 @@ public static class QueryExtensions
     public static async Task AssignSession<T>(this T item, ISessionContext session)
         where T : IAuditable
     {
-        var user = await session.User.GetAsync();
+        var user = await session.User.Current.GetAsync();
         if (item.CreatedBy.xIsNotEmpty())
         {
             item.ModifiedBy = user.Id.ToString();

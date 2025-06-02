@@ -1,12 +1,11 @@
 ﻿using Jennifer.Account.Application.Auth.Contracts;
-using Jennifer.Account.Application.Users.Filters;
 using Jennifer.Infrastructure.Database;
 using Jennifer.SharedKernel;
 using LinqKit;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 
-namespace Jennifer.Account.Application.Users.Commands;
+namespace Jennifer.Account.Application.Users.Queries;
 
 public sealed class GetUserQueryHandler(
     IUserQueryFilter queryFilter,

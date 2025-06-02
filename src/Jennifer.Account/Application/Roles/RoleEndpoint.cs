@@ -1,5 +1,6 @@
 ﻿using Asp.Versioning;
 using Jennifer.Account.Application.Roles.Commands;
+using Jennifer.Account.Application.Roles.Queries;
 using Mediator;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;

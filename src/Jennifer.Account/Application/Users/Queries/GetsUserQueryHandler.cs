@@ -1,14 +1,13 @@
 ﻿using Jennifer.Account.Application.Auth.Contracts;
-using Jennifer.Account.Application.Users.Filters;
+using Jennifer.Account.Application.Users.Commands;
 using Jennifer.Infrastructure.Database;
 using Jennifer.Infrastructure.Session;
-using Jennifer.Infrastructure.Session.Abstracts;
 using Jennifer.SharedKernel;
 using LinqKit;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 
-namespace Jennifer.Account.Application.Users.Commands;
+namespace Jennifer.Account.Application.Users.Queries;
 
 public sealed class GetsUserQueryHandler(
     ISessionContext session,
@@ -17,9 +16,8 @@ public sealed class GetsUserQueryHandler(
 {
     public async ValueTask<PaginatedResult<UserDto>> Handle(GetsUserQuery query, CancellationToken cancellationToken)
     {
-        var options = await session.Option.GetAsync();
-        var userOptions = await session.UserOption.GetAsync();
-        var user = await session.User.GetAsync();
+        var userOptions = await session.User.Option.GetAsync();
+        var user = await session.User.Current.GetAsync();
         
         var queryable = dbContext
             .Users

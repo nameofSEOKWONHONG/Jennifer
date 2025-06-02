@@ -3,11 +3,13 @@ using eXtensionSharp.AspNet;
 using Jennifer.Infrastructure.Session.Abstracts;
 using Jennifer.Infrastructure.Session.Contracts;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Jennifer.Infrastructure.Session;
 
-public sealed class UserContext(IHttpContextAccessor httpContextAccessor,
-    IUserCacheProvider userCacheProvider) : IUnifiedContext<UserCacheResult>
+
+public sealed class UserCacheProvider(IHttpContextAccessor httpContextAccessor,
+    IUserCacheProvider userCacheProvider) : IUnifiedCacheProvider<UserCacheResult>
 {
     public string Sid => httpContextAccessor.HttpContext.xGetClaim<string>(ClaimTypes.NameIdentifier);
     public async Task<UserCacheResult> GetAsync()
@@ -17,9 +19,9 @@ public sealed class UserContext(IHttpContextAccessor httpContextAccessor,
         => await userCacheProvider.ClearAsync(this.Sid);
 }
 
-public sealed class OptionContext(
+public sealed class OptionCacheProvider(
     IHttpContextAccessor httpContextAccessor,
-    IOptionCacheProvider optionProvider) : IUnifiedContext<OptionCacheResult[]>
+    IOptionCacheProvider optionProvider) : IUnifiedCacheProvider<OptionCacheResult[]>
 {
     public string Sid => httpContextAccessor.HttpContext.xGetClaim<string>(ClaimTypes.NameIdentifier);
     public async Task<OptionCacheResult[]> GetAsync() => await optionProvider.GetAsync(this.Sid);
@@ -27,9 +29,9 @@ public sealed class OptionContext(
     public async Task ClearAsync() => await optionProvider.ClearAsync(this.Sid);
 }
 
-public sealed class UserOptionContext(
+public sealed class UserOptionCacheProvider(
     IHttpContextAccessor httpContextAccessor,
-    IUserOptionCacheProvider userOptionCacheProvider) : IUnifiedContext<UserOptionCacheResult[]>
+    IUserOptionCacheProvider userOptionCacheProvider) : IUnifiedCacheProvider<UserOptionCacheResult[]>
 {
     public string Sid => httpContextAccessor.HttpContext.xGetClaim<string>(ClaimTypes.NameIdentifier);
     public async Task<UserOptionCacheResult[]> GetAsync()

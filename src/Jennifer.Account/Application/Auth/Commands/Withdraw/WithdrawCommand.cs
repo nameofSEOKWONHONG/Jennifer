@@ -15,7 +15,7 @@ public sealed class WithdrawCommandHandler(
 {
     public async ValueTask<Result> Handle(WithdrawCommand request, CancellationToken cancellationToken)
     {
-        var user = await session.User.GetAsync();
+        var user = await session.User.Current.GetAsync();
         var exists = await dbContext.Users.Where(m => m.Id == user.Id)
             .FirstOrDefaultAsync(cancellationToken: cancellationToken);
         if(exists.xIsEmpty()) return await Result.FailureAsync("not found");
