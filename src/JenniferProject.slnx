@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="Directory.Packages.props" />
+  </Folder>
+  <Project Path="Jennifer.Account.E2ETests/Jennifer.Account.E2ETests.csproj" />
+  <Project Path="Jennifer.Account/Jennifer.Account.csproj" />
+  <Project Path="Jennifer.Api/Jennifer.Api.csproj" />
+  <Project Path="Jennifer.Domain/Jennifer.Domain.csproj" />
+  <Project Path="Jennifer.External.OAuth/Jennifer.External.OAuth.csproj" />
+  <Project Path="Jennifer.Infrastructure/Jennifer.Infrastructure.csproj" />
+  <Project Path="Jennifer.McpServer/Jennifer.McpServer.csproj" />
+  <Project Path="Jennifer.SharedKernel/Jennifer.SharedKernel.csproj" />
+  <Project Path="Jennifer.Todo/Jennifer.Todo.csproj" />
+</Solution>

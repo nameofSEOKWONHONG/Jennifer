@@ -21,9 +21,9 @@ public sealed class SignInCommandHandler(
         if(!await userManager.CheckPasswordAsync(user, command.Password))
             return await Result<TokenResponse>.FailureAsync("wrong password");
 
-        if (user.TwoFactorEnabled)
+        if (!user.EmailConfirmed)
         {
-            return await Result<TokenResponse>.SuccessAsync(new TokenResponse(user.Id.ToString(), null, true));
+            return await Result<TokenResponse>.FailureAsync("email not confirmed");
         }
         
         return await sender.Send(new TokenGenerateCommand(user), cancellationToken);

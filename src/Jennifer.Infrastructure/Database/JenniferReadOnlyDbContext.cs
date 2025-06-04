@@ -33,12 +33,6 @@ public class JenniferReadOnlyDbContext: IdentityDbContext<User, Role, Guid,
         configurationBuilder.ConfigureSmartEnum();
     }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        base.OnConfiguring(optionsBuilder);
-        optionsBuilder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-    }
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

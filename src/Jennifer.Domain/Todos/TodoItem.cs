@@ -35,6 +35,26 @@ public class TodoItem : Entry
 
         return newItem;
     }
+
+    public void Update(string description, DateTime? dueDate, List<string> labels, bool isCompleted, DateTime? completedAt, Priority priority, Guid userId)
+    {
+        Description = description;
+        DueDate = dueDate;
+        Labels = labels;
+        IsCompleted = isCompleted;
+        CompletedAt = completedAt;
+        Priority = priority;
+        ModifiedOn = DateTimeOffset.UtcNow;
+        ModifiedBy = userId.ToString();
+
+        if (this.TodoItemShares.Count > 0)
+        {
+            foreach (var item in this.TodoItemShares)
+            {
+                this.DomainEvents.Add(new TodoItemShareEvent(Id, item.ShareUserId));
+            }
+        }
+    }
 }
 
 public class TodoItemEntityConfiguration : IEntityTypeConfiguration<TodoItem>

@@ -111,6 +111,8 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<User>
             .HasMaxLength(36);
 
         builder.Ignore(m => m.DomainEvents);
+        builder.HasIndex(m => m.NormalizedUserName)
+            .IsUnique(false);
         
         builder.HasMany(m => m.UserRoles)
             .WithOne(ur => ur.User)

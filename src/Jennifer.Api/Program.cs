@@ -16,7 +16,6 @@ using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Scalar.AspNetCore;
 using Serilog;
-using JwtOptions = Jennifer.SharedKernel.JwtOptions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -103,7 +102,7 @@ builder.Services.AddJennifer(jenniferOptions,
             identityOptions.SignIn.RequireConfirmedAccount = false;
             identityOptions.SignIn.RequireConfirmedEmail = false;
             identityOptions.SignIn.RequireConfirmedPhoneNumber = false;
-            identityOptions.Tokens.AuthenticatorTokenProvider = null!; // optional     
+            identityOptions.Tokens.AuthenticatorTokenProvider = null!; // optional
             identityOptions.User.RequireUniqueEmail = true;
             identityOptions.User.AllowedUserNameCharacters = null!;
         })

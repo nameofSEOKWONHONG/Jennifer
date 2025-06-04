@@ -34,6 +34,7 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Tokens;
 using StackExchange.Redis;
 using Role = Jennifer.Domain.Accounts.Role;
@@ -78,12 +79,17 @@ public static class DependencyInjection
         //read, write
         services.AddDbContext<JenniferDbContext>(dbContextSetup);
         //readonly
-        services.AddDbContext<JenniferReadOnlyDbContext>(dbContextSetup);
+        services.AddDbContextPool<JenniferReadOnlyDbContext>((sp, op) =>
+        {
+            op.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+            dbContextSetup.Invoke(sp, op);
+        });
         services.AddScoped<ITransactionDbContext, JenniferDbContext>();
         
         services.AddIdentity<User, Role>(identitySetup)
             .AddEntityFrameworkStores<JenniferDbContext>()
             .AddDefaultTokenProviders();
+        services.RemoveAll<IUserValidator<User>>();
         services.AddTransient<IUserValidator<User>, UserNameValidator<User>>();
         
         services.AddAuthentication(options =>
