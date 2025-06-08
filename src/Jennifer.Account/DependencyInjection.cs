@@ -3,8 +3,6 @@ using System.Net;
 using System.Text;
 using Confluent.Kafka;
 using eXtensionSharp.Mongo;
-using FluentValidation;
-using Jennifer.Account.Application.Auth.Commands.SignUp;
 using Jennifer.Account.Hubs;
 using Jennifer.External.OAuth;
 using Jennifer.Infrastructure.Email;
@@ -15,16 +13,12 @@ using Jennifer.Account.Application.Tests;
 using Jennifer.Account.Application.Users;
 using Jennifer.Account.GrpcServices;
 using Jennifer.Domain.Accounts;
-using Jennifer.Domain.Common;
 using Jennifer.External.OAuth.Contracts;
 using Jennifer.Infrastructure.Abstractions;
-using Jennifer.Infrastructure.Abstractions.Behaviors;
-using Jennifer.Infrastructure.Abstractions.DomainEvents;
 using Jennifer.Infrastructure.Database;
 using Jennifer.Infrastructure.Middlewares;
 using Jennifer.Infrastructure.Session;
 using Jennifer.SharedKernel;
-using Mediator;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
@@ -52,7 +46,7 @@ public static class DependencyInjection
     /// Configures and adds Jennifer.Account services to the specified dependency injection container.
     /// </summary>
     /// <param name="services">The service collection to which Jennifer.Account services will be added.</param>
-    /// <param name="jenniferOptions">The configuration options used to setup Jennifer features and behavior.</param>
+    /// <param name="jenniferOptions">The configuration options used to set up Jennifer features and behavior.</param>
     /// <param name="dbContextSetup">A delegate to configure the DbContext options for Jennifer's database context.</param>
     /// <param name="identitySetup">A delegate to configure options for ASP.NET Core Identity.</param>
     /// <remarks>
@@ -254,7 +248,7 @@ public static class DependencyInjection
             
             services.AddSignalR().AddStackExchangeRedis(o =>
             {
-                o.ConnectionFactory = writer => Task.FromResult(connectionMultiplexer);
+                o.ConnectionFactory = _ => Task.FromResult(connectionMultiplexer);
             });
         }
         catch
@@ -289,7 +283,7 @@ public static class DependencyInjection
         // services.AddSingleton<IEmailQueue, EmailQueue>();
         // services.AddHostedService<EmailSendService>();
         services.AddHostedService<EmailConsumerProcessor>();
-        services.AddSingleton<IProducer<string, string>>(sp =>
+        services.AddSingleton(_ =>
         {
             var config = new ProducerConfig
             {
@@ -300,7 +294,7 @@ public static class DependencyInjection
             };
             return new ProducerBuilder<string, string>(config).Build();
         });
-        services.AddSingleton<IConsumer<string, string>>(sp =>
+        services.AddSingleton(_ =>
         {
             var config = new ConsumerConfig()
             {

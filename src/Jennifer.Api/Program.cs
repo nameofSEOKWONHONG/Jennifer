@@ -132,7 +132,7 @@ builder.Services
 
         tracing.AddOtlpExporter(options =>
         {
-            options.Endpoint = new Uri(builder.Configuration["OTEL_EXPORTER_ENDPOINT"]);
+            options.Endpoint = new Uri(builder.Configuration["OTEL_EXPORTER_ENDPOINT"].xValue<string>());
         });
     });
 
