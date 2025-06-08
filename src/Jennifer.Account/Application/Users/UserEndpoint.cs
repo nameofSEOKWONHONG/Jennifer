@@ -64,7 +64,7 @@ public static class UserEndpoint
             .WithName("AddUserClaim")
             .WithDescription("사용자의 클레임 추가");
 
-        group.MapPatch("/2fa/set/", async (Set2FACommand command, ISender sender, CancellationToken ct) =>
+        group.MapPatch("/2fa/set/", async (Set2FaCommand command, ISender sender, CancellationToken ct) =>
                 await sender.Send(command, ct))
             .MapToApiVersion(1)
             .WithName("Set2FA")

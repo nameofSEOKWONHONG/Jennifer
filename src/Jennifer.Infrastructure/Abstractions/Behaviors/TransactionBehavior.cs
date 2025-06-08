@@ -1,4 +1,4 @@
-﻿using Jennifer.Domain.Common;
+﻿using System.Reflection;
 using Jennifer.Infrastructure.Database;
 using Mediator;
 using Microsoft.Extensions.Logging;
@@ -10,9 +10,12 @@ public sealed class TransactionBehavior<TRequest, TResponse>(ITransactionDbConte
 {
     public async ValueTask<TResponse> Handle(TRequest message, MessageHandlerDelegate<TRequest, TResponse> next, CancellationToken cancellationToken)
     {
-        // 조건: 트랜잭션 명시된 커맨드만 처리
-        // if (message is not ITransactionCommand && message is not ITransactionCommand<TResponse>)
-        //     return await next(message, cancellationToken);
+        var attr = typeof(TRequest).GetCustomAttribute<UseTransactionAttribute>();
+        if (attr is null)
+        {
+            // 트랜잭션 없이 그대로 다음 핸들러 실행
+            return await next(message, cancellationToken);
+        }
 
         logger.LogDebug("Begin Transaction for {Command}", typeof(TRequest).Name);
         
