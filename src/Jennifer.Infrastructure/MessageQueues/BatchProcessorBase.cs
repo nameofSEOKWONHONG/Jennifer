@@ -11,20 +11,20 @@ namespace Jennifer.Infrastructure.MessageQueues;
 /// The service processes items in parallel from a source database context to a target database context, using
 /// specified degrees of parallelism.
 /// </summary>
-/// <typeparam name="TService">The type of the service deriving from this base class.</typeparam>
+/// <typeparam name="TProcessor">The type of the service deriving from this base class.</typeparam>
 /// <typeparam name="TDbContext">The type of the source database context to produce items from.</typeparam>
 /// <typeparam name="TItem">The type of the items being processed.</typeparam>
 /// <remarks>
 /// Derive this class to implement a custom background service for batch processing. The derived class must provide
 /// specific implementations for the methods to produce and consume items.
 /// </remarks>
-public abstract class BatchProcessorBase<TService, TDbContext, TItem>(
-    ILogger<TService> logger,
+public abstract class BatchProcessorBase<TProcessor, TDbContext, TItem>(
+    ILogger<TProcessor> logger,
     IServiceScopeFactory serviceScopeFactory,
     int maxDegreeOfParallelism = 4,
     int delayInMilliseconds = 1000)
     : BackgroundService
-    where TService : class
+    where TProcessor : class
     where TDbContext : DbContext
 {
     protected sealed override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -106,8 +106,6 @@ public abstract class BatchServiceBase<TService, TDbContextFrom, TDbContextTo, T
     where TService : class
     where TDbContextFrom : DbContext
 {
-    protected readonly ILogger<TService> logger = logger;
-
     protected sealed override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         while (!stoppingToken.IsCancellationRequested)

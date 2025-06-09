@@ -11,7 +11,7 @@ using Dapper;
 
 public interface IDapperExecutor
 {
-    Task<IDbContextTransaction> BeginTransactionAsync();
+    Task<IDbContextTransaction> BeginTransactionAsync(IsolationLevel isolationLevel = IsolationLevel.ReadCommitted);
     Task<IEnumerable<T>> QueryAsync<T>(string sql, object param = null);
     Task<int> ExecuteAsync(string sql, object param = null);
     Task<T> QueryFirstOrDefaultAsync<T>(string sql, object param = null);
@@ -25,7 +25,7 @@ public sealed class DapperExecutor : IDapperExecutor
 
     public DapperExecutor(ITransactionDbContext context) => _context = context;
 
-    public Task<IDbContextTransaction> BeginTransactionAsync() => _context.Database.BeginTransactionAsync();
+    public Task<IDbContextTransaction> BeginTransactionAsync(IsolationLevel isolationLevel = IsolationLevel.ReadCommitted) => _context.Database.BeginTransactionAsync(isolationLevel);
 
     public Task<IEnumerable<T>> QueryAsync<T>(string sql, object param = null) =>
         _context.QueryAsync<T>(sql, param);

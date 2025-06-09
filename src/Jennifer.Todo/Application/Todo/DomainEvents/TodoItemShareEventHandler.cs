@@ -13,10 +13,12 @@ public sealed class TodoItemShareEventHandler(
     {
         logger.LogInformation("TodoItemShareEvent: documentId:{documentId}, receiverId:{receiverId}", notification.Id, notification.ShareUserId);
 
-        var msg = new Message<string, string>();
-        msg.Key = notification.Id.ToString();
-        msg.Value = notification.ShareUserId.ToString();
-        
+        var msg = new Message<string, string>
+        {
+            Key = notification.Id.ToString(),
+            Value = notification.ShareUserId.ToString()
+        };
+
         await producer.ProduceAsync("todo-item-share", msg, cancellationToken);
     }
 }

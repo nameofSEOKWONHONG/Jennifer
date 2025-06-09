@@ -9,6 +9,7 @@ public class TodoItem : Entry
 {
     public Guid Id { get; set; }
     public Guid UserId { get; set; }
+    public string Title { get; set; }
     public string Description { get; set; }
     public DateTime? DueDate { get; set; }
     public List<string> Labels { get; set; } = [];
@@ -18,11 +19,12 @@ public class TodoItem : Entry
     
     public virtual ICollection<TodoItemShare> TodoItemShares { get; set; }
 
-    public static TodoItem Create(Guid userId, string description, DateTime? dueDate, List<string> labels,  bool isCompleted, DateTime? completedAt, Priority priority)
+    public static TodoItem Create(Guid userId, string title, string description, DateTime? dueDate, List<string> labels,  bool isCompleted, DateTime? completedAt, Priority priority)
     {
         var newItem = new TodoItem()
         {
             UserId = userId,
+            Title = title,
             Description = description,
             DueDate = dueDate,
             Labels = labels,
@@ -36,8 +38,9 @@ public class TodoItem : Entry
         return newItem;
     }
 
-    public void Update(string description, DateTime? dueDate, List<string> labels, bool isCompleted, DateTime? completedAt, Priority priority, Guid userId)
+    public void Update(string title, string description, DateTime? dueDate, List<string> labels, bool isCompleted, DateTime? completedAt, Priority priority, Guid userId)
     {
+        Title = title;       
         Description = description;
         DueDate = dueDate;
         Labels = labels;
@@ -66,8 +69,12 @@ public class TodoItemEntityConfiguration : IEntityTypeConfiguration<TodoItem>
         builder.Property(m => m.Id)
             .ValueGeneratedOnAdd()
             .HasValueGenerator<GuidV7ValueGenerator>();
+        builder.Property(m => m.Title)
+            .IsRequired()
+            .HasMaxLength(200);
         builder.Property(m => m.Description)
-            .HasMaxLength(4000);
+            .IsRequired()
+            .HasMaxLength(8000);
         
         builder.Property(m => m.CreatedBy)
             .HasMaxLength(36)
