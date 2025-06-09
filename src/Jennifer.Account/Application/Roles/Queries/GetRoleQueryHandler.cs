@@ -28,6 +28,6 @@ public sealed class GetRoleQueryHandler(JenniferDbContext dbContext): IQueryHand
             })
             .FirstOrDefaultAsync(cancellationToken);
         
-        return Result<RoleDto>.Success(result);
+        return await Result<RoleDto>.SuccessAsync(result);
     }
 }

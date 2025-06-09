@@ -16,6 +16,7 @@ using Jennifer.Domain.Accounts;
 using Jennifer.External.OAuth.Contracts;
 using Jennifer.Infrastructure.Abstractions;
 using Jennifer.Infrastructure.Database;
+using Jennifer.Infrastructure.Extensions;
 using Jennifer.Infrastructure.Middlewares;
 using Jennifer.Infrastructure.Session;
 using Jennifer.SharedKernel;
@@ -70,15 +71,18 @@ public static class DependencyInjection
         ArgumentNullException.ThrowIfNull(dbContextSetup);
         ArgumentNullException.ThrowIfNull(identitySetup);
 
-        //read, write
+        //read, write dbcontext
         services.AddDbContext<JenniferDbContext>(dbContextSetup);
-        //readonly
+        //readonly dbcontext
         services.AddDbContextPool<JenniferReadOnlyDbContext>((sp, op) =>
         {
             op.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
             dbContextSetup.Invoke(sp, op);
         });
+        //abstraction transaction dbcontext
         services.AddScoped<ITransactionDbContext, JenniferDbContext>();
+        //use dapper executor
+        services.AddScoped<IDapperExecutor, DapperExecutor>();
         
         services.AddIdentity<User, Role>(identitySetup)
             .AddEntityFrameworkStores<JenniferDbContext>()
@@ -356,8 +360,6 @@ public static class DependencyInjection
         using var scope = app.Services.CreateScope();
         var service = scope.ServiceProvider.GetRequiredService<IIpBlockService>();
         service.SubscribeToUpdates();
-        
-        
 
         app.UseJMongoDbAsync();
     }
