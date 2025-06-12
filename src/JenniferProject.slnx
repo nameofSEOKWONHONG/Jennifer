@@ -9,6 +9,7 @@
   <Project Path="Jennifer.External.OAuth/Jennifer.External.OAuth.csproj" />
   <Project Path="Jennifer.Infrastructure/Jennifer.Infrastructure.csproj" />
   <Project Path="Jennifer.McpServer/Jennifer.McpServer.csproj" />
+  <Project Path="Jennifer.Proto\Jennifer.Proto.csproj" Type="Classic C#" />
   <Project Path="Jennifer.SharedKernel/Jennifer.SharedKernel.csproj" />
   <Project Path="Jennifer.Todo/Jennifer.Todo.csproj" />
 </Solution>

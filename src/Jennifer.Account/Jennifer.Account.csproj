@@ -12,12 +12,6 @@
         <PackageReference Include="EFCore.BulkExtensions"/>
         <PackageReference Include="eXtensionSharp.AspNet"/>
         <PackageReference Include="eXtensionSharp.Mongo"/>
-        <PackageReference Include="Google.Protobuf" />
-        <PackageReference Include="Grpc.AspNetCore.Server" />
-        <PackageReference Include="Grpc.Tools">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
         <PackageReference Include="LinqKit.Microsoft.EntityFrameworkCore"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore"/>
         <PackageReference Include="Microsoft.Extensions.Caching.Hybrid"/>
@@ -29,18 +23,23 @@
         <PackageReference Include="RabbitMQ.Client"/>
         <PackageReference Include="Mediator.Abstractions"/>
         <PackageReference Include="ZLinq"/>
-        <PackageReference Include="ZString"/>   
-    </ItemGroup>
-
-    <ItemGroup>
-        <Protobuf Include="Protos\account.proto" GrpcServices="Server" />
+        <PackageReference Include="ZString"/>
+        <PackageReference Include="Google.Protobuf" />
+        <PackageReference Include="Grpc.AspNetCore.Server" />
+        <PackageReference Include="Grpc.Tools">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>        
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Jennifer.Domain\Jennifer.Domain.csproj" />
       <ProjectReference Include="..\Jennifer.External.OAuth\Jennifer.External.OAuth.csproj" />
       <ProjectReference Include="..\Jennifer.Infrastructure\Jennifer.Infrastructure.csproj" />
+      <ProjectReference Include="..\Jennifer.Proto\Jennifer.Proto.csproj" />
       <ProjectReference Include="..\Jennifer.SharedKernel\Jennifer.SharedKernel.csproj" />
     </ItemGroup>
+
+
     
 </Project>

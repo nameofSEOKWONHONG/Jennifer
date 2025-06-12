@@ -20,11 +20,8 @@
         
       <ProjectReference Include="..\Jennifer.Domain\Jennifer.Domain.csproj" />
       <ProjectReference Include="..\Jennifer.Infrastructure\Jennifer.Infrastructure.csproj" />
+      <ProjectReference Include="..\Jennifer.Proto\Jennifer.Proto.csproj" />
       <ProjectReference Include="..\Jennifer.SharedKernel\Jennifer.SharedKernel.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <Protobuf Include="Protos\account.proto" GrpcServices="Client" />
     </ItemGroup>
 
 </Project>
