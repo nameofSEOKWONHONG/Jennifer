@@ -1,7 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Text.Json.Serialization;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Ardalis.SmartEnum;
+using Ardalis.SmartEnum.EFCore;
+using Ardalis.SmartEnum.SystemTextJson;
 
 namespace Jennifer.Domain.Common;
+
 
 public class IpBlockLog
 {
@@ -14,7 +19,6 @@ public class IpBlockLog
     public DateTime? ExpiresAt { get; set; }
 
     public string Reason { get; set; }
-
     public bool IsPermanent { get; set; } = false;
 
     public DateTime? ReleasedAt { get; set; }

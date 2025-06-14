@@ -199,7 +199,16 @@ public static class DependencyInjection
         return services;
     }
 
-    public static IServiceCollection WithJenniferDistributeCache(this IServiceCollection services, string redisConnectionString)
+    /// <summary>
+    /// Configures and adds distributed caching using Redis for Jennifer services.
+    /// </summary>
+    /// <param name="services">The service collection to which the distributed cache services will be added.</param>
+    /// <param name="redisConnectionString">The connection string for the Redis server used to configure the distributed cache.</param>
+    /// <returns>
+    /// The updated service collection with the distributed cache services configured.
+    /// </returns>
+    public static IServiceCollection WithJenniferDistributeCache(this IServiceCollection services,
+        string redisConnectionString)
     {
         ArgumentNullException.ThrowIfNull(redisConnectionString);
 
@@ -237,8 +246,14 @@ public static class DependencyInjection
         
         return services;
     }
-    
 
+
+    /// <summary>
+    /// Configures and adds IP rate limiting using Redis as the backend storage for rate limit rules and throttling,
+    /// along with additional services required for custom IP blocking in the specified dependency injection container.
+    /// </summary>
+    /// <param name="services">The service collection to which IP rate limiting and related services will be added.</param>
+    /// <returns>The same instance of <see cref="IServiceCollection"/> to allow method chaining.</returns>
     public static IServiceCollection WithJenniferIpRateLimit(this IServiceCollection services)
     {
         services.AddDistributedRateLimiting<RedisProcessingStrategy>();
@@ -299,7 +314,8 @@ public static class DependencyInjection
             };
         });
         services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
-            
+        services.AddSingleton<IIpBlockTtlService, IpBlockTtlService>();
+        services.AddSingleton<IIpBlockStaticService, IpBlockStaticService>();
         WithOptions.Instance.WithJenniferIpRateLimit = true;
         
         return services;
@@ -446,7 +462,15 @@ public static class DependencyInjection
             {
                 var service = scope.ServiceProvider.GetRequiredService<IIpBlockTtlService>();
                 service.SubscribeToUpdates();            
-            }        
+            }
+
+            //TODO: Here need test.
+            if (WithOptions.Instance.WithJenniferIpRateLimit)
+            {
+                var service = scope.ServiceProvider.GetRequiredService<IIpBlockStaticService>();
+                var task = Task.Run(async() => await service.Setup());
+                Task.WaitAll(task);
+            }
         }
         
         app.UseJMongoDbAsync();

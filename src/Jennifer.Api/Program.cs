@@ -37,7 +37,7 @@ builder.Host.UseSerilog((context, services, config) =>
 //builder.Services.AddScoped<INotificationPublisher, DomainEventPublisher>();
 builder.Services.AddScoped<DomainEventDispatcher>();
 builder.Services.AddValidatorsFromAssemblyContaining<SignUpAdminCommandValidator>();
-builder.Services.AddSingleton<IIpBlockTtlService, IpBlockTtlService>();
+
 builder.Services.AddMediator(options =>
 {
     options.ServiceLifetime = ServiceLifetime.Scoped;
