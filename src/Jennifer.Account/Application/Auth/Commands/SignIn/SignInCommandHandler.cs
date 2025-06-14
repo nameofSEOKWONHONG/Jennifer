@@ -1,6 +1,6 @@
-﻿using Jennifer.Account.Application.Auth.Contracts;
-using Jennifer.Domain.Accounts;
+﻿using Jennifer.Domain.Accounts;
 using Jennifer.SharedKernel;
+using Jennifer.SharedKernel.Account.Auth;
 using Mediator;
 using Microsoft.AspNetCore.Identity;
 

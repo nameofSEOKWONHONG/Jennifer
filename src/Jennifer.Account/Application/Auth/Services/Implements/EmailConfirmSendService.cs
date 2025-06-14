@@ -1,6 +1,5 @@
 ﻿using Confluent.Kafka;
 using eXtensionSharp;
-using Jennifer.Account.Application.Auth.Contracts;
 using Jennifer.Account.Application.Auth.Services.Abstracts;
 using Jennifer.Domain.Accounts;
 using Jennifer.Domain.Accounts.Contracts;
@@ -8,6 +7,7 @@ using Jennifer.Infrastructure.Abstractions.ServiceCore;
 using Jennifer.Infrastructure.Database;
 using Jennifer.Infrastructure.Email;
 using Jennifer.SharedKernel;
+using Jennifer.SharedKernel.Account.Auth;
 using Microsoft.EntityFrameworkCore;
 
 namespace Jennifer.Account.Application.Auth.Services.Implements;
@@ -48,7 +48,7 @@ Jennifer";
         await dbContext.EmailVerificationCodes.AddAsync(new EmailConfirmCode()
         {
             Email = request.Email,
-            Type = request.Type,
+            Type = ENUM_EMAIL_VERIFY_TYPE.FromName(request.VerityStatus),
             Code = code,
             FailedCount = 0,
             ExpiresAt = DateTimeOffset.UtcNow.AddMinutes(30),

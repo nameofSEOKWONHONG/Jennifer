@@ -3,13 +3,13 @@ using FluentValidation;
 using Jennifer.Domain.Accounts;
 using Jennifer.Infrastructure.Database;
 using Jennifer.SharedKernel;
+using Jennifer.SharedKernel.Account.Users;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Jennifer.Account.Application.Users.Commands;
 
-public sealed record CreateUserClaimRequest(string ClaimType, string ClaimValue);
 
 [UseTransaction(IsolationLevel.ReadUncommitted)]
 public sealed record CreateUserClaimCommand(Guid UserId, CreateUserClaimRequest[] requests) : ICommand<Result>;

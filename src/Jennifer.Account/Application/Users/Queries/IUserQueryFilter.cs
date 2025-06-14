@@ -1,7 +1,7 @@
 ﻿using System.Linq.Expressions;
-using Jennifer.Account.Application.Auth.Contracts;
 using Jennifer.Account.Application.Users.Commands;
 using Jennifer.Domain.Accounts;
+using Jennifer.SharedKernel.Account.Auth;
 
 namespace Jennifer.Account.Application.Users.Queries;
 

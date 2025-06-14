@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="Directory.Packages.props" />
+  </Folder>
+  <Project Path="Jennifer.SharedKernel/Jennifer.SharedKernel.csproj" />
+  <Project Path="Jennifer.Web.Admin/Jennifer.Web.Admin.Client/Jennifer.Web.Admin.Client.csproj" Id="8ce50e5b-002a-4019-bcfc-a4ac6f205f3d" />
+  <Project Path="Jennifer.Web.Admin/Jennifer.Web.Admin/Jennifer.Web.Admin.csproj" Id="4d1e99e3-56d2-468a-9bd2-9bec01a000da" />
+</Solution>

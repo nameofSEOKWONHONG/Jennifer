@@ -1,8 +1,8 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
-using Jennifer.Account.Application.Auth.Contracts;
 using Jennifer.Domain.Accounts.Contracts;
 using Jennifer.SharedKernel;
+using Jennifer.SharedKernel.Account.Auth;
 using Shouldly;
 
 namespace Jennifer.Account.E2ETests.Auth;
@@ -17,7 +17,7 @@ public class SignUpFlowTests
             Email = "test@test.com",
             Password = "qawsEDRF",
             PhoneNumber = "01011112222",
-            Type = ENUM_EMAIL_VERIFY_TYPE.SIGN_UP_BEFORE,
+            VerifyType = ENUM_EMAIL_VERIFY_TYPE.SIGN_UP_BEFORE.Name,
             UserName = "tester",
             VerifyCode = string.Empty
         };

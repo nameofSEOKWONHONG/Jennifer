@@ -1,6 +1,4 @@
-﻿using Jennifer.Domain.Accounts.Contracts;
-
-namespace Jennifer.Account.Application.Auth.Contracts;
+﻿namespace Jennifer.SharedKernel.Account.Auth;
 
 public record TokenResponse(string AccessToken, string RefreshToken, bool isTwoFactor);
 
@@ -14,7 +12,7 @@ public class PasswordForgotChangeRequest
     public string Email { get; set; }
     public string Code { get; set; }
     public string NewPassword { get; set; }
-    public ENUM_EMAIL_VERIFY_TYPE Type { get; set; }
+    public string VerifyType { get; set; }
 }
 
 /// <summary>
@@ -71,7 +69,7 @@ public class RegisterRequest
     /// when handling a registration request. It is associated with
     /// <see cref="ENUM_EMAIL_VERIFY_TYPE"/> which defines the allowed verification types.
     /// </remarks>
-    public ENUM_EMAIL_VERIFY_TYPE Type { get; set; }   
+    public string VerifyType { get; set; }
 }
 
 public class RegisterAdminRequest
@@ -88,30 +86,30 @@ public class RegisterAdminRequest
 /// <see cref="ENUM_EMAIL_VERIFY_TYPE"/>
 public class EmailConfirmRequest
 {
-    public EmailConfirmRequest(string email, string code, ENUM_EMAIL_VERIFY_TYPE type)
+    public EmailConfirmRequest(string email, string code, string verifyType)
     {
         Email = email;
         Code = code;
-        Type = type;
+        VerifyType = verifyType;
     }
 
     public string Email { get; set; }
     public string Code { get; set; }
-    public ENUM_EMAIL_VERIFY_TYPE Type { get; set; }   
+    public string VerifyType { get; set; }
 }
 
 public class VerifyCodeResponse
 {
-    public VerifyCodeResponse(ENUM_VERITY_RESULT_STATUS status, string message)
+    public VerifyCodeResponse(string verityStatus, string message)
     {
-        Status = status;
+        VerityStatus = verityStatus;
         Message = message;
     }
 
-    public ENUM_VERITY_RESULT_STATUS Status { get; set; }
+    public string VerityStatus { get; set; }
     public string Message { get; set; }   
 }
 
-public record EmailConfirmSendRequest(string Email, string UserName, ENUM_EMAIL_VERIFY_TYPE Type);
+public record EmailConfirmSendRequest(string Email, string UserName, string VerityStatus);
 
 public record ExternalSignInRequest(string Provider, string AccessToken);

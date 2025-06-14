@@ -1,5 +1,5 @@
-﻿using Jennifer.Account.Application.Roles.Contracts;
-using Jennifer.SharedKernel;
+﻿using Jennifer.SharedKernel;
+using Jennifer.SharedKernel.Account.Role;
 using Mediator;
 
 namespace Jennifer.Account.Application.Roles.Queries;

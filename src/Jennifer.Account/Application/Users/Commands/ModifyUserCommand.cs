@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Jennifer.Account.Application.Users.Commands;
 
-public sealed record ModifyUserRequest(Guid UserId, string UserName, string PhoneNumber);
+
 
 [UseTransaction(IsolationLevel.ReadUncommitted)]
 public sealed record ModifyUserCommand(Guid UserId, string UserName, string PhoneNumber): ICommand<Result>;

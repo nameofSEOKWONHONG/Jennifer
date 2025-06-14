@@ -37,7 +37,7 @@ builder.Host.UseSerilog((context, services, config) =>
 //builder.Services.AddScoped<INotificationPublisher, DomainEventPublisher>();
 builder.Services.AddScoped<DomainEventDispatcher>();
 builder.Services.AddValidatorsFromAssemblyContaining<SignUpAdminCommandValidator>();
-builder.Services.AddSingleton<IIpBlockService, IpBlockService>();
+builder.Services.AddSingleton<IIpBlockTtlService, IpBlockTtlService>();
 builder.Services.AddMediator(options =>
 {
     options.ServiceLifetime = ServiceLifetime.Scoped;
@@ -107,7 +107,9 @@ builder.Services.AddJennifer(jenniferOptions,
             identityOptions.User.AllowedUserNameCharacters = null!;
         })
     // Add jennifer cache
-    .WithJenniferCache(builder.Configuration["REDIS_AUTH_CONNECTION"])
+    .WithJenniferDistributeCache(builder.Configuration["REDIS_AUTH_CONNECTION"])
+    // Add jennifer ip block, need redis IConnectionMultiplexer, use WithJenniferCache
+    .WithJenniferIpRateLimit()    
     // Add jennifer signalr
     .WithJenniferSignalr(builder.Configuration["REDIS_HUB_BACKPLANE"])
     // Add jennifer mongodb

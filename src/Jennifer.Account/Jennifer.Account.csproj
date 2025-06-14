@@ -9,6 +9,8 @@
 
     <ItemGroup>
         <PackageReference Include="Asp.Versioning.Http"/>        
+        <PackageReference Include="AspNetCoreRateLimit.Redis" />        
+        <PackageReference Include="AspNetCoreRateLimit.Redis.AbsoluteUrl" />        
         <PackageReference Include="EFCore.BulkExtensions"/>
         <PackageReference Include="eXtensionSharp.AspNet"/>
         <PackageReference Include="eXtensionSharp.Mongo"/>

@@ -12,14 +12,14 @@ public class IpBlockMiddleware
 {
     private readonly RequestDelegate _next;
     private readonly ILogger<IpBlockMiddleware> _logger;
-    private readonly IIpBlockService _service;
+    private readonly IIpBlockTtlService _ttlService;
 
     public IpBlockMiddleware(RequestDelegate next, ILogger<IpBlockMiddleware> logger,
-        IIpBlockService service)
+        IIpBlockTtlService ttlService)
     {
         _next = next;
         _logger = logger;
-        _service = service;
+        _ttlService = ttlService;
     }
 
     public async Task Invoke(HttpContext context)
@@ -38,7 +38,7 @@ public class IpBlockMiddleware
             };       
         }
         
-        var @checked = await _service.IsBlockedAsync(ip);
+        var @checked = await _ttlService.IsBlockedAsync(ip);
         if (@checked)
         {
             problemDetails = new ProblemDetails

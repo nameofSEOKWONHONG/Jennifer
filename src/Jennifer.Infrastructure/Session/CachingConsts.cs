@@ -8,8 +8,8 @@ public sealed class CachingConsts
     private const string SidCacheKeyFormat = "sid:{0}";
     public static string SidCacheKey(string sid) => string.Format(SidCacheKeyFormat, sid);
     
-    private const string UserCacheKeyFormat = "user:{0}";
-    public static string UserCacheKey(string userId) => string.Format(UserCacheKeyFormat, userId);
+    private const string UserCacheKeyFormat = "sid:{0}:user:{1}";
+    public static string UserCacheKey(string sid, string userId) => string.Format(UserCacheKeyFormat, sid, userId);
     
     private const string OptionCacheKeyFormat = "option:{0}";
     public static string OptionCacheKey(string sid) => string.Format(OptionCacheKeyFormat, sid);

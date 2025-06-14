@@ -1,9 +1,9 @@
-﻿using Microsoft.Extensions.Caching.Memory;
+﻿using Jennifer.Infrastructure.AppConfigurations;
 using StackExchange.Redis;
 
 namespace Jennifer.Infrastructure.Middlewares;
 
-public interface IIpBlockService
+public interface IIpBlockTtlService
 {
     Task BlockIpAsync(string ip);
 
@@ -14,26 +14,22 @@ public interface IIpBlockService
     void SubscribeToUpdates();
 }
 
-public class IpBlockService: IIpBlockService
+public class IpBlockTtlService: IIpBlockTtlService
 {
-    private readonly IMemoryCache _cache;
     private readonly IDatabase _redis;
     private readonly ISubscriber _subscriber;
     private static readonly TimeSpan _ttl = TimeSpan.FromMinutes(10);
 
-    
-    public IpBlockService(IConnectionMultiplexer redis, IMemoryCache cache)
+    public IpBlockTtlService(IConnectionMultiplexer redis)
     {
-        _cache = cache;
         _redis = redis.GetDatabase();
         _subscriber = redis.GetSubscriber();
     }
-
+    
     public async Task BlockIpAsync(string ip)
     {
         var key = $"ip:block:{ip}";
-        await _redis.StringSetAsync(key, "1");
-        _cache.Set(key, true, _ttl);
+        await _redis.StringSetAsync(key, "1", _ttl, When.NotExists);
         
         await _subscriber.PublishAsync(RedisChannel.Literal("ip:block:update"), ip);
     }
@@ -42,22 +38,18 @@ public class IpBlockService: IIpBlockService
     {
         var key = $"ip:block:{ip}";
         await _redis.KeyDeleteAsync(key);
-        _cache.Remove(key);
         
         await _redis.KeyDeleteAsync(key);
     }
 
     public async Task<bool> IsBlockedAsync(string ip)
     {
+        if (!WithOptions.Instance.WorkIpBlock) return true;
+        
         var key = $"ip:block:{ip}";
-
-        if (_cache.TryGetValue(key, out bool cached) && cached)
-            return true;
-
+        
         var exists = await _redis.KeyExistsAsync(key);
-        if (exists)
-            _cache.Set(key, true, _ttl);
-
+        
         return exists;
     }
 

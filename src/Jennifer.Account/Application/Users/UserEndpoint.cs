@@ -2,6 +2,7 @@
 using Jennifer.Account.Application.Users.Commands;
 using Jennifer.Account.Application.Users.Queries;
 using Jennifer.Infrastructure.Abstractions;
+using Jennifer.SharedKernel.Account.Users;
 using Mediator;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;

@@ -1,6 +1,6 @@
-﻿using Jennifer.Account.Application.Auth.Contracts;
-using Jennifer.Infrastructure.Database;
+﻿using Jennifer.Infrastructure.Database;
 using Jennifer.SharedKernel;
+using Jennifer.SharedKernel.Account.Auth;
 using LinqKit;
 using Mediator;
 using Microsoft.EntityFrameworkCore;

@@ -1,5 +1,5 @@
-﻿using Jennifer.Account.Application.Auth.Contracts;
-using Jennifer.SharedKernel;
+﻿using Jennifer.SharedKernel;
+using Jennifer.SharedKernel.Account.Auth;
 using Mediator;
 
 namespace Jennifer.Account.Application.Auth.Commands.TwoFactor;

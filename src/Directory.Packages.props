@@ -4,6 +4,10 @@
   </PropertyGroup>
   <!--.NET 9 packages. Most of them will work on .NET 8. If you need to, make the updates here individually.-->
   <ItemGroup>
+    <PackageVersion Include="AspNetCoreRateLimit.Redis" Version="2.0.0" />
+    <PackageVersion Include="AspNetCoreRateLimit.Redis.AbsoluteUrl" Version="2.0.0" />
+    <PackageVersion Include="Blazored.LocalStorage" Version="4.5.0" />
+    <PackageVersion Include="Blazored.SessionStorage" Version="2.4.0" />
     <PackageVersion Include="Dapper" Version="2.1.66" />
     <PackageVersion Include="Google.Protobuf" Version="3.31.1" />
     <PackageVersion Include="Grpc.AspNetCore.Server" Version="2.71.0" />
@@ -40,6 +44,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageVersion>
     <PackageVersion Include="Shouldly" Version="4.3.0" />
+    <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="8.12.0" />
     <PackageVersion Include="ZLinq" Version="1.4.9" />
     <PackageVersion Include="ZString" Version="2.6.0" />
     <PackageVersion Include="Ardalis.SmartEnum" Version="8.2.0" />
@@ -75,5 +80,12 @@
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
     <PackageVersion Include="xunit" Version="2.9.2" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.2" />
+    <!-- Jennifer.Web.Admin -->
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.6" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="9.0.6" PrivateAssets="all" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="9.0.6" />
+    <PackageVersion Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.12.0" />
+    <PackageVersion Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.12.0" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="9.0.6" />
   </ItemGroup>
 </Project>

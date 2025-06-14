@@ -29,7 +29,7 @@ public sealed class UserCacheProvider(IDistributedCache cache,
                 })
                 .FirstAsync(cancellationToken: token);
         
-        _cached = await hybridCache.GetOrCreateAsync(CachingConsts.UserCacheKey(value), FetchFromDatabase);
+        _cached = await hybridCache.GetOrCreateAsync(CachingConsts.UserCacheKey(sid, value), FetchFromDatabase);
         
         return _cached;
     }
@@ -37,7 +37,7 @@ public sealed class UserCacheProvider(IDistributedCache cache,
     public async Task ClearAsync(string sid)
     {
         var value = await cache.GetStringAsync(CachingConsts.SidCacheKey(sid));
-        var userKey = CachingConsts.UserCacheKey(value);
+        var userKey = CachingConsts.UserCacheKey(sid,value);
         await hybridCache.RemoveAsync(userKey);
         await cache.RemoveAsync(CachingConsts.SidCacheKey(sid));
     }

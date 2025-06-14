@@ -1,7 +1,6 @@
 ﻿using FluentValidation;
-using Jennifer.SharedKernel;
 
-namespace Jennifer.Account.Application.Auth.Contracts;
+namespace Jennifer.SharedKernel.Account.Auth;
 
 public class UserPagingRequest : PagingRequest
 {

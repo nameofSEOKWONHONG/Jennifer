@@ -1,0 +1,89 @@
+﻿@page "/login"
+
+@rendermode InteractiveAuto
+
+@using Jennifer.Web.Admin.Client.Auth.Services
+
+@inject NavigationManager Navigation
+@inject ILoginService LoginService
+
+@inherits LayoutComponentBase
+
+<div class="login-layout">
+    <div class="login-box">
+        <FluentCard class="login-card">
+            <FluentTextField @bind-Value="Email" Label="Email11" />
+            <FluentTextField Type="TextFieldType.Password" @bind-Value="Password" Label="Password" />
+
+            @if (!string.IsNullOrEmpty(ErrorMessage))
+            {
+                <div class="error-text">@ErrorMessage</div>
+            }
+
+            <div class="button-group">
+                <FluentButton Appearance="Appearance.Accent" OnClick="LoginAsync">Sign In</FluentButton>
+                <FluentButton Appearance="Appearance.Outline" OnClick="GoToSignup">Sign Up</FluentButton>
+            </div>
+        </FluentCard>
+    </div>
+</div>
+
+<style>
+    .login-layout {
+        display: grid;
+        place-items: center; /* 상하좌우 중앙 정렬 */
+        height: 100vh; /* 화면 높이 100% */
+        background-color: #f3f4f6;
+    }
+
+    .login-box {
+        width: 100%;
+        max-width: 400px;
+        padding: 2rem;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .login-card {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .button-group {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 1rem;
+    }
+
+    .error-text {
+        color: #d32f2f;
+        font-size: 0.875rem;
+    }
+</style>
+
+@code {
+    private string Email = "htest198231";
+    private string Password = string.Empty;
+    private string ErrorMessage = string.Empty;
+
+    private async Task LoginAsync()
+    {
+        Console.WriteLine("test");
+        var result = await LoginService.LoginAsync(Email, Password);
+        if (result.IsSuccess)
+        {
+            Navigation.NavigateTo("/", forceLoad: true);
+        }
+        else
+        {
+            ErrorMessage = "Invalid credentials.";
+        }
+    }
+
+    private async Task GoToSignup()
+    {
+        await Task.Delay(10);
+    }
+}

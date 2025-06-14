@@ -9,30 +9,30 @@
     <ItemGroup>
         <FrameworkReference Include="Microsoft.AspNetCore.App" />
         <PackageReference Include="Dapper" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational"/>
-        <PackageReference Include="Confluent.Kafka"/>
-        <PackageReference Include="eXtensionSharp"/>
-        <PackageReference Include="eXtensionSharp.AspNet"/>
-        <PackageReference Include="eXtensionSharp.Mongo"/>
-        <PackageReference Include="Mediator.Abstractions"/>
-        <PackageReference Include="Microsoft.Data.SqlClient"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
+        <PackageReference Include="Confluent.Kafka" />
+        <PackageReference Include="eXtensionSharp" />
+        <PackageReference Include="eXtensionSharp.AspNet" />
+        <PackageReference Include="eXtensionSharp.Mongo" />
+        <PackageReference Include="Mediator.Abstractions" />
+        <PackageReference Include="Microsoft.Data.SqlClient" />
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
         <PackageReference Include="NUlid" />
-        <PackageReference Include="RabbitMQ.Client"/>
-        <PackageReference Include="MailKit"/>        
-        <PackageReference Include="AWSSDK.SecretsManager"/>
-        <PackageReference Include="AWSSDK.SimpleSystemsManagement"/>
-        <PackageReference Include="Serilog.AspNetCore"/>
-        <PackageReference Include="Serilog.Enrichers.Environment"/>
-        <PackageReference Include="Serilog.Enrichers.Process"/>
-        <PackageReference Include="Serilog.Enrichers.Thread"/>
-        <PackageReference Include="Serilog.Sinks.Console"/>
-        <PackageReference Include="Serilog.Sinks.File"/>
-        <PackageReference Include="FluentValidation"/>
-        <PackageReference Include="FluentValidation.DependencyInjectionExtensions"/>
-        <PackageReference Include="StackExchange.Redis"/>
-        <PackageReference Include="ZLinq"/>
+        <PackageReference Include="RabbitMQ.Client" />
+        <PackageReference Include="MailKit" />        
+        <PackageReference Include="AWSSDK.SecretsManager" />
+        <PackageReference Include="AWSSDK.SimpleSystemsManagement" />
+        <PackageReference Include="Serilog.AspNetCore" />
+        <PackageReference Include="Serilog.Enrichers.Environment" />
+        <PackageReference Include="Serilog.Enrichers.Process" />
+        <PackageReference Include="Serilog.Enrichers.Thread" />
+        <PackageReference Include="Serilog.Sinks.Console" />
+        <PackageReference Include="Serilog.Sinks.File" />
+        <PackageReference Include="FluentValidation" />
+        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+        <PackageReference Include="StackExchange.Redis" />
+        <PackageReference Include="ZLinq" />
     </ItemGroup>
 
     <ItemGroup>

@@ -1,9 +1,10 @@
 ﻿using System.Security.Claims;
-using Jennifer.Account.Application.Auth.Contracts;
 using Jennifer.Account.Application.Auth.Services.Abstracts;
 using Jennifer.Domain.Accounts;
+using Jennifer.Infrastructure.Extensions;
 using Jennifer.Infrastructure.Session;
 using Jennifer.SharedKernel;
+using Jennifer.SharedKernel.Account.Auth;
 using Mediator;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Caching.Distributed;
@@ -50,7 +51,7 @@ public sealed class TokenGenerateCommandHandler(
         var encodedRefreshToken = tokenService.ObjectToTokenString(refreshTokenObj);
         var token = new TokenResponse(tokenService.GenerateJwtToken(sid, command.User, userClaims.ToList(), roleClaims), encodedRefreshToken, isTwoFactor:command.User.TwoFactorEnabled);
 
-        await cache.SetStringAsync(CachingConsts.SidCacheKey(sid), command.User.Id.ToString(), token: cancellationToken);
+        await cache.SetCacheUserSid(CachingConsts.SidCacheKey(sid), command.User.Id.ToString(), TimeSpan.FromMinutes(30), cancellationToken);
         
         return await Result<TokenResponse>.SuccessAsync(token);
     }

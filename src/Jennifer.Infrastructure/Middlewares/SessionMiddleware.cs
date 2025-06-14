@@ -1,9 +1,12 @@
 ﻿using System.Security.Claims;
 using eXtensionSharp;
+using Jennifer.Infrastructure.Database;
 using Jennifer.Infrastructure.Session;
 using Jennifer.Infrastructure.Session.Abstracts;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Jennifer.Infrastructure.Middlewares;
 
@@ -24,7 +27,9 @@ public class SessionMiddleware
             //TODO: HERE IS ERROR... first succeed, but second fail.
             var cs = context.User.FindFirstValue("cs");
             var user = await session.User.Current.GetAsync();
-            if(cs != user.ConcurrencyStamp) throw new Exception("ConcurrencyStamp is not matched");
+            var db = context.RequestServices.GetRequiredService<JenniferReadOnlyDbContext>();
+            var selectedUser = await db.Users.AsNoTracking().FirstAsync(m => m.Id == user.Id);
+            if(cs != selectedUser.ConcurrencyStamp) throw new Exception("ConcurrencyStamp is not matched");
         }
         
         await _next(context);

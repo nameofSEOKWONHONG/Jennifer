@@ -21,6 +21,7 @@ public class JenniferDbContext : IdentityDbContext<User, Role, Guid,
     public DbSet<Audit> Audits { get; set; }
     public DbSet<KafkaDeadLetter> KafkaDeadLetters { get; set; }
     public DbSet<UserOption> UserOptions { get; set; }
+    public DbSet<IpBlockLog> IpBlockLogs { get; set; }
     
     public DbSet<TodoItem> TodoItems { get; set; }
     public DbSet<TodoItemShare> TodoItemShares { get; set; }
@@ -51,6 +52,7 @@ public class JenniferDbContext : IdentityDbContext<User, Role, Guid,
         modelBuilder.ApplyConfiguration(new AuditEntityConfiguration());
         modelBuilder.ApplyConfiguration(new KafkaDeadLetterConfiguration());
         modelBuilder.ApplyConfiguration(new UserOptionEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new IpBlockLogEntityConfiguration());
         
         modelBuilder.ApplyConfiguration(new TodoItemEntityConfiguration());
         modelBuilder.ApplyConfiguration(new TodoItemShareEntityConfiguration());

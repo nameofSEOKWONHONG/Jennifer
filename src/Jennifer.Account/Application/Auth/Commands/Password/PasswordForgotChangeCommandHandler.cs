@@ -1,10 +1,10 @@
 ﻿using eXtensionSharp;
-using Jennifer.Account.Application.Auth.Contracts;
 using Jennifer.Account.Application.Auth.Services.Abstracts;
 using Jennifer.Domain.Accounts;
 using Jennifer.Domain.Accounts.Contracts;
 using Jennifer.Infrastructure.Abstractions.ServiceCore;
 using Jennifer.SharedKernel;
+using Jennifer.SharedKernel.Account.Auth;
 using Mediator;
 using Microsoft.AspNetCore.Identity;
 
@@ -20,7 +20,7 @@ public sealed class PasswordForgotChangeCommandHandler(
         var builder = factory.Create();
         Result verified = null;
         await builder.Register<IEmailConfirmService, EmailConfirmRequest, Result>()
-            .Request(new EmailConfirmRequest(command.Email, command.Code, ENUM_EMAIL_VERIFY_TYPE.PASSWORD_FORGOT))
+            .Request(new EmailConfirmRequest(command.Email, command.Code, ENUM_EMAIL_VERIFY_TYPE.PASSWORD_FORGOT.Name))
             .Handle(r => verified = r)
             .ExecuteAsync(cancellationToken);
         

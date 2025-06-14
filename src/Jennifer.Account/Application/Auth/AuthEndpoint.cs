@@ -7,7 +7,7 @@ using Jennifer.Account.Application.Auth.Commands.SignOut;
 using Jennifer.Account.Application.Auth.Commands.SignUp;
 using Jennifer.Account.Application.Auth.Commands.TwoFactor;
 using Jennifer.Account.Application.Auth.Commands.Withdraw;
-using Jennifer.Account.Application.Auth.Contracts;
+using Jennifer.SharedKernel.Account.Auth;
 using Mediator;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -64,7 +64,7 @@ public static class AuthEndpoint
                 async (RegisterRequest request,
                         ISender sender, CancellationToken ct) => 
                     await sender.Send(
-                        new SignUpCommand(request.Email, request.Password, request.UserName, request.PhoneNumber, request.Type), ct))
+                        new SignUpCommand(request.Email, request.Password, request.UserName, request.PhoneNumber, Domain.Accounts.Contracts.ENUM_EMAIL_VERIFY_TYPE.FromName(request.VerifyType)), ct))
             .Produces<TokenResponse>(StatusCodes.Status200OK)
             .ProducesValidationProblem()
             .WithDescription(@"

@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel;
 using System.Net.Http.Headers;
 using eXtensionSharp;
-using Jennifer.Account.Application.Auth.Contracts;
 using Jennifer.SharedKernel;
+using Jennifer.SharedKernel.Account.Auth;
 using ModelContextProtocol.Server;
 
 namespace Jennifer.McpServer;

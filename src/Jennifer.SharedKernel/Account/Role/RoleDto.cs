@@ -1,4 +1,8 @@
-﻿namespace Jennifer.Account.Application.Roles.Contracts;
+﻿namespace Jennifer.SharedKernel.Account.Role;
+
+public sealed record CreateRoleClaimRequest(string ClaimType, string ClaimValue);
+
+public sealed record CreateRoleRequest(string RoleName);
 
 public sealed class RoleDto
 {

@@ -7,13 +7,14 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi"/>
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
         <PackageReference Include="ModelContextProtocol" />
         <PackageReference Include="ModelContextProtocol.AspNetCore" />
+        <PackageReference Include="eXtensionSharp"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Jennifer.Account\Jennifer.Account.csproj" />
+      <ProjectReference Include="..\Jennifer.SharedKernel\Jennifer.SharedKernel.csproj" />
     </ItemGroup>
 
 </Project>

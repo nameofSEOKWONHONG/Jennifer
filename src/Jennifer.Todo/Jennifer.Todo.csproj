@@ -7,7 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Asp.Versioning.Http"/>
+        <PackageReference Include="Asp.Versioning.Http" />
         <PackageReference Include="Google.Protobuf" />
         <PackageReference Include="Grpc.Net.Client" />
         <PackageReference Include="Grpc.Net.ClientFactory" />
@@ -16,11 +16,11 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>        
         <PackageReference Include="LinqKit.Core" />
-        <PackageReference Include="Mediator.Abstractions"/>
-        
-      <ProjectReference Include="..\Jennifer.Domain\Jennifer.Domain.csproj" />
-      <ProjectReference Include="..\Jennifer.Infrastructure\Jennifer.Infrastructure.csproj" />
-      <ProjectReference Include="..\Jennifer.Proto\Jennifer.Proto.csproj" />
+        <PackageReference Include="Mediator.Abstractions" />
+        <PackageReference Include="eXtensionSharp"/>
+        <ProjectReference Include="..\Jennifer.Domain\Jennifer.Domain.csproj" />
+        <ProjectReference Include="..\Jennifer.Infrastructure\Jennifer.Infrastructure.csproj" />
+        <ProjectReference Include="..\Jennifer.Proto\Jennifer.Proto.csproj" />
       <ProjectReference Include="..\Jennifer.SharedKernel\Jennifer.SharedKernel.csproj" />
     </ItemGroup>
 

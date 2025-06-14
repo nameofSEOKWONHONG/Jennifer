@@ -1,7 +1,10 @@
 ﻿using System.IO.Compression;
 using System.Net;
 using System.Text;
+using AspNetCoreRateLimit;
+using AspNetCoreRateLimit.Redis;
 using Confluent.Kafka;
+using eXtensionSharp;
 using eXtensionSharp.Mongo;
 using Jennifer.Account.Hubs;
 using Jennifer.External.OAuth;
@@ -13,8 +16,10 @@ using Jennifer.Account.Application.Tests;
 using Jennifer.Account.Application.Users;
 using Jennifer.Account.GrpcServices;
 using Jennifer.Domain.Accounts;
+using Jennifer.Domain.Common;
 using Jennifer.External.OAuth.Contracts;
 using Jennifer.Infrastructure.Abstractions;
+using Jennifer.Infrastructure.AppConfigurations;
 using Jennifer.Infrastructure.Database;
 using Jennifer.Infrastructure.Extensions;
 using Jennifer.Infrastructure.Middlewares;
@@ -22,6 +27,7 @@ using Jennifer.Infrastructure.Session;
 using Jennifer.SharedKernel;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.Routing;
@@ -188,15 +194,12 @@ public static class DependencyInjection
         #endif
 
         services.AddScoped<ISlimSender, SlimSender>();
-
-
         services.AddGrpc();
-
         
         return services;
     }
 
-    public static IServiceCollection WithJenniferCache(this IServiceCollection services, string redisConnectionString)
+    public static IServiceCollection WithJenniferDistributeCache(this IServiceCollection services, string redisConnectionString)
     {
         ArgumentNullException.ThrowIfNull(redisConnectionString);
 
@@ -208,8 +211,10 @@ public static class DependencyInjection
             services.AddSingleton(connectionMultiplexer);
 
             services.AddStackExchangeRedisCache(options =>
+            {
                 options.ConnectionMultiplexerFactory = () =>
-                    Task.FromResult(connectionMultiplexer));
+                    Task.FromResult(connectionMultiplexer);
+            });
         }
         finally
         {
@@ -227,9 +232,78 @@ public static class DependencyInjection
                 };
             });            
         }
+
+        WithOptions.Instance.WithJenniferDistributeCache = true;
         
         return services;
     }
+    
+
+    public static IServiceCollection WithJenniferIpRateLimit(this IServiceCollection services)
+    {
+        services.AddDistributedRateLimiting<RedisProcessingStrategy>();
+        services.Configure<IpRateLimitOptions>(options =>
+        {
+            options.EnableEndpointRateLimiting = true;
+            options.StackBlockedRequests = false;
+            options.RealIpHeader = "X-Forwarded-For";
+            options.ClientIdHeader = "X-ClientId";
+            options.HttpStatusCode = (int)HttpStatusCode.TooManyRequests;
+            options.GeneralRules =
+            [
+                new RateLimitRule
+                {
+                    Endpoint = "*",
+                    Period = "10s", // 10초
+                    Limit = 30 // 최대 30회
+                }
+            ];
+            options.RequestBlockedBehaviorAsync = async (context, identity, rule, counter) =>
+            {
+                var ip = context.Connection.RemoteIpAddress?.ToString();
+                if(ip.xIsEmpty()) return;
+                
+                var redis = context.RequestServices.GetRequiredService<IConnectionMultiplexer>().GetDatabase();
+                var ipBlockService = context.RequestServices.GetRequiredService<IIpBlockTtlService>();
+                var db = context.RequestServices.GetRequiredService<JenniferDbContext>();
+                
+                // 위반 횟수 Redis 카운터 증가
+                var violationKey = $"ratelimit:violation:{ip}";
+                var count = await redis.StringIncrementAsync(violationKey);
+
+                // 누적 위반 TTL 설정 (예: 24시간)
+                if (count == 1)
+                    await redis.KeyExpireAsync(violationKey, TimeSpan.FromHours(24));
+
+                if (count > 10)
+                {
+                    // 차단 등록 (TTL 포함, Redis + 메모리)
+                    await ipBlockService.BlockIpAsync(ip);
+                    await redis.KeyDeleteAsync(violationKey);          // 누적 제거
+                    // RDB 이력 기록
+                    await db.IpBlockLogs.AddAsync(new IpBlockLog
+                    {
+                        IpAddress = ip,
+                        BlockedAt = DateTime.UtcNow,
+                        ExpiresAt = DateTime.UtcNow.AddHours(1), // 예: 1시간 임시 차단
+                        Reason = "RateLimit exceeded",
+                        CreatedBy = "SYSTEM",
+                        IsPermanent = false
+                    });
+                    await db.SaveChangesAsync();
+                }
+                
+                context.Response.StatusCode = (int)HttpStatusCode.TooManyRequests;
+                context.Response.ContentType = "application/json";
+                await context.Response.WriteAsync("{\"message\":\"Too many requests. Your IP has been temporarily blocked.\"}");
+            };
+        });
+        services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+            
+        WithOptions.Instance.WithJenniferIpRateLimit = true;
+        
+        return services;
+    }    
 
     /// <summary>
     /// Configures and adds SignalR services to the specified dependency injection container for Jennifer.Account,
@@ -260,7 +334,7 @@ public static class DependencyInjection
             services.AddSignalR();
         }
         
-        
+        WithOptions.Instance.WithJenniferSignalr = true;
 
         return services;
     }
@@ -273,6 +347,8 @@ public static class DependencyInjection
             options.AddInitializer<ExternalOAuthDocumentConfiguration>();
             options.AddInitializer<EmailSendResultDocumentConfiguration>();
         });
+        
+        WithOptions.Instance.WithJenniferMongodb = true;
 
         return services;
     }
@@ -312,6 +388,8 @@ public static class DependencyInjection
             };
             return new ConsumerBuilder<string, string>(config).Build();
         });
+        
+        WithOptions.Instance.WithJenniferMailService = true;
     }
 
     /// <summary>
@@ -337,6 +415,9 @@ public static class DependencyInjection
     /// <param name="app">The WebApplication instance where the middleware and SignalR hub will be configured.</param>
     public static void UseJennifer(this WebApplication app)
     {
+        if(WithOptions.Instance.WithJenniferIpRateLimit)
+            app.UseIpRateLimiting();
+        
 #if DEBUG
         app.UseCors(); // 이름 지정 없이 default policy 사용
 #else
@@ -349,18 +430,26 @@ public static class DependencyInjection
         app.UseAuthentication();
         app.UseAuthorization();
 
-        app.UseMiddleware<IpBlockMiddleware>();
+        if(WithOptions.Instance.WithJenniferIpRateLimit)
+            app.UseMiddleware<IpBlockMiddleware>();
+        
         app.UseMiddleware<ProblemDetailsMiddleware>();
         app.UseMiddleware<SessionMiddleware>();
         
         app.MapGrpcService<AccountServiceImpl>();
 
         app.MapHub<JenniferHub>("/jenniferHub");
-        
-        using var scope = app.Services.CreateScope();
-        var service = scope.ServiceProvider.GetRequiredService<IIpBlockService>();
-        service.SubscribeToUpdates();
 
+        using (var scope = app.Services.CreateScope())
+        {
+            if (WithOptions.Instance.WithJenniferDistributeCache)
+            {
+                var service = scope.ServiceProvider.GetRequiredService<IIpBlockTtlService>();
+                service.SubscribeToUpdates();            
+            }        
+        }
+        
         app.UseJMongoDbAsync();
     }
 }
+

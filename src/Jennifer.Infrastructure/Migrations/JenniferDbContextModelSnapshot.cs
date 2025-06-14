@@ -406,6 +406,48 @@ namespace Jennifer.Infrastructure.Migrations
                     b.ToTable("Audits", "audits");
                 });
 
+            modelBuilder.Entity("Jennifer.Domain.Common.IpBlockLog", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("BlockedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime?>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("IpAddress")
+                        .IsRequired()
+                        .HasMaxLength(45)
+                        .HasColumnType("character varying(45)");
+
+                    b.Property<bool>("IsPermanent")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Reason")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<DateTime?>("ReleasedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BlockedAt");
+
+                    b.HasIndex("IpAddress");
+
+                    b.ToTable("IpBlockLogs", "common");
+                });
+
             modelBuilder.Entity("Jennifer.Domain.Common.KafkaDeadLetter", b =>
                 {
                     b.Property<long>("Id")
@@ -467,8 +509,9 @@ namespace Jennifer.Infrastructure.Migrations
                         .HasDefaultValueSql("CURRENT_TIMESTAMP AT TIME ZONE 'UTC'");
 
                     b.Property<string>("Description")
-                        .HasMaxLength(4000)
-                        .HasColumnType("character varying(4000)");
+                        .IsRequired()
+                        .HasMaxLength(8000)
+                        .HasColumnType("character varying(8000)");
 
                     b.Property<DateTime?>("DueDate")
                         .HasColumnType("timestamp with time zone");
@@ -488,6 +531,11 @@ namespace Jennifer.Infrastructure.Migrations
 
                     b.Property<int>("Priority")
                         .HasColumnType("integer");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
 
                     b.HasKey("Id", "UserId");
 
