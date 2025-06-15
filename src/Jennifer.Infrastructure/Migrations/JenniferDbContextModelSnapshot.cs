@@ -486,6 +486,55 @@ namespace Jennifer.Infrastructure.Migrations
                     b.ToTable("KafkaDeadLetters", "audits");
                 });
 
+            modelBuilder.Entity("Jennifer.Domain.Common.Menu", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("CreatedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Icon")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<bool>("IsVisible")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset?>("ModifiedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid?>("ParentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ParentId");
+
+                    b.ToTable("Menus", "common");
+                });
+
             modelBuilder.Entity("Jennifer.Domain.Todos.TodoItem", b =>
                 {
                     b.Property<Guid>("Id")
@@ -656,6 +705,16 @@ namespace Jennifer.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Jennifer.Domain.Common.Menu", b =>
+                {
+                    b.HasOne("Jennifer.Domain.Common.Menu", "Parent")
+                        .WithMany("Children")
+                        .HasForeignKey("ParentId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Parent");
+                });
+
             modelBuilder.Entity("Jennifer.Domain.Todos.TodoItemShare", b =>
                 {
                     b.HasOne("Jennifer.Domain.Todos.TodoItem", "TodoItem")
@@ -685,6 +744,11 @@ namespace Jennifer.Infrastructure.Migrations
                     b.Navigation("UserOptions");
 
                     b.Navigation("UserRoles");
+                });
+
+            modelBuilder.Entity("Jennifer.Domain.Common.Menu", b =>
+                {
+                    b.Navigation("Children");
                 });
 
             modelBuilder.Entity("Jennifer.Domain.Todos.TodoItem", b =>

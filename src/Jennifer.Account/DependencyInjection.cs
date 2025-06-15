@@ -10,6 +10,7 @@ using Jennifer.Account.Hubs;
 using Jennifer.External.OAuth;
 using Jennifer.Infrastructure.Email;
 using Jennifer.Account.Application.Auth;
+using Jennifer.Account.Application.Menus;
 using Jennifer.Account.Application.Options;
 using Jennifer.Account.Application.Roles;
 using Jennifer.Account.Application.Tests;
@@ -419,7 +420,8 @@ public static class DependencyInjection
         app.MapRoleEndpoint();
         app.MapTestEndpoint();
         app.MapUserEndpoint();
-        
+        app.MapMenuEndpoint();
+
         // app.MapUserRoleEndpoint();
         // app.MapUserClaimEndpoint();
         // app.MapRoleEndpoint();
@@ -476,4 +478,3 @@ public static class DependencyInjection
         app.UseJMongoDbAsync();
     }
 }
-

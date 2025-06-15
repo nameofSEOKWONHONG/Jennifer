@@ -1,6 +1,7 @@
 ﻿using Jennifer.Domain.Accounts;
 using Jennifer.Domain.Common;
 using Jennifer.Domain.Todos;
+using Jennifer.Infrastructure.Session;
 using Jennifer.SharedKernel;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -15,19 +16,31 @@ public class JenniferDbContext : IdentityDbContext<User, Role, Guid,
     RoleClaim,
     UserToken>, ITransactionDbContext
 {
+    private readonly IUserContext _user;
     private readonly DomainEventDispatcher _dispatcher;
     public DbSet<EmailConfirmCode> EmailVerificationCodes { get; set; }
+
+    #region [common]
+
     public DbSet<Option> Options { get; set; }
     public DbSet<Audit> Audits { get; set; }
     public DbSet<KafkaDeadLetter> KafkaDeadLetters { get; set; }
     public DbSet<UserOption> UserOptions { get; set; }
     public DbSet<IpBlockLog> IpBlockLogs { get; set; }
-    
-    public DbSet<TodoItem> TodoItems { get; set; }
-    public DbSet<TodoItemShare> TodoItemShares { get; set; }
+    public DbSet<Menu> Menus { get; set; }    
 
-    public JenniferDbContext(DbContextOptions<JenniferDbContext> options, DomainEventDispatcher dispatcher): base(options)
+    #endregion
+
+    #region [example - todo]
+
+    public DbSet<TodoItem> TodoItems { get; set; }
+    public DbSet<TodoItemShare> TodoItemShares { get; set; }    
+
+    #endregion
+
+    public JenniferDbContext(DbContextOptions<JenniferDbContext> options, IUserContext user, DomainEventDispatcher dispatcher): base(options)
     {
+        _user = user;
         _dispatcher = dispatcher;
     }
 
@@ -48,28 +61,40 @@ public class JenniferDbContext : IdentityDbContext<User, Role, Guid,
         modelBuilder.ApplyConfiguration(new RoleEntityConfiguration());
         modelBuilder.ApplyConfiguration(new RoleClaimEntityConfiguration());
         modelBuilder.ApplyConfiguration(new EmailVerificationCodeEntityConfiguration());
+        
+        #region [common]
         modelBuilder.ApplyConfiguration(new OptionEntityConfiguration());
         modelBuilder.ApplyConfiguration(new AuditEntityConfiguration());
         modelBuilder.ApplyConfiguration(new KafkaDeadLetterConfiguration());
         modelBuilder.ApplyConfiguration(new UserOptionEntityConfiguration());
         modelBuilder.ApplyConfiguration(new IpBlockLogEntityConfiguration());
-        
+        modelBuilder.ApplyConfiguration(new MenuEntityConfiguration());        
+        #endregion
+
+        #region [example - todo]
+
         modelBuilder.ApplyConfiguration(new TodoItemEntityConfiguration());
-        modelBuilder.ApplyConfiguration(new TodoItemShareEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new TodoItemShareEntityConfiguration());        
+
+        #endregion
+
     }
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
     {
+        var currentUser = await _user.Current.GetAsync();
         foreach (var entry in ChangeTracker.Entries<IAuditable>())
         {
             if (entry.State == EntityState.Added)
             {
                 entry.Entity.CreatedOn = DateTimeOffset.UtcNow;
+                entry.Entity.CreatedBy = currentUser.Id.ToString();
             }
 
             if (entry.State == EntityState.Modified)
             {
                 entry.Entity.ModifiedOn = DateTimeOffset.UtcNow;
+                entry.Entity.ModifiedBy = currentUser.Id.ToString();
             }
         }
         
