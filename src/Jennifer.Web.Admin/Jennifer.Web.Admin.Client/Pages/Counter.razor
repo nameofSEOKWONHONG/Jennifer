@@ -1,6 +1,6 @@
 ﻿@page "/counter"
+@using Microsoft.AspNetCore.Authorization
 @rendermode InteractiveAuto
-
 <PageTitle>Counter</PageTitle>
 
 <h1>Counter</h1>
@@ -11,11 +11,17 @@
 
 <FluentButton Appearance="Appearance.Accent" @onclick="IncrementCount">Click me</FluentButton>
 
+<Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
+    <Authorized>
+        @context.User.Identity.IsAuthenticated
+    </Authorized>
+</Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
+
 @code {
     private int currentCount = 0;
 
     private void IncrementCount()
     {
-        currentCount+=2;
+        currentCount++;
     }
 }

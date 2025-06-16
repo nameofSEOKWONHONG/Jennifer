@@ -1,4 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Components.Authorization
+@inject NavigationManager Navigation
 @inherits LayoutComponentBase
 
 <AuthorizeView>
@@ -23,7 +24,7 @@
         </FluentLayout>
     </Authorized>
     <NotAuthorized>
-        <Jennifer.Web.Admin.Client.Pages.Login/>
+        <Jennifer.Web.Admin.Components.Pages.Login/>
     </NotAuthorized>
 </AuthorizeView>
 

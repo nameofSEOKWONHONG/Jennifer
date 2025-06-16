@@ -1,11 +1,10 @@
-using Blazored.SessionStorage;
-using Jennifer.Web.Admin.Auth;
-using Jennifer.Web.Admin.Client.Auth.Services;
+using Jennifer.Web.Admin;
 using Jennifer.Web.Admin.Client.Pages;
 using Jennifer.Web.Admin.Components;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.FluentUI.AspNetCore.Components;
+using System.ComponentModel.DataAnnotations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,16 +12,17 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
     .AddInteractiveWebAssemblyComponents();
-
-builder.Services.AddScoped<ILoginService, LoginService>();
-builder.Services.AddBlazoredSessionStorage();
-builder.Services.AddHttpClient();
-
-builder.Services.AddScoped<AuthenticationStateProvider, JwtAuthenticationStateProvider>();
-builder.Services.AddScoped<JwtAuthenticationStateProvider>();
-builder.Services.AddAuthorizationCore();
-
 builder.Services.AddFluentUIComponents();
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/login";
+        options.ExpireTimeSpan = TimeSpan.FromHours(1);
+    });
+builder.Services.AddCascadingAuthenticationState();
+builder.Services.AddScoped<AuthenticationStateProvider, PersistingRevalidatingAuthenticationStateProvider>();
+
 
 var app = builder.Build();
 
@@ -39,7 +39,8 @@ else
 }
 
 app.UseHttpsRedirection();
-
+app.UseAuthentication();
+app.UseAuthentication();
 app.UseAntiforgery();
 
 app.MapStaticAssets();
@@ -49,3 +50,4 @@ app.MapRazorComponents<App>()
     .AddAdditionalAssemblies(typeof(Jennifer.Web.Admin.Client._Imports).Assembly);
 
 app.Run();
+

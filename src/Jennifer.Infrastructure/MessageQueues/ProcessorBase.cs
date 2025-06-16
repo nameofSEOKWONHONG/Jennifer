@@ -4,10 +4,21 @@ using Microsoft.Extensions.Logging;
 
 namespace Jennifer.Infrastructure.MessageQueues;
 
-public abstract class ProcessorBase<TProcessor>(ILogger<TProcessor> logger,
-    IServiceScopeFactory serviceScopeFactory,
-    int delayInMilliseconds = 1000) : BackgroundService
+public abstract class ProcessorBase<TProcessor> : BackgroundService
 {
+    protected readonly ILogger<TProcessor> Logger;
+    protected readonly IServiceScopeFactory ServiceScopeFactory;
+    protected readonly int DelayInMilliseconds;
+
+    public ProcessorBase(ILogger<TProcessor> logger,
+        IServiceScopeFactory serviceScopeFactory,
+        int delayInMilliseconds = 1000)
+    {
+        this.Logger = logger;
+        this.ServiceScopeFactory = serviceScopeFactory;
+        this.DelayInMilliseconds = delayInMilliseconds;
+    }
+    
     protected sealed override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         while (!stoppingToken.IsCancellationRequested)
@@ -18,10 +29,10 @@ public abstract class ProcessorBase<TProcessor>(ILogger<TProcessor> logger,
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "RunAsync Error");
+                this.Logger.LogError(ex, "RunAsync Error");
             }
 
-            await Task.Delay(delayInMilliseconds, stoppingToken);
+            await Task.Delay(DelayInMilliseconds, stoppingToken);
         }
     }
     

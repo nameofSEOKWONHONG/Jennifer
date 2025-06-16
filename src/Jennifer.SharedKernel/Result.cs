@@ -26,8 +26,8 @@ public class Result<T>: Result, IResult
     public T Data { get; set; }
     
     private static Result<T> Success(T data) => new() { IsSuccess = true, Data = data };
-    private new static Result<T> Failure(string message) => new() { IsSuccess = false, Message = message };
-    private new static Result<T> Failure(Error error) => new() { IsSuccess = false, Error = error};
+    private static Result<T> Failure(string message) => new() { IsSuccess = false, Message = message };
+    private static Result<T> Failure(Error error) => new() { IsSuccess = false, Error = error};
     public static Task<Result<T>> SuccessAsync(T data) => Task.FromResult(Success(data));
     public new static Task<Result<T>> FailureAsync(string message) => Task.FromResult(Failure(message));
     public new static Task<Result<T>> FailureAsync(Error error) => Task.FromResult(Failure(error));  

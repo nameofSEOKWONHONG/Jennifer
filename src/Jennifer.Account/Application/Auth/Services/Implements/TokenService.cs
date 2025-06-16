@@ -22,6 +22,8 @@ public sealed class TokenService : ITokenService
         var claims = new List<Claim>()
         {
             new Claim(JwtRegisteredClaimNames.Sub, sid),
+            new Claim(JwtRegisteredClaimNames.Name, user.UserName!),
+            new Claim(JwtRegisteredClaimNames.Email, user.Email!),
             new Claim("emailConfirmed", user.EmailConfirmed.ToString()),
             new Claim("cs", user.ConcurrencyStamp!)
         };

@@ -7,19 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" />
     <ProjectReference Include="..\..\Jennifer.SharedKernel\Jennifer.SharedKernel.csproj" />
     <ProjectReference Include="..\Jennifer.Web.Admin.Client\Jennifer.Web.Admin.Client.csproj" />
-    <PackageReference Include="Blazored.SessionStorage" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" />
     <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Components\Layout\" />
   </ItemGroup>
 </Project>

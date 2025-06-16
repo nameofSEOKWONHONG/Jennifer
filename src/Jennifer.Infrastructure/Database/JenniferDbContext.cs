@@ -1,4 +1,5 @@
-﻿using Jennifer.Domain.Accounts;
+﻿using eXtensionSharp;
+using Jennifer.Domain.Accounts;
 using Jennifer.Domain.Common;
 using Jennifer.Domain.Todos;
 using Jennifer.Infrastructure.Session;
@@ -88,13 +89,13 @@ public class JenniferDbContext : IdentityDbContext<User, Role, Guid,
             if (entry.State == EntityState.Added)
             {
                 entry.Entity.CreatedOn = DateTimeOffset.UtcNow;
-                entry.Entity.CreatedBy = currentUser.Id.ToString();
+                entry.Entity.CreatedBy = currentUser.xIsEmpty() ? "SYSTEM" : currentUser.Id.ToString();
             }
 
             if (entry.State == EntityState.Modified)
             {
                 entry.Entity.ModifiedOn = DateTimeOffset.UtcNow;
-                entry.Entity.ModifiedBy = currentUser.Id.ToString();
+                entry.Entity.ModifiedBy = currentUser.xIsEmpty() ? "SYSTEM" : currentUser.Id.ToString();
             }
         }
         

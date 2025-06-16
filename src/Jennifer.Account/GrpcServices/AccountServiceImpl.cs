@@ -13,7 +13,7 @@ public class AccountServiceImpl(
     public override async Task<UserReply> GetUserInfo(AccountUserRequest request, ServerCallContext context)
     {
         var user = await dbContext.Users.FirstOrDefaultAsync(m => m.Id == Guid.Parse(request.UserId));
-        if(user.xIsEmpty()) throw new Exception("user not found");
+        if (user.xIsEmpty()) return null;
 
         return new UserReply
         {

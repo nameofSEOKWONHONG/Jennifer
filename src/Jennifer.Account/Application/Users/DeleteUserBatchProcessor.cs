@@ -28,7 +28,7 @@ public sealed class DeleteUserProcessor(
 {
     protected override async Task RunAsync(CancellationToken cancellationToken)
     {
-        using var scope = serviceScopeFactory.CreateScope();
+        using var scope = ServiceScopeFactory.CreateScope();
         var executor = scope.ServiceProvider.GetRequiredService<IDapperExecutor>();
         var transaction = await executor.BeginTransactionAsync(IsolationLevel.ReadUncommitted);
         
@@ -44,7 +44,7 @@ public sealed class DeleteUserProcessor(
         catch (Exception e)
         {
             await transaction.RollbackAsync(cancellationToken);
-            logger.LogError(e, "Delete user search fail"); 
+            Logger.LogError(e, "Delete user search fail"); 
         }
     }
 }
@@ -62,7 +62,7 @@ public sealed class DeleteUserBatchProcessor(
     protected override async Task<IEnumerable<User>> ProduceAsync(JenniferDbContext dbContext, CancellationToken cancellationToken)
     {
         return await dbContext.Users
-            .Where(m => m.IsDelete == true)
+            .Where(m => m.IsDelete)
             .Where(m => m.ModifiedOn.Value.AddDays(30) >= DateTimeOffset.UtcNow)
             .Take(100)
             .ToArrayAsync(cancellationToken: cancellationToken);

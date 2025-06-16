@@ -1,9 +1,10 @@
 ﻿using Blazored.SessionStorage;
 using Microsoft.AspNetCore.Components.Authorization;
+using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 
-namespace Jennifer.Web.Admin.Auth
+namespace Jennifer.Wasm.Admin.Auth
 {
     public class JwtAuthenticationStateProvider : AuthenticationStateProvider
     {
@@ -28,13 +29,15 @@ namespace Jennifer.Web.Admin.Auth
                     return GetAnonymous();
 
                 var identity = ParseClaimsFromJwt(storedToken);
+
+                // 인증된 사용자
+                var user = new ClaimsPrincipal(identity);
                 _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", storedToken);
-                return new AuthenticationState(new ClaimsPrincipal(identity));
+                return new AuthenticationState(user);
             }
-            catch (InvalidOperationException ex) when (ex.Message.Contains("JavaScript interop calls cannot be issued"))
+            catch (InvalidOperationException ex) when (ex.Message.Contains("JavaScript interop"))
             {
-                // Prerendering 중: 익명 사용자로 처리
-                return GetAnonymous();
+                return GetAnonymous(); // prerender 등 JS 접근 불가 상황
             }
         }
 
@@ -47,25 +50,25 @@ namespace Jennifer.Web.Admin.Auth
         {
             await _storage.SetItemAsStringAsync(TokenKey, token);
             await _storage.SetItemAsStringAsync(RefreshToken, refreshToken);
-            
+
             var identity = ParseClaimsFromJwt(token);
-            NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(new ClaimsPrincipal(identity))));
+            var user = new ClaimsPrincipal(identity);
+            NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(user)));
         }
 
         public async Task MarkUserAsLoggedOut()
         {
             await _storage.RemoveItemAsync(TokenKey);
             await _storage.RemoveItemAsync(RefreshToken);
-            
-            NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()))));
+            NotifyAuthenticationStateChanged(Task.FromResult(GetAnonymous()));
         }
 
-        private ClaimsIdentity ParseClaimsFromJwt(string jwt)
+        private ClaimsIdentity ParseClaimsFromJwt(string token)
         {
-            var handler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
-            var token = handler.ReadJwtToken(jwt);
-            var claims = token.Claims;
-            return new ClaimsIdentity(claims, "jwt");
+            var handler = new JwtSecurityTokenHandler();
+            var jwtToken = handler.ReadJwtToken(token);
+
+            return new ClaimsIdentity(jwtToken.Claims, "auth");
         }
     }
 }

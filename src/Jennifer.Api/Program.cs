@@ -34,14 +34,12 @@ builder.Host.UseSerilog((context, services, config) =>
 });
 
 #region [setting mediator]
-//builder.Services.AddScoped<INotificationPublisher, DomainEventPublisher>();
 builder.Services.AddScoped<DomainEventDispatcher>();
 builder.Services.AddValidatorsFromAssemblyContaining<SignUpAdminCommandValidator>();
 
 builder.Services.AddMediator(options =>
 {
     options.ServiceLifetime = ServiceLifetime.Scoped;
-    //options.NotificationPublisherType = typeof(DomainEventPublisher);
     options.Assemblies = [
         typeof(Jennifer.Account.DependencyInjection).Assembly,
         typeof(Jennifer.Todo.DependencyInjection).Assembly,
@@ -53,12 +51,6 @@ builder.Services.AddMediator(options =>
         typeof(ValidationBehavior<,>)
     ];
 });
-//Registered behaviors are executed in order
-//(e.g., DomainEventBehavior -> ValidationBehavior -> TransactionBehavior)
-//(e.g., TransactionBehavior -> ValidationBehavior -> DomainEventBehavior)
-// builder.Services.AddScoped(typeof(IPipelineBehavior<,>), typeof(DomainEventBehavior<,>));
-// builder.Services.AddScoped(typeof(IPipelineBehavior<,>), typeof(TransactionBehavior<,>));
-// builder.Services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
 #endregion
 
@@ -160,4 +152,4 @@ app.UseHttpsRedirection();
 app.UseJennifer();
 app.UseTodo();
 
-app.Run();
+await app.RunAsync();

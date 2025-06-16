@@ -1,18 +1,21 @@
 ﻿@page "/login"
 
-@rendermode InteractiveAuto
-
-@using Jennifer.Web.Admin.Client.Auth.Services
+@using Jennifer.Wasm.Admin.Auth
+@using Jennifer.Wasm.Admin.Auth.Services
+@using Jennifer.Wasm.Admin.Common
 
 @inject NavigationManager Navigation
 @inject ILoginService LoginService
+@inject JwtAuthenticationStateProvider AuthProvider
 
-@inherits LayoutComponentBase
+@inherits LoginPageBase
+
+@attribute [AllowAnonymous]
 
 <div class="login-layout">
     <div class="login-box">
         <FluentCard class="login-card">
-            <FluentTextField @bind-Value="Email" Label="Email11" />
+            <FluentTextField @bind-Value="Email" Label="Email" />
             <FluentTextField Type="TextFieldType.Password" @bind-Value="Password" Label="Password" />
 
             @if (!string.IsNullOrEmpty(ErrorMessage))
@@ -64,17 +67,17 @@
 </style>
 
 @code {
-    private string Email = "htest198231";
+    private string Email = string.Empty;
     private string Password = string.Empty;
     private string ErrorMessage = string.Empty;
 
     private async Task LoginAsync()
     {
-        Console.WriteLine("test");
         var result = await LoginService.LoginAsync(Email, Password);
         if (result.IsSuccess)
         {
-            Navigation.NavigateTo("/", forceLoad: true);
+            await AuthProvider.MarkUserAsAuthenticated(result.Data.AccessToken, result.Data.RefreshToken);
+            Navigation.NavigateTo("/", forceLoad:true); // 로그인 성공 후 홈으로 이동            
         }
         else
         {

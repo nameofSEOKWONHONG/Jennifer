@@ -15,7 +15,7 @@ public class OpenApiSecuritySchemeTransformer
         {
             Name = "Jennifer API",
             Email = "h20913@gmail.com",
-            Url = new Uri("https://github.com/nameofSEOKWONHONG/Jennifer")
+            Url = new Uri($"https://github.com/nameofSEOKWONHONG/Jennifer")
         };
 
         var securitySchema =

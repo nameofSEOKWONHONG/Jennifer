@@ -1,7 +1,7 @@
 ﻿using Jennifer.SharedKernel;
 using Jennifer.SharedKernel.Account.Auth;
 
-namespace Jennifer.Web.Admin.Client.Auth.Services
+namespace Jennifer.Wasm.Admin.Auth.Services
 {
     public interface ILoginService
     {

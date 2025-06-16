@@ -199,9 +199,7 @@ JWT 토큰과 갱신 토큰을 반환합니다.
         
         group.MapPost("/password/change",
             async (PasswordChangeRequest request, ISender sender, CancellationToken ct) =>
-            {
-                var result = await sender.Send(new PasswordChangeCommand(request.OldPassword, request.NewPassword), ct);
-            })
+                await sender.Send(new PasswordChangeCommand(request.OldPassword, request.NewPassword), ct))
             .WithName("PasswordChange")
             .RequireAuthorization()
             .WithDescription(@"

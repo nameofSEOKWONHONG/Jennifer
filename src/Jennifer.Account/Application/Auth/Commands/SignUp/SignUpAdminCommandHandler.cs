@@ -16,11 +16,13 @@ public sealed class SignUpAdminCommandHandler(JenniferDbContext context, IPasswo
         {
             return await Result<Guid>.FailureAsync("email already exists.");
         }
+        
+        if(command is null) return await Result<Guid>.FailureAsync("command is null");
 
         var user = new User()
         {
             Id = Guid.CreateVersion7(),
-            Email = command.Email,
+            Email = command?.Email,
             NormalizedEmail = command.Email.ToUpper(),
             UserName = command.UserName,
             NormalizedUserName = command.UserName.ToUpper(),

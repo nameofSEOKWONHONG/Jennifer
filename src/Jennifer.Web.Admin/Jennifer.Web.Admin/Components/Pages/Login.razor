@@ -1,0 +1,117 @@
+﻿@page "/login"
+
+@using Microsoft.AspNetCore.Authentication
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Authentication.Cookies
+@using System.ComponentModel.DataAnnotations
+@using System.IdentityModel.Tokens.Jwt
+@using Jennifer.SharedKernel
+@using Jennifer.SharedKernel.Account.Auth
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.FluentUI.AspNetCore.Components
+
+<style>
+    html, body {
+        height: 100%;
+        margin: 0;
+    }
+
+    .login-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #f3f2f1;
+    }
+
+    .login-card {
+        width: 400px;
+        padding: 2rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .login-title {
+        text-align: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .full-width {
+        width: 100%;
+    }
+</style>
+
+<div class="login-wrapper">
+    <div class="login-container">
+        <FluentCard class="login-card">
+            <h3 style="text-align:center">Login</h3>
+
+            <EditForm FormName="LoginForm" Model="@LoginReq" OnValidSubmit="@LoginTask" method="post">
+                <DataAnnotationsValidator />
+                <FluentStack Orientation="Orientation.Vertical">
+                    <FluentTextField Class="full-width" Label="Email" Name="LoginReq.Email" @bind-Value="LoginReq.Email" />
+                    <FluentValidationMessage For="@(() => LoginReq.Email)" />
+
+                    <FluentTextField Class="full-width" 
+                                     Label="Password"
+                                     TextFieldType="TextFieldType.Password"
+                                     Name="LoginReq.Password"
+                                     @bind-Value="LoginReq.Password" />
+                    <FluentValidationMessage For="@(() => LoginReq.Password)" />
+
+                    <FluentButton Type="ButtonType.Submit" Appearance="Appearance.Accent">Submit</FluentButton>
+                </FluentStack>
+            </EditForm>
+            @ErrorMessage
+        </FluentCard>
+    </div>
+</div>
+
+@code {
+    public class LoginModel
+    {
+        [Required]
+        public string Email { get; set; }
+        [Required]
+        public string Password { get; set; }
+    }
+
+    [SupplyParameterFromForm]
+    public LoginModel LoginReq { get; set; } = new LoginModel();
+
+    [CascadingParameter]
+    private HttpContext HttpContext { get; set; } = default!;
+
+    private string ErrorMessage;
+
+    public async Task LoginTask()
+    {
+        using var client = new HttpClient();
+        client.BaseAddress = new Uri("https://localhost:7288");
+        var res = await client.PostAsJsonAsync("/api/v1/auth/signin", new { Email = LoginReq.Email, LoginReq.Password });
+        if (!res.IsSuccessStatusCode)
+        {
+            ErrorMessage = $"HTTP Error: {res.StatusCode}";
+            return;
+        }
+
+        var result = await res.Content.ReadFromJsonAsync<Result<TokenResponse>>();
+        if (result == null || !result.IsSuccess)
+        {
+            ErrorMessage = result?.Error?.Message ?? "Unknown error.";
+            return;
+        }
+
+        var accessToken = result.Data.AccessToken;
+
+        // JWT 파싱하여 Claim 생성
+        var handler = new JwtSecurityTokenHandler();
+        var token = handler.ReadJwtToken(accessToken);
+        var claims = token.Claims.ToList();
+        var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+        var principal = new ClaimsPrincipal(claimsIdentity);
+
+        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+        
+        HttpContext.Response.Redirect("/");
+    }
+}

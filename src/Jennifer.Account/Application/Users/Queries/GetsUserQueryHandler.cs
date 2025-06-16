@@ -10,15 +10,11 @@ using Microsoft.EntityFrameworkCore;
 namespace Jennifer.Account.Application.Users.Queries;
 
 public sealed class GetsUserQueryHandler(
-    ISessionContext session,
     IUserQueryFilter queryFilter,
     JenniferDbContext dbContext) : IQueryHandler<GetsUserQuery, PaginatedResult<UserDto>>
 {
     public async ValueTask<PaginatedResult<UserDto>> Handle(GetsUserQuery query, CancellationToken cancellationToken)
     {
-        var userOptions = await session.User.Option.GetAsync();
-        var user = await session.User.Current.GetAsync();
-        
         var queryable = dbContext
             .Users
             .AsNoTracking()

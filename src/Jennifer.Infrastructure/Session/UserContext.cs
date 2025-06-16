@@ -1,42 +1,58 @@
-﻿using System.Security.Claims;
-using eXtensionSharp.AspNet;
+﻿using eXtensionSharp;
 using Jennifer.Infrastructure.Session.Abstracts;
 using Jennifer.Infrastructure.Session.Contracts;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Jennifer.Infrastructure.Session;
 
 
 public sealed class UserCacheProvider(IHttpContextAccessor httpContextAccessor,
-    IUserCacheProvider userCacheProvider) : IUnifiedCacheProvider<UserCacheResult>
+    IUserCacheProvider userCacheProvider) : CacheProviderBase<UserCacheResult>(httpContextAccessor)
 {
-    public string Sid => httpContextAccessor.HttpContext.xGetClaim<string>(ClaimTypes.NameIdentifier);
-    public async Task<UserCacheResult> GetAsync()
-        => await userCacheProvider.GetAsync(this.Sid);
+    public override async Task<UserCacheResult> GetAsync()
+    {
+        if(this.Sid.xIsEmpty()) return null;
+        return await userCacheProvider.GetAsync(this.Sid);
+    }
 
-    public async Task ClearAsync()
-        => await userCacheProvider.ClearAsync(this.Sid);
+    public override async Task ClearAsync()
+    {
+        if(this.Sid.xIsEmpty()) throw new Exception("Sid is empty");
+        await userCacheProvider.ClearAsync(this.Sid);
+    }
+        
 }
 
 public sealed class OptionCacheProvider(
     IHttpContextAccessor httpContextAccessor,
-    IOptionCacheProvider optionProvider) : IUnifiedCacheProvider<OptionCacheResult[]>
+    IOptionCacheProvider optionProvider) : CacheProviderBase<OptionCacheResult[]>(httpContextAccessor)
 {
-    public string Sid => httpContextAccessor.HttpContext.xGetClaim<string>(ClaimTypes.NameIdentifier);
-    public async Task<OptionCacheResult[]> GetAsync() => await optionProvider.GetAsync(this.Sid);
+    public override async Task<OptionCacheResult[]> GetAsync()
+    {
+        if(this.Sid.xIsEmpty()) return null;
+        return await optionProvider.GetAsync(this.Sid);   
+    }
 
-    public async Task ClearAsync() => await optionProvider.ClearAsync(this.Sid);
+    public override async Task ClearAsync()
+    {
+        if(this.Sid.xIsEmpty()) throw new Exception("Sid is empty");
+        await optionProvider.ClearAsync(this.Sid);
+    }
 }
 
 public sealed class UserOptionCacheProvider(
     IHttpContextAccessor httpContextAccessor,
-    IUserOptionCacheProvider userOptionCacheProvider) : IUnifiedCacheProvider<UserOptionCacheResult[]>
+    IUserOptionCacheProvider userOptionCacheProvider) : CacheProviderBase<UserOptionCacheResult[]>(httpContextAccessor)
 {
-    public string Sid => httpContextAccessor.HttpContext.xGetClaim<string>(ClaimTypes.NameIdentifier);
-    public async Task<UserOptionCacheResult[]> GetAsync()
-        => await userOptionCacheProvider.GetAsync(this.Sid);
+    public override async Task<UserOptionCacheResult[]> GetAsync()
+    {
+        if(this.Sid.xIsEmpty()) return null;
+        return await userOptionCacheProvider.GetAsync(this.Sid);
+    }
 
-    public async Task ClearAsync()
-        => await userOptionCacheProvider.ClearAsync(this.Sid);
+    public override async Task ClearAsync()
+    {
+        if(this.Sid.xIsEmpty()) throw new Exception("Sid is empty");
+        await userOptionCacheProvider.ClearAsync(this.Sid);
+    }
 }

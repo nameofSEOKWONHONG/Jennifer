@@ -12,7 +12,7 @@ public sealed class GetsRoleQueryHandler(JenniferDbContext dbContext) : IQueryHa
     {
         var queryable = dbContext.Roles.AsNoTracking()
             .Where(m => m.NormalizedName == query.RoleName.ToUpper());
-        var total = queryable.Count();
+        var total = await queryable.CountAsync(cancellationToken: cancellationToken);
         var result = await queryable
             .Select(m => new RoleDto
             {

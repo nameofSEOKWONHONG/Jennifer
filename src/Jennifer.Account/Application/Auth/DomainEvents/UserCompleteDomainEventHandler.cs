@@ -25,6 +25,6 @@ public sealed class UserCompleteDomainEventHandler(ILogger<UserCompleteDomainEve
             .ExecuteAsync(cancellationToken);
         
         if(!result.IsSuccess)
-            logger.LogCritical("Email Send Fail.:{message}", result.Message);;
+            logger.LogCritical("Email send failed:{Message}", result.Message);
     }
 }

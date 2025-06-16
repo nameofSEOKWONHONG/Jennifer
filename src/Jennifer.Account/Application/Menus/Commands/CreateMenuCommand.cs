@@ -35,8 +35,7 @@ public class MenuDtoValidator : AbstractValidator<MenuDto>
     }
 }
 
-public sealed class CreateMenuCommandHandler(JenniferDbContext dbContext,
-    ISessionContext session) : ICommandHandler<CreateMenuCommand, Result<Guid>>
+public sealed class CreateMenuCommandHandler(JenniferDbContext dbContext) : ICommandHandler<CreateMenuCommand, Result<Guid>>
 {
     public async ValueTask<Result<Guid>> Handle(CreateMenuCommand command, CancellationToken cancellationToken)
     {
