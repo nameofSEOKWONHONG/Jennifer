@@ -123,7 +123,7 @@ public class EmailSendService : BackgroundService
         }
         
         document.CreatedAt = DateTimeOffset.UtcNow;
-        var collection = _factory.Create<EmailSendResultDocument>().GetCollection();
+        var collection = _factory.Create<EmailSendResultDocument>();
         await collection.InsertOneAsync(document);
     }
 }

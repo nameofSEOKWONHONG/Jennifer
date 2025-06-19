@@ -32,6 +32,9 @@
         <PackageReference Include="FluentValidation" />
         <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
         <PackageReference Include="StackExchange.Redis" />
+        <PackageReference Include="TickerQ" />
+        <PackageReference Include="TickerQ.Dashboard" />
+        <PackageReference Include="TickerQ.EntityFrameworkCore" />
         <PackageReference Include="ZLinq" />
     </ItemGroup>
 

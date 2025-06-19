@@ -5,7 +5,6 @@ using MongoDB.Driver;
 
 namespace Jennifer.External.OAuth.Contracts;
 
-[JMongoCollection("jennifer", "externalOAuth")]
 public class ExternalOAuthDocument
 {
     [BsonId]
@@ -18,17 +17,17 @@ public class ExternalOAuthDocument
     [BsonElement("createdAt")] public DateTimeOffset CreatedAt { get; set; }
 }
 
-public class ExternalOAuthDocumentConfiguration: IJMongoConfiguration
+public class ExternalOAuthDocumentConfiguration: IJMongoConfiguration<ExternalOAuthDocument>
 {
-    public void Configure(IJMongoFactory factory)
+    public void Configure(JMongoCollectionBuilder<ExternalOAuthDocument> builder)
     {
-        var builder = factory.Create<ExternalOAuthDocument>();
-        var collection = builder.GetCollection();
-        collection.Indexes.CreateOne(
-            new CreateIndexModel<ExternalOAuthDocument>(
-                Builders<ExternalOAuthDocument>.IndexKeys.Ascending(m => m.CreatedAt),
-                new CreateIndexOptions { ExpireAfter = TimeSpan.FromDays(30) }
-            )
+        builder.ToDocument("jennifer", "external_oauth");
+        builder.ToIndex(indexes =>
+            indexes.CreateOne(
+                new CreateIndexModel<ExternalOAuthDocument>(
+                    Builders<ExternalOAuthDocument>.IndexKeys.Ascending(m => m.CreatedAt),
+                    new CreateIndexOptions { ExpireAfter = TimeSpan.FromDays(30) }
+                ))
         );
     }
 }

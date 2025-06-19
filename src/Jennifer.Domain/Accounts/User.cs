@@ -57,6 +57,8 @@ public class User : IdentityUser<Guid>, IAuditable, IHasDomainEvents
         PhoneNumber = phoneNumber;
         PhoneNumberConfirmed = true;
         Type = type;
+        SecurityStamp = Guid.NewGuid().ToString();
+        ConcurrencyStamp = Guid.NewGuid().ToString();
         ModifiedBy = modifiedBy;
         ModifiedOn = DateTimeOffset.UtcNow;
     }
@@ -64,6 +66,13 @@ public class User : IdentityUser<Guid>, IAuditable, IHasDomainEvents
     public void Delete(string modifiedBy)
     {
         IsDelete = true;
+        UserName = string.Empty;
+        NormalizedUserName = string.Empty;
+        PhoneNumber = string.Empty;
+        PhoneNumberConfirmed = false;
+        Type = ENUM_USER_TYPE.WITHDRAW;
+        SecurityStamp = Guid.NewGuid().ToString();
+        ConcurrencyStamp = Guid.NewGuid().ToString();        
         ModifiedBy = modifiedBy;
         ModifiedOn = DateTimeOffset.UtcNow;
         //TODO : 회원 탈퇴 안내 메세지 전송 및 정책 전달.

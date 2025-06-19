@@ -25,7 +25,7 @@ public class KakaoOAuthProvider(IHttpClientFactory httpClientFactory, IJMongoFac
         var result = await info.Content.ReadFromJsonAsync<KakaoUserResult>(cancellationToken: ct);
         if (result is null) return ExternalOAuthResult.Fail("fail to get kakao user");
         
-        var collection = this.mongoFactory.Create<ExternalOAuthDocument>().GetCollection();
+        var collection = this.mongoFactory.Create<ExternalOAuthDocument>();
         await collection.InsertOneAsync(new ExternalOAuthDocument()
         {
             Result = result.xSerialize(),

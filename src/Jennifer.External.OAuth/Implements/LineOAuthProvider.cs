@@ -48,7 +48,7 @@ public sealed class LineOAuthProvider(
                 PictureUrl = picture
             };
 
-            var collection = this.mongoFactory.Create<ExternalOAuthDocument>().GetCollection();
+            var collection = this.mongoFactory.Create<ExternalOAuthDocument>();
             await collection.InsertOneAsync(new ExternalOAuthDocument
             {
                 Result = result.xSerialize(),

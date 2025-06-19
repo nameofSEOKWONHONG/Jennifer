@@ -1,5 +1,4 @@
 ﻿using eXtensionSharp.Mongo;
-using Jennifer.SharedKernel;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using MongoDB.Bson;
@@ -57,7 +56,6 @@ public class KafkaDeadLetterConfiguration: IEntityTypeConfiguration<KafkaDeadLet
     }
 }
 
-[JMongoCollection("jennifer", "deadletters")]
 public class DeadLetterDocument
 {
     [BsonId]
@@ -78,4 +76,12 @@ public class DeadLetterDocument
     [BsonElement("errorMessage")] public string ErrorMessage { get; set; }
 
     [BsonElement("createAt")] public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
+}
+
+public class DeadLetterDocumentConfiguration: IJMongoConfiguration<DeadLetterDocument>
+{
+    public void Configure(JMongoCollectionBuilder<DeadLetterDocument> builder)
+    {
+        builder.ToDocument("jennifer", "deadletters");
+    }
 }

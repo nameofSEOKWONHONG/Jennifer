@@ -39,7 +39,7 @@ public class AppleOAuthProvider : ExternalOAuthProvider
 
         if (providerId.xIsEmpty()) return ExternalOAuthResult.Fail("providerId is empty");
 
-        var collection = this.mongoFactory.Create<ExternalOAuthDocument>().GetCollection();
+        var collection = this.mongoFactory.Create<ExternalOAuthDocument>();
         await collection.InsertOneAsync(new ExternalOAuthDocument()
         {
             Result = principal.xSerialize(),

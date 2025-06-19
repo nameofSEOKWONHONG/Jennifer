@@ -94,7 +94,7 @@ public static class DependencyInjection
         services.AddIdentity<User, Role>(identitySetup)
             .AddEntityFrameworkStores<JenniferDbContext>()
             .AddDefaultTokenProviders();
-        services.RemoveAll<IUserValidator<User>>();
+        //services.RemoveAll<IUserValidator<User>>();
         services.AddTransient<IUserValidator<User>, UserNameValidator<User>>();
         
         services.AddAuthentication(options =>
@@ -361,8 +361,8 @@ public static class DependencyInjection
     {
         services.AddJMongoDb(mongodbConnectionString, options =>
         {
-            options.AddInitializer<ExternalOAuthDocumentConfiguration>();
-            options.AddInitializer<EmailSendResultDocumentConfiguration>();
+            options.ApplyConfiguration(new ExternalOAuthDocumentConfiguration());
+            options.ApplyConfiguration(new EmailSendResultDocumentConfiguration());
         });
         
         WithOptions.Instance.WithJenniferMongodb = true;
@@ -475,6 +475,6 @@ public static class DependencyInjection
             }
         }
         
-        app.UseJMongoDbAsync();
+        app.UseJMongoDb();
     }
 }

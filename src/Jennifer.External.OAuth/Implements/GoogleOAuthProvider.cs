@@ -20,7 +20,7 @@ public class GoogleOAuthProvider(IHttpClientFactory httpClientFactory, IJMongoFa
         var content = await res.Content.ReadFromJsonAsync<GoogleOAuthResult>(cancellationToken: ct);
         if (content is null) return ExternalOAuthResult.Fail("fail to get google user");
         
-        var collection = this.mongoFactory.Create<ExternalOAuthDocument>().GetCollection();
+        var collection = this.mongoFactory.Create<ExternalOAuthDocument>();
         await collection.InsertOneAsync(new ExternalOAuthDocument()
         {
             Result = content.xSerialize(),

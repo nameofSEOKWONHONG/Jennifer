@@ -25,7 +25,7 @@ public sealed class NaverOAuthProvider(
         if (result?.Response == null || string.IsNullOrEmpty(result.Response.Id))
             return ExternalOAuthResult.Fail("invalid naver user response");
 
-        var collection = this.mongoFactory.Create<ExternalOAuthDocument>().GetCollection();
+        var collection = this.mongoFactory.Create<ExternalOAuthDocument>();
         await collection.InsertOneAsync(new ExternalOAuthDocument
         {
             Result = result.xSerialize(),

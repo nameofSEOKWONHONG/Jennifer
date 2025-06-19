@@ -29,7 +29,7 @@ public class FacebookOAuthProvider: ExternalOAuthProvider
 
         if (fbUser is null || string.IsNullOrEmpty(fbUser.Id)) return ExternalOAuthResult.Fail("fail to get facebook user");
         
-        var collection = this.mongoFactory.Create<ExternalOAuthDocument>().GetCollection();
+        var collection = this.mongoFactory.Create<ExternalOAuthDocument>();
         await collection.InsertOneAsync(new ExternalOAuthDocument()
         {
             Result = fbUser.xSerialize(),

@@ -46,13 +46,16 @@
     </PackageVersion>
     <PackageVersion Include="Shouldly" Version="4.3.0" />
     <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="8.12.0" />
+    <PackageVersion Include="TickerQ" Version="2.2.0" />
+    <PackageVersion Include="TickerQ.Dashboard" Version="2.2.0" />
+    <PackageVersion Include="TickerQ.EntityFrameworkCore" Version="2.2.0" />
     <PackageVersion Include="ZLinq" Version="1.4.9" />
     <PackageVersion Include="ZString" Version="2.6.0" />
     <PackageVersion Include="Ardalis.SmartEnum" Version="8.2.0" />
     <PackageVersion Include="Ardalis.SmartEnum.EFCore" Version="8.2.0" />
     <PackageVersion Include="Ardalis.SmartEnum.SystemTextJson" Version="8.1.0" />
     <PackageVersion Include="eXtensionSharp" Version="1.0.2" />
-    <PackageVersion Include="eXtensionSharp.Mongo" Version="0.0.3" />
+    <PackageVersion Include="eXtensionSharp.Mongo" Version="0.0.5" />
     <PackageVersion Include="eXtensionSharp.AspNet" Version="0.0.3" />
     <PackageVersion Include="Confluent.Kafka" Version="2.10.0" />
     <PackageVersion Include="RabbitMQ.Client" Version="7.1.2" />
@@ -81,7 +84,7 @@
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
     <PackageVersion Include="xunit" Version="2.9.2" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.2" />
-    <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.11.0.117924"/>
+    <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.11.0.117924" />
     <!-- Jennifer.Web.Admin -->
     <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.6" />
     <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="9.0.6" PrivateAssets="all" />

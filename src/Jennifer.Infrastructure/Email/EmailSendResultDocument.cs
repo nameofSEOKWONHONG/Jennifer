@@ -5,7 +5,6 @@ using MongoDB.Driver;
 
 namespace Jennifer.Infrastructure.Email;
 
-[JMongoCollection("jennifer", "emailSendResult")]
 public class EmailSendResultDocument
 {
     [BsonId]
@@ -20,23 +19,27 @@ public class EmailSendResultDocument
     [BsonElement("createdAt")] public DateTimeOffset CreatedAt { get; set; }
 }
 
-public class EmailSendResultDocumentConfiguration: IJMongoConfiguration
+public class EmailSendResultDocumentConfiguration: IJMongoConfiguration<EmailSendResultDocument>
 {
-    public void Configure(IJMongoFactory factory)
+    public void Configure(JMongoCollectionBuilder<EmailSendResultDocument> builder)
     {
-        var builder = factory.Create<EmailSendResultDocument>();
-        var collection = builder.GetCollection();
-        collection.Indexes.CreateOne(
-            new CreateIndexModel<EmailSendResultDocument>(
-                Builders<EmailSendResultDocument>.IndexKeys.Ascending(m => m.ToEmail),
-                new CreateIndexOptions { ExpireAfter = TimeSpan.FromDays(30) }
+        builder.ToDocument("jennifer", "emailSendResult");
+        builder.ToIndex(indexes =>
+            indexes.CreateOne(
+                new CreateIndexModel<EmailSendResultDocument>(
+                    Builders<EmailSendResultDocument>.IndexKeys.Ascending(m => m.ToEmail),
+                    new CreateIndexOptions { ExpireAfter = TimeSpan.FromDays(30) }
+                )
             )
         );
-        collection.Indexes.CreateOne(
-            new CreateIndexModel<EmailSendResultDocument>(
-                Builders<EmailSendResultDocument>.IndexKeys.Ascending(m => m.CreatedAt),
-                new CreateIndexOptions { ExpireAfter = TimeSpan.FromDays(30) }
+        builder.ToIndex(indexes =>
+            indexes.CreateOne(
+                new CreateIndexModel<EmailSendResultDocument>(
+                    Builders<EmailSendResultDocument>.IndexKeys.Ascending(m => m.CreatedAt),
+                    new CreateIndexOptions { ExpireAfter = TimeSpan.FromDays(30) }
+                )
             )
         );
+        
     }
 }

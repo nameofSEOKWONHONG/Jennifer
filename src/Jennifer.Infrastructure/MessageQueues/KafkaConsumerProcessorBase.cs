@@ -46,7 +46,7 @@ public abstract class KafkaConsumerProcessorBase<TService>(
                     }
                     catch (Exception ex)
                     {
-                        var collection = mongoFactory.Create<DeadLetterDocument>().GetCollection();
+                        var collection = mongoFactory.Create<DeadLetterDocument>();
                         await collection.InsertOneAsync(new DeadLetterDocument()
                         {
                             Topic = consumeResult.Topic,
