@@ -11,7 +11,7 @@ namespace Jennifer.Todo.Application.Todo.Commands;
 /// Handler for removing todo items
 /// </summary>
 public sealed class RemoveTodoItemCommandHandler(
-    JenniferDbContext dbContext,
+    TodoDbContext dbContext,
     ISessionContext session): ICommandHandler<RemoveTodoItemCommand, Result>
 {
     /// <summary>

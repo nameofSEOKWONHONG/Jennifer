@@ -4,7 +4,7 @@ using Jennifer.Account.Grpc;
 using Jennifer.Infrastructure.Database;
 using Jennifer.Infrastructure.Session;
 using Jennifer.SharedKernel;
-using Jennifer.Todo.Application.Todo.Contracts;
+using Jennifer.SharedKernel.Todo;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -13,7 +13,7 @@ namespace Jennifer.Todo.Application.Todo.Queries;
 
 public sealed record GetsTodoQuery(string Description, int PageNo, int PageSize): IQuery<PaginatedResult<TodoItemDto>>;
 public sealed class GetsTodoQueryHandler(
-    JenniferDbContext dbContext,
+    TodoDbContext dbContext,
     ISessionContext session,
     AccountService.AccountServiceClient client,
     ITodoQueryFilter filter,

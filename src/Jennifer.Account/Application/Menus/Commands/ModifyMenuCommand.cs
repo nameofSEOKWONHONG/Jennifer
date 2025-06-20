@@ -4,6 +4,7 @@ using FluentValidation;
 using Jennifer.Account.Application.Menus.Queries;
 using Jennifer.Infrastructure.Database;
 using Jennifer.SharedKernel;
+using Jennifer.SharedKernel.Account.Menu;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 

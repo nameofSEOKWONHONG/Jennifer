@@ -109,7 +109,18 @@ builder.Services.AddJennifer(jenniferOptions,
     // Add jennifer email
     .WithJenniferMailService(builder.Configuration["KAFKA_CONNECTION"]);
 
-builder.Services.AddTodo();
+builder.Services.AddTodo((provider, optionsBuilder) =>
+{
+    optionsBuilder.UseNpgsql(builder.Configuration["SQLSERVER_CONNECTION"])
+        //optionsBuilder.UseSqlServer(builder.Configuration["SQLSERVER_CONNECTION"])
+        .AddInterceptors(new AuditInterceptor());
+    if (builder.Environment.IsDevelopment())
+    {
+        optionsBuilder.EnableSensitiveDataLogging()
+            .EnableThreadSafetyChecks()
+            .EnableDetailedErrors();
+    }
+});
 
 builder.Services
     .AddOpenTelemetry()

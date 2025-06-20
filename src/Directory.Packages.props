@@ -46,9 +46,6 @@
     </PackageVersion>
     <PackageVersion Include="Shouldly" Version="4.3.0" />
     <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="8.12.0" />
-    <PackageVersion Include="TickerQ" Version="2.2.0" />
-    <PackageVersion Include="TickerQ.Dashboard" Version="2.2.0" />
-    <PackageVersion Include="TickerQ.EntityFrameworkCore" Version="2.2.0" />
     <PackageVersion Include="ZLinq" Version="1.4.9" />
     <PackageVersion Include="ZString" Version="2.6.0" />
     <PackageVersion Include="Ardalis.SmartEnum" Version="8.2.0" />

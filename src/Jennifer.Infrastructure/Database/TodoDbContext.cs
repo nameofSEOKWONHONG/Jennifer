@@ -1,42 +1,23 @@
 ﻿using eXtensionSharp;
-using Jennifer.Domain.Accounts;
-using Jennifer.Domain.Common;
+using Jennifer.Domain.Todos;
 using Jennifer.Infrastructure.Session;
 using Jennifer.SharedKernel;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SmartEnum.EFCore;
 
 namespace Jennifer.Infrastructure.Database;
 
-public class JenniferDbContext : IdentityDbContext<User, Role, Guid, 
-    UserClaim, 
-    UserRole, 
-    UserLogin, 
-    RoleClaim,
-    UserToken>, ITransactionDbContext
+public class TodoDbContext: DbContext
 {
     private readonly IUserContext _user;
     private readonly DomainEventDispatcher _dispatcher;
-    public DbSet<EmailConfirmCode> EmailVerificationCodes { get; set; }
 
-    #region [common]
-
-    public DbSet<Option> Options { get; set; }
-    public DbSet<Audit> Audits { get; set; }
-    public DbSet<KafkaDeadLetter> KafkaDeadLetters { get; set; }
-    public DbSet<UserOption> UserOptions { get; set; }
-    public DbSet<IpBlockLog> IpBlockLogs { get; set; }
-    public DbSet<Menu> Menus { get; set; }    
-
-    #endregion
-
-    public JenniferDbContext(DbContextOptions<JenniferDbContext> options, IUserContext user, DomainEventDispatcher dispatcher): base(options)
+    public TodoDbContext(DbContextOptions<TodoDbContext> options, IUserContext user, DomainEventDispatcher dispatcher): base(options)
     {
         _user = user;
         _dispatcher = dispatcher;
     }
-
+    
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
     {
         configurationBuilder.ConfigureSmartEnum();
@@ -45,27 +26,12 @@ public class JenniferDbContext : IdentityDbContext<User, Role, Guid,
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-
-        modelBuilder.ApplyConfiguration(new UserEntityConfiguration());
-        modelBuilder.ApplyConfiguration(new UserClaimEntityConfiguration());
-        modelBuilder.ApplyConfiguration(new UserLoginEntityConfiguration());
-        modelBuilder.ApplyConfiguration(new UserRoleEntityConfiguration());
-        modelBuilder.ApplyConfiguration(new UserTokenEntityConfiguration());
-        modelBuilder.ApplyConfiguration(new RoleEntityConfiguration());
-        modelBuilder.ApplyConfiguration(new RoleClaimEntityConfiguration());
-        modelBuilder.ApplyConfiguration(new EmailVerificationCodeEntityConfiguration());
         
-        #region [common]
-        modelBuilder.ApplyConfiguration(new OptionEntityConfiguration());
-        modelBuilder.ApplyConfiguration(new AuditEntityConfiguration());
-        modelBuilder.ApplyConfiguration(new KafkaDeadLetterConfiguration());
-        modelBuilder.ApplyConfiguration(new UserOptionEntityConfiguration());
-        modelBuilder.ApplyConfiguration(new IpBlockLogEntityConfiguration());
-        modelBuilder.ApplyConfiguration(new MenuEntityConfiguration());        
-        #endregion
-
+        modelBuilder.ApplyConfiguration(new TodoUserEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new TodoItemEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new TodoItemShareEntityConfiguration());
     }
-
+    
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
     {
         var currentUser = await _user.Current.GetAsync();
@@ -100,4 +66,8 @@ public class JenniferDbContext : IdentityDbContext<User, Role, Guid,
         
         return result;
     }
+
+    public DbSet<TodoUser> TodoUsers { get; set; }
+    public DbSet<TodoItem> TodoItems { get; set; }
+    public DbSet<TodoItemShare> TodoItemShares { get; set; }   
 }

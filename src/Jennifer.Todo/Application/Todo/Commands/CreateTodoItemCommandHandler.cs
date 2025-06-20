@@ -13,7 +13,7 @@ namespace Jennifer.Todo.Application.Todo.Commands;
 /// Validates that the item doesn't already exist and creates a new one if valid.
 /// </summary>
 public sealed class CreateTodoItemCommandHandler(
-    JenniferDbContext dbContext,
+    TodoDbContext dbContext,
     ISessionContext session
 ): ICommandHandler<CreateTodoItemCommand, Result<Guid>>
 {
@@ -30,7 +30,7 @@ public sealed class CreateTodoItemCommandHandler(
             command.Item.Labels, 
             command.Item.IsCompleted, 
             command.Item.CompletedAt, 
-            command.Item.Priority);
+            (Priority)command.Item.Priority);
         await dbContext.TodoItems.AddAsync(newTodoItem, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
         

@@ -79,6 +79,12 @@ public class User : IdentityUser<Guid>, IAuditable, IHasDomainEvents
         this.AddDomainEvent(new UserWithdrawDomainEvent(this));
     }
 
+    public void Confirm()
+    {
+        this.EmailConfirmed = true;
+        this.AddDomainEvent(new SignUpConfirmedDomainEvent(this));
+    }
+
     public List<INotification> DomainEvents { get; } = new();
 
     private void AddDomainEvent(INotification @event) => DomainEvents.Add(@event);

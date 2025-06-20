@@ -1,4 +1,5 @@
 ﻿using eXtensionSharp;
+using Jennifer.Domain.Todos;
 using Jennifer.Infrastructure.Database;
 using Jennifer.Infrastructure.Session;
 using Jennifer.SharedKernel;
@@ -11,7 +12,7 @@ namespace Jennifer.Todo.Application.Todo.Commands;
 /// Handler for processing UpdateTodoCommand
 /// </summary>
 public sealed class UpdateTodoItemCommandHandler(
-    JenniferDbContext dbContext,
+    TodoDbContext dbContext,
     ISessionContext session
 ): ICommandHandler<UpdateTodoItemCommand, Result>
 {
@@ -32,7 +33,7 @@ public sealed class UpdateTodoItemCommandHandler(
         exists.Labels = itemCommand.Item.Labels;  
         exists.IsCompleted = itemCommand.Item.IsCompleted;  
         exists.CompletedAt = itemCommand.Item.CompletedAt;  
-        exists.Priority = itemCommand.Item.Priority;
+        exists.Priority = (Priority)itemCommand.Item.Priority;
         
         await dbContext.SaveChangesAsync(cancellationToken);
         return await Result.SuccessAsync();       

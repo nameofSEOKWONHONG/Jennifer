@@ -1,5 +1,6 @@
 ﻿using Jennifer.Infrastructure.Database;
 using Jennifer.SharedKernel;
+using Jennifer.SharedKernel.Account.Menu;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;

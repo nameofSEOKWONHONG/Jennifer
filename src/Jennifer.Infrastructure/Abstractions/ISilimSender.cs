@@ -5,6 +5,7 @@ using ICommand = System.Windows.Input.ICommand;
 
 namespace Jennifer.Infrastructure.Abstractions;
 
+[Obsolete("don't use this", true)]
 public interface ISlimSender
 {
     ValueTask<TResponse> Send<TResponse>(ICommand<TResponse> command, CancellationToken ct = default);
@@ -12,6 +13,7 @@ public interface ISlimSender
     ValueTask Send(ICommand command, CancellationToken ct = default); // 반환 없는 명령
 }
 
+[Obsolete("don't use this", true)]
 public sealed class SlimSender : ISlimSender
 {
     private readonly IServiceProvider _provider;

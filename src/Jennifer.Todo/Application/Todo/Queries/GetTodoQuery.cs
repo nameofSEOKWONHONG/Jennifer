@@ -1,9 +1,7 @@
 ﻿using Jennifer.Infrastructure.Database;
 using Jennifer.Infrastructure.Session;
-using Jennifer.Infrastructure.Session.Abstracts;
 using Jennifer.SharedKernel;
-using Jennifer.Todo.Application.Todo.Commands;
-using Jennifer.Todo.Application.Todo.Contracts;
+using Jennifer.SharedKernel.Todo;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,7 +9,7 @@ namespace Jennifer.Todo.Application.Todo.Queries;
 
 public sealed record GetTodoQuery(Guid Id):IQuery<Result<TodoItemDto>>;
 public sealed class GetTodoQueryHandler(
-    JenniferDbContext dbContext,
+    TodoDbContext dbContext,
     ISessionContext session,
     ITodoQueryFilter queryFilter   
 ):IQueryHandler<GetTodoQuery, Result<TodoItemDto>>

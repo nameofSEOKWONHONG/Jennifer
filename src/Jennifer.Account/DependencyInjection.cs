@@ -6,6 +6,7 @@ using AspNetCoreRateLimit.Redis;
 using Confluent.Kafka;
 using eXtensionSharp;
 using eXtensionSharp.Mongo;
+using Grpc.Net.Client;
 using Jennifer.Account.Hubs;
 using Jennifer.External.OAuth;
 using Jennifer.Infrastructure.Email;
@@ -15,17 +16,18 @@ using Jennifer.Account.Application.Options;
 using Jennifer.Account.Application.Roles;
 using Jennifer.Account.Application.Tests;
 using Jennifer.Account.Application.Users;
+using Jennifer.Account.Grpc;
 using Jennifer.Account.GrpcServices;
 using Jennifer.Domain.Accounts;
 using Jennifer.Domain.Common;
 using Jennifer.External.OAuth.Contracts;
-using Jennifer.Infrastructure.Abstractions;
 using Jennifer.Infrastructure.AppConfigurations;
 using Jennifer.Infrastructure.Database;
 using Jennifer.Infrastructure.Extensions;
 using Jennifer.Infrastructure.Middlewares;
 using Jennifer.Infrastructure.Session;
 using Jennifer.SharedKernel;
+using Jennifer.Todo.Grpc;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -36,7 +38,6 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Tokens;
 using StackExchange.Redis;
 using Role = Jennifer.Domain.Accounts.Role;
@@ -193,9 +194,23 @@ public static class DependencyInjection
             });
         });
         #endif
-
-        services.AddScoped<ISlimSender, SlimSender>();
         services.AddGrpc();
+        
+        services.AddSingleton(provider =>
+        {
+            var channel = GrpcChannel.ForAddress("https://localhost:7288", new GrpcChannelOptions
+            {
+                HttpHandler = new SocketsHttpHandler
+                {
+                    PooledConnectionIdleTimeout = TimeSpan.FromMinutes(5),
+                    KeepAlivePingDelay = TimeSpan.FromSeconds(30),
+                    KeepAlivePingTimeout = TimeSpan.FromSeconds(10),
+                    EnableMultipleHttp2Connections = true
+                }
+            });
+
+            return new TodoService.TodoServiceClient(channel);
+        });
         
         return services;
     }
@@ -478,3 +493,46 @@ public static class DependencyInjection
         app.UseJMongoDb();
     }
 }
+
+/*
+ * [수평적 확장 모놀리식에 대한 해설]
+ * 모놀리식은 모든 프로젝트에 대한 출발점이다.
+ * 모든 코드를 하나의 프로젝트에 묶어서 개발하는 것으로 대부분 당신이 작성하는 코드일 것이다.
+ * 수평적 확장 모놀리식은 이러한 모놀리식을 각각의 프로젝트로 분리하는 것이다.
+ * 이 프로젝트에서는 Account와 Todo로 분리된다.
+ * Account의 DB 연결은 분리될 수 있다.
+ * Todo의 DB 연결은 분리될 수 있다.
+ *
+ * 현재는 infra에 db context가 있지만 여기서도 선택지가 있다.
+ * 현재처럼 같은 db에 종속된다면 infrastructure에 구현할 수 있지만
+ * db를 분리한다면 현재의 DbContext는 모두 각각의 프로젝트로 간다.
+ * Domain역시 마찬가지이다.
+ *
+ * 그럼 처음 시작할 때 모놀리식으로 개발하지 않고 현재의 구조로 개발한다면 향후에
+ * 확장에 따라 하나씩 마이크로서비스로 이전하면 되겠다.
+ *
+ * MSA의 결과는 분리된 DB, 분리된 Endpoint이다.
+ *
+ * 따라서 현재의 Account가 하나의 API 프로젝트가 되어야 한다.
+ * 따라서 현재의 Todo가 하나의 API 프로젝트가 되어야 한다.
+ *
+ * 실시간 연동을 위한 부분도 하나의 프로젝트가 되어야 한다.
+ *
+ * MSA를 할 수 있는 규모는 개발자 100명 이상의 프로젝트에 (DB, 인프라 포함)
+ * 평균 접속자 10만
+ * 일일 DAU 5만
+ * 이상일 경우 시도해 볼 수 있겠다.
+ *
+ * 하지만, 한국 기준 서비스로 해당 규모는 극히 일부이므로 대부분 겪을 수 없는 시나리오다.
+ * 따라서, MSA가 정말 필요하냐고 묻는다면 필요하지 않다고 말할 수 있겠다.
+ *
+ * [CQRS는?]
+ * CQRS는 매우 추천하는 방식으로 도메인에 대한 분리와 Aggregate Root 구현으로
+ * 관심사를 절대적으로 분리할 수 있다.
+ * 이 방법을 권장하는 것은 이것이 절대적으로 논리 구조를 분리해 준다는 것에 있다.
+ * 백엔드는 논리 구조의 단순성이 매우 중요하다.
+ * UI 개발은 실제 UI를 추적하며 개발할 수 있지만 백엔드는 요청과 결과에 대한 논리 구현이므로
+ * 코드가 길어지면 추적하기 매우 힘들어 진다.
+ * 따라서, 대부분의 경우에 CQRS를 권장한다.
+ * CQRS의 경우 아무리 복잡한 논리라도 대부분의 경우 500줄 이상 될 수 없다.
+*/

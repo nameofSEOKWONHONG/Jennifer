@@ -1,0 +1,20 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "Jennifer.Todo.Grpc";
+
+package todo;
+
+service TodoService {
+  rpc SyncUserInfo (UserData) returns (SyncUserInfoResponse);
+}
+
+message SyncUserInfoResponse {
+  bool success = 1;
+}
+
+message UserData {
+  string userId = 1;
+  string email = 2;
+  string userName = 3;
+  int32 Type = 4;
+}

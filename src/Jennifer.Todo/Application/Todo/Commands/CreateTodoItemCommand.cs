@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 using Jennifer.SharedKernel;
-using Jennifer.Todo.Application.Todo.Contracts;
+using Jennifer.SharedKernel.Todo;
 using Mediator;
 
 namespace Jennifer.Todo.Application.Todo.Commands;

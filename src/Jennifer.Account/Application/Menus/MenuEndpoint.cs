@@ -1,6 +1,7 @@
 ﻿using Asp.Versioning;
 using Jennifer.Account.Application.Menus.Commands;
 using Jennifer.Account.Application.Menus.Queries;
+using Jennifer.SharedKernel.Account.Menu;
 using Mediator;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;

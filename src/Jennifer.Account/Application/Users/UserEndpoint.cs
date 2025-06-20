@@ -26,7 +26,7 @@ public static class UserEndpoint
             ;
 
         group.MapGet("/",
-            async ([AsParameters] GetsUserRequest request, ISlimSender sender, CancellationToken ct) =>
+            async ([AsParameters] GetsUserRequest request, ISender sender, CancellationToken ct) =>
                 await sender.Send(new GetsUserQuery(request.Email,  request.UserName, request.PageNo, request.PageSize), ct))
             .MapToApiVersion(1)
             .WithName("GetUsers")

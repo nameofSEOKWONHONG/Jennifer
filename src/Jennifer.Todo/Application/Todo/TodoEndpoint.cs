@@ -1,6 +1,6 @@
 ﻿using Asp.Versioning;
+using Jennifer.SharedKernel.Todo;
 using Jennifer.Todo.Application.Todo.Commands;
-using Jennifer.Todo.Application.Todo.Contracts;
 using Jennifer.Todo.Application.Todo.Queries;
 using Mediator;
 using Microsoft.AspNetCore.Builder;

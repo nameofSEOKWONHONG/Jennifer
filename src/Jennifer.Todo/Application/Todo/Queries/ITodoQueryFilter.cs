@@ -1,9 +1,7 @@
 ﻿using System.Linq.Expressions;
 using eXtensionSharp;
-using Jennifer.Domain.Accounts;
 using Jennifer.Domain.Todos;
-using Jennifer.Infrastructure.Session;
-using Jennifer.Todo.Application.Todo.Contracts;
+using Jennifer.SharedKernel.Todo;
 using LinqKit;
 
 namespace Jennifer.Todo.Application.Todo.Queries;
@@ -47,7 +45,7 @@ public class TodoQueryFilter: ITodoQueryFilter
         Labels = item.Labels, 
         IsCompleted = item.IsCompleted, 
         CompletedAt = item.CompletedAt, 
-        Priority = item.Priority,
+        Priority = (int)item.Priority,
         SharedUsers = item.TodoItemShares.Select(mm => mm.ShareUserId).ToList()
     };
 }

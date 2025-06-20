@@ -4,6 +4,7 @@ using Jennifer.Domain.Common;
 using Jennifer.Infrastructure.Database;
 using Jennifer.Infrastructure.Session;
 using Jennifer.SharedKernel;
+using Jennifer.SharedKernel.Account.Menu;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 

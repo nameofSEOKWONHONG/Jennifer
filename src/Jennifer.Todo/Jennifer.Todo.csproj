@@ -9,6 +9,7 @@
     <ItemGroup>
         <PackageReference Include="Asp.Versioning.Http" />
         <PackageReference Include="Google.Protobuf" />
+        <PackageReference Include="Grpc.AspNetCore.Server" />
         <PackageReference Include="Grpc.Net.Client" />
         <PackageReference Include="Grpc.Net.ClientFactory" />
         <PackageReference Include="Grpc.Tools">
@@ -22,6 +23,10 @@
         <ProjectReference Include="..\Jennifer.Infrastructure\Jennifer.Infrastructure.csproj" />
         <ProjectReference Include="..\Jennifer.Proto\Jennifer.Proto.csproj" />
       <ProjectReference Include="..\Jennifer.SharedKernel\Jennifer.SharedKernel.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Application\Todo\Contracts\" />
     </ItemGroup>
 
 </Project>

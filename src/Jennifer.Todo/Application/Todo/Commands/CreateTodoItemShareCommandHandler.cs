@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Jennifer.Todo.Application.Todo.Commands;
 
 public sealed class CreateTodoItemShareCommandHandler(
-    JenniferDbContext dbContext,
+    TodoDbContext dbContext,
     ISessionContext session
 ) : ICommandHandler<CreateTodoItemShareCommand, Result>
 {
